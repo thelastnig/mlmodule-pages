@@ -1,0 +1,44 @@
+$dialog_border: solid 1px #d5d6d7;
+$dialog_bg_color: #ffffff;
+$dialog_box_shadow: 7px 8px 20px 0 rgba(0, 0, 0, 0.12);
+
+.dialog_layout {
+	.MuiDialog-paper {
+		border-radius: 4px;
+		box-shadow: $dialog_box_shadow;
+		border: $dialog_border;
+		background-color: $dialog_bg_color;
+		max-width: unset;
+		margin: 0;
+	}
+}
+
+.confirm_dlg {
+	.MuiDialog-paper {
+		width: 320px;
+		height: 327px;
+	}
+}
+
+.progress_dlg {
+	.MuiDialog-paper {
+		width: 600px;		
+	}
+}
+
+.alert_dlg {
+	z-index: 1400 !important;
+	.MuiDialog-paper {
+		width: 320px;
+		height: 312px;
+	}
+}
+
+.alert_teachable_data {
+	z-index: 1400 !important;
+	.MuiDialog-paper {
+		width: 320px;
+		height: 100px;
+		border-radius: 10px;
+	}
+}

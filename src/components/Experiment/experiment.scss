@@ -1,0 +1,92 @@
+$dialog_border: solid 1px #d5d6d7;
+$dialog_bg_color: #ffffff;
+$dialog_box_shadow: 7px 8px 20px 0 rgba(0, 0, 0, 0.12);
+.dialog_layout {
+	.MuiDialog-paper {
+		border-radius: 4px;
+		box-shadow: $dialog_box_shadow;
+		border: $dialog_border;
+		background-color: $dialog_bg_color;
+		max-width: unset;
+		margin: 0;
+	}
+}
+
+.resource_dialog {
+	.MuiDialog-paper {
+		width: 911px;
+		height: 618px;
+		padding: 0;
+		overflow: hidden;
+	}
+}
+
+.experiment_dialog {
+	.MuiDialog-paper {
+		width: 1016px;
+		height: 756px;
+		padding: 0;
+	}
+}
+
+.register_model_dialog {
+	.MuiDialog-paper {
+		width: 476px;
+		height: 428px;
+	}
+}
+
+.compare_dlg {
+	.MuiDialog-paper {
+		width: 1423px;
+		height: 691px;
+	}
+}
+
+.exp_run_detail_dialog {
+	.MuiDialog-paper {
+		width: 802px;
+		height: 668px;
+		padding: 0;
+	}
+}
+
+.exp_run_hpo_setting_dialog {
+	.MuiDialog-paper {
+		width: 662px;
+		height: 596px;
+		padding: 0;
+	}
+}
+
+.exp_run_automl_configuration_dialog {
+	.MuiDialog-paper {
+		width: 584px;
+		height: 441px;
+		padding: 0;
+		overflow: hidden;
+	}
+}
+
+.algorithm_dialog {
+	.MuiDialog-paper {
+		width: 991px;
+		height: 695px;
+		padding: 0;
+		overflow: hidden;
+	}
+}
+
+.change_model_name_dialog {
+	.MuiDialog-paper {
+		width: 476px;
+		height: 428px;
+	}
+}
+
+.tutorial_dlg {
+	.MuiDialog-paper {
+		width: 522px;
+		height: 554px;
+	}
+}

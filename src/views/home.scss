@@ -1,0 +1,36 @@
+$dialog_border: solid 1px #d5d6d7;
+$dialog_bg_color: #ffffff;
+$dialog_box_shadow: 7px 8px 20px 0 rgba(0, 0, 0, 0.12);
+.dialog_layout {
+	.MuiDialog-paper {
+		border-radius: 4px;
+		box-shadow: $dialog_box_shadow;
+		border: $dialog_border;
+		background-color: $dialog_bg_color;
+		max-width: unset;
+		margin: 0;
+	}
+}
+
+.home_delete_dialog {
+	.MuiDialog-paper {
+		width: 320px;
+		height: 327px;
+		padding: 0;
+	}
+}
+
+.home_detail_dialog {
+	.MuiDialog-paper {
+		width: 792px;
+		height: 549px;
+		padding: 0;
+	}
+}
+
+.home_change_model_dialog {
+	.MuiDialog-paper {
+		width: 476px;
+		height: 428px;
+	}
+}

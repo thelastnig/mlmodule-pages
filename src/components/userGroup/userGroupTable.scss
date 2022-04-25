@@ -1,0 +1,50 @@
+$dialog_border: solid 1px #d5d6d7;
+$dialog_bg_color: #ffffff;
+$dialog_box_shadow: 7px 8px 20px 0 rgba(0, 0, 0, 0.12);
+.dialog_layout {
+	.MuiDialog-paper {
+		border-radius: 4px;
+		box-shadow: $dialog_box_shadow;
+		border: $dialog_border;
+		background-color: $dialog_bg_color;
+		max-width: unset;
+		margin: 0;
+	}
+}
+
+.user_state_change_dlg {
+	.MuiDialog-paper {
+		width: 476px;
+		height: 473px;
+		overflow: unset;
+		.MuiDialogContent-root {
+			overflow: unset;
+		}
+	}
+}
+
+.user_create_dlg {
+	.MuiDialog-paper {
+		width: 476px;
+		height: 617px;
+		overflow: unset;
+		.MuiDialogContent-root {
+			overflow: unset;
+		}
+	}
+}
+
+.group_change_dlg {
+	.MuiDialog-paper {
+		width: 932px;
+		height: 536px;
+		overflow: hidden;
+	}
+}
+
+.group_detail_dlg {
+	.MuiDialog-paper {
+		width: 700px;
+		height: 400px;
+	}
+}

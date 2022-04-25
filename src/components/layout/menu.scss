@@ -1,0 +1,122 @@
+.menuContainer {
+	.active {
+		.MuiListItem-button {
+			background-color: rgba(0, 66, 130, 0.1);
+		}
+	}
+}
+
+$color_disabled: #d5d6d7;
+$color_light_blue: #005cb5;
+.button_area {
+	.button {
+		cursor: pointer;
+		display: inline-block;
+		text-align: center;
+		vertical-align: top;
+		font-size: 14px;
+		outline: none;
+		border: none;
+		&:disabled,
+		&.disabled {
+			cursor: not-allowed !important;
+		}
+	}
+
+	.gray {
+		border-radius: 2px;
+		background-color: $color_disabled;
+		color: #ffffff;
+		&:not(.disabled):hover {
+			background-color: #3d3f45;
+		}
+
+		&:not(.disabled):active {
+			border: solid 1px #c2cce7;
+			background-color: #5162eb;
+		}
+
+		&.disabled {
+			color: #4f5562 !important;
+			border: solid 1px #4f5562;
+			background-color: #363b48;
+		}
+	}
+	.blue {
+		border-radius: 2px;
+		background-color: $color_light_blue;
+		text-align: center;
+		color: #ffffff;
+		&:hover {
+			background-color: #1742c3;
+		}
+		&:disabled {
+			color: #ffffff !important;
+			border: solid 1px #d5d6d7;
+			background-color: #d5d6d7;
+		}
+	}
+	.wd44 {
+		width: 44px;
+	}
+	.wd50 {
+		width: 50px;
+	}
+	.wd56 {
+		width: 56px;
+	}
+	.wd64 {
+		width: 64px;
+	}
+	.wd70 {
+		width: 70px;
+	}
+	.wd72 {
+		width: 72px;
+	}
+	.wd74 {
+		width: 74px;
+	}
+	.wd76 {
+		width: 76px;
+	}
+	.wd92 {
+		width: 90px;
+	}
+	.wd94 {
+		width: 94px;
+	}
+	.wd120 {
+		width: 120px;
+	}
+	.hi18 {
+		height: 18px;
+		line-height: 16px;
+	}
+	.hi28 {
+		height: 28px;
+		line-height: 26px;
+	}
+	.hi32 {
+		height: 32px;
+		line-height: 30px;
+	}
+	.hi34 {
+		height: 34px;
+		line-height: 32px;
+	}
+	.hi36 {
+		height: 36px;
+		line-height: 34px;
+	}
+	.hi40 {
+		height: 40px;
+		line-height: 38px;
+	}
+}
+.ml5 {
+	margin-left: 5px;
+}
+.mr12 {
+	margin-right: 12px;
+}

@@ -1,0 +1,55 @@
+$dialog_border: solid 1px #d5d6d7;
+$dialog_bg_color: #ffffff;
+$dialog_box_shadow: 7px 8px 20px 0 rgba(0, 0, 0, 0.12);
+.dialog_layout {
+	.MuiDialog-paper {
+		border-radius: 4px;
+		box-shadow: $dialog_box_shadow;
+		border: $dialog_border;
+		background-color: $dialog_bg_color;
+		max-width: unset;
+		margin: 0;
+	}
+}
+
+.preview_dlg {
+	.MuiDialog-paper {
+		width: 668px;
+		height: 548px;
+	}
+}
+
+.inference_save_result_dlg {
+	.MuiDialog-paper {
+		width: 476px;
+		height: 330px;
+	}
+}
+
+.inference_process_dlg {
+	.MuiDialog-paper {
+		width: 1016px;
+		height: 796px;
+	}
+}
+
+.inference_image_detail_dlg {
+	.MuiDialog-paper {
+		width: 980px;
+		height: 627px;
+	}
+}
+
+.inference_tabular_detail_dlg {
+	.MuiDialog-paper {
+		//width: 644px;
+		width: 800px;
+		height: 615px;
+	}
+}
+
+.inference_res_example_dialog {
+	.MuiDialog-paper {
+		width: 800px;	
+	}
+}

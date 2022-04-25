@@ -1,0 +1,79 @@
+$dialog_border: solid 1px #d5d6d7;
+$dialog_bg_color: #ffffff;
+$dialog_box_shadow: 7px 8px 20px 0 rgba(0, 0, 0, 0.12);
+.dialog_layout {
+	.MuiDialog-paper {
+		border-radius: 4px;
+		box-shadow: $dialog_box_shadow;
+		border: $dialog_border;
+		background-color: $dialog_bg_color;
+		max-width: unset;
+		margin: 0;
+	}
+}
+
+.modal_dialog {
+	.MuiDialog-paper {
+		width: 322spx;
+		height: 327px;
+		padding: 0;
+	}
+}
+
+.data_merge_dialog {
+	.MuiDialog-paper {
+		width: 548px;		
+		padding: 0;
+	}
+}
+
+.data_label_info_dialog {
+	.MuiDialog-paper {
+		width: 650px;
+		padding: 0;
+	}
+}
+
+.preview_dlg {
+	.MuiDialog-paper {
+		width: 668px;
+		height: 548px;
+	}
+}
+
+.visualize_dlg {
+	.MuiDialog-paper {
+		width: 1356px;
+		height: 820px;
+	}
+}
+
+.selectAnnotator_dlg {
+	.MuiDialog-paper {
+		width: 618px;
+		height: 588px;
+	}
+}
+
+.data_prerocess_result_dlg {
+	.MuiDialog-paper {
+		width: 882px;
+		height: 526px;
+	}
+}
+
+.data_analyze_result_dialog {
+	.MuiDialog-paper {
+		width: 1356px;
+		height: 820px;
+		overflow: hidden;
+	}
+}
+
+.data_shared_storage_dialog {
+	.MuiDialog-paper {
+		width: 1380px;
+		height: 768px;
+		padding: 0;
+	}
+}
