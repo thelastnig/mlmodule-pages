@@ -4,6 +4,7 @@ import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import Webcam from "react-webcam";
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 const WebcamComponent = () => <Webcam />;
 
@@ -118,14 +119,14 @@ const WebcamUploaderComponent = (props) => {
                         />
                     </ScreenArea>
                     <SaveArea>
-                        <div className='saveButton' onClick={capture}>녹화하기</div>
+                        <div className='saveButton' onClick={capture}>Record</div>
                         <SettingsOutlinedIcon className='icon'/>
                     </SaveArea>
                 </>
                 :
                 <ErrorMessageArea>
                     <div className='message'>
-                        웹캠을 여는 중에 오류가 발생했습니다. 웹캠을 연결했는지 또는 이미지 업로드로 전환했는지 확인하세요.
+                        An error occurres. Please check your device.
                     </div>
                 </ErrorMessageArea>
             }
@@ -140,12 +141,8 @@ const WebcamUploader = styled.div`
     height: 100%;
 
     .icon {
-        font-size: 26px;
-        color: #1967D2;
-
-        :hover {
-            color: #185ABC;
-        }
+        font-size: 24px;
+        color: white;
     }
 `;
 
@@ -157,9 +154,9 @@ const InfoArea = styled.div`
     align-items: center;
 
     .infoText {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 
@@ -180,13 +177,15 @@ const SaveArea = styled.div`
     .saveButton {
         width: 200px;
         padding: 8px 0px;
-        background: #1967D2;
-        border-radius: 5px;
+        background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        border-radius: 2px;
         color: white;
+        font-size: 12px;
+        font-weight: 600;
         text-align: center;
 
         :hover {
-            background: #185ABC;
+            background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
         }
     }
 `;
@@ -201,8 +200,7 @@ const ErrorMessageArea = styled.div`
 
     .message {
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 

@@ -8,6 +8,7 @@ import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import LibraryMusicOutlinedIcon from '@material-ui/icons/LibraryMusicOutlined';
 import useDrivePicker from 'react-google-drive-picker';
 import axios from 'axios';
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
 const FileUploaderComponent = (props) => {
@@ -142,7 +143,7 @@ const FileUploaderComponent = (props) => {
 	return (
         <FileUploader>
             <InfoArea>
-                <div className='infoText'>파일</div>
+                <div className='infoText'>File</div>
                 <CloseOutlinedIcon className='icon' onClick={() => clickUploadOpen(id, 'local')}/>
             </InfoArea>
             <DropZone>
@@ -160,15 +161,15 @@ const FileUploaderComponent = (props) => {
                         ?
                             taskType === 'image'
                             ?
-                            <div className='uploadInfoText'>파일에서 이미지를 선택하거나 여기로 드래그 앤 드롭하세요.</div> 
+                            <div className='uploadInfoText'>Select or Drag &#38; Drop</div> 
                             :
-                            <div className='uploadInfoText'>오디오 zip 파일을 선택하거나 여기로 드래그 앤 드롭하세요.</div> 
+                            <div className='uploadInfoText'>Select zip file or Drag &#38; Drop</div> 
                         :
                             taskType === 'image'
                             ?
-                            <div className='uploadInfoText'>파일에서 이미지를 선택하거나 여기로 드래그 앤 드롭하세요.</div> 
+                            <div className='uploadInfoText'>Select or Drag &#38; Drop</div> 
                             :
-                            <div className='uploadInfoText'>오디오 zip 파일을 선택하거나 여기로 드래그 앤 드롭하세요.</div> 
+                            <div className='uploadInfoText'>Select zip file or Drag &#38; Drop</div> 
                     }
                 </div>
             </DropZone>
@@ -179,9 +180,9 @@ const FileUploaderComponent = (props) => {
                         {
                             taskType === 'image'
                             ?
-                            <p>Google Drive에서 이미지 가져오기</p>
+                            <p>Google Drive</p>
                             :
-                            <p>Google Drive에서 오디오 zip 파일 가져오기</p>
+                            <p>Google Drive</p>
                         }
                     </div> 
                 </div>    
@@ -201,12 +202,8 @@ const FileUploader = styled.div`
     align-items: center;
 
     .icon {
-        font-size: 26px;
-        color: #1967D2;
-
-        :hover {
-            color: #185ABC;
-        }
+        font-size: 24px;
+        color: white;
     }
 `;
 
@@ -218,19 +215,18 @@ const InfoArea = styled.div`
     align-items: center;
 
     .infoText {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 
 const DropZone = styled.div`
     width: 100%;
     height: 170px;
-    background: #D2E3FC;
-    border-radius: 5px;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     &:hover {
-        background: #AECBFA;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
     }
 
     .uploadClickArea {
@@ -246,8 +242,7 @@ const DropZone = styled.div`
     .uploadInfoText {
         margin-top: 5px;
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 
     .uploadIcon {
@@ -259,10 +254,9 @@ const DropZone = styled.div`
 const GoogleDriveZone = styled.div`
     width: 100%;
     height: 170px;
-    background: #D2E3FC;
-    border-radius: 5px;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     &:hover {
-        background: #AECBFA;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
     }
 
     .uploadClickArea {
@@ -278,8 +272,7 @@ const GoogleDriveZone = styled.div`
     .uploadInfoText {
         margin-top: 5px;
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 
     .uploadIcon {

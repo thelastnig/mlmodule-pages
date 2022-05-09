@@ -11,6 +11,7 @@ import VideocamOutlinedIcon from '@material-ui/icons/VideocamOutlined';
 import AddToQueueOutlinedIcon from '@material-ui/icons/AddToQueueOutlined';
 import MicIcon from '@material-ui/icons/Mic';
 import Button from '@material-ui/core/Button';
+import LabelIcon from '@material-ui/icons/Label';
 import { PageWrapper, BodyFullContainer, TitleComponent } from 'components/common/StyledComponent';
 import AddClassButton from 'components/teachable/AddClassButton';
 import PreprocessComponent from 'components/teachable/PreprocessComponent';
@@ -382,14 +383,17 @@ const Teachable = (props) => {
                                                         >   
                                                             <div className='draggableContent'>
                                                                 <ItemHeader>
-                                                                    <ClassNameInput>
-                                                                        <input
-                                                                            className='classInput' 
-                                                                            value={item.class_name}
-                                                                            onChange={(e) => onChangeValue(e, item.id)}
-                                                                            onFocus={(e) => handleFocus(e)}
-                                                                        />
-                                                                    </ClassNameInput>
+                                                                    <div className='inputWrapper'>
+                                                                        <LabelIcon className='labelIcon'></LabelIcon>
+                                                                        <ClassNameInput>
+                                                                            <input
+                                                                                className='classInput' 
+                                                                                value={item.class_name}
+                                                                                onChange={(e) => onChangeValue(e, item.id)}
+                                                                                onFocus={(e) => handleFocus(e)}
+                                                                            />
+                                                                        </ClassNameInput>
+                                                                    </div>
                                                                     <MenuBtn>
                                                                         <MoreButton
                                                                             id={item.id}
@@ -409,9 +413,9 @@ const Teachable = (props) => {
                                                                             :
                                                                                 taskType === 'image' 
                                                                                 ?
-                                                                                <FileUploaderText>+ 이미지 추가</FileUploaderText>
+                                                                                <FileUploaderText>+ Add images</FileUploaderText>
                                                                                 :
-                                                                                <FileUploaderText>+ 오디오 추가(최소 20개)</FileUploaderText>
+                                                                                <FileUploaderText>+ Add audios(at least 20)</FileUploaderText>
                                                                         }
                                                                         {
                                                                             item.isUploadOpen
@@ -462,11 +466,11 @@ const Teachable = (props) => {
                                                                                 <FileUploaderSelect>
                                                                                     <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'webcam', true, false)}>
                                                                                         <VideocamOutlinedIcon className='selectIcon'/>
-                                                                                        <div className='selectText'>웹캠</div>
+                                                                                        <div className='selectText'>Webcam</div>
                                                                                     </div>
-                                                                                    <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'local')}>
+                                                                                    <div className='fileUploaderSelectItem file' onClick={() => clickUploadOpen(item.id, 'local')}>
                                                                                         <AddToQueueOutlinedIcon className='selectIcon file'/>
-                                                                                        <div className='selectText file'>업로드</div>
+                                                                                        <div className='selectText file'>File</div>
                                                                                     </div>
                                                                                 </FileUploaderSelect>
                                                                                 :
@@ -706,6 +710,18 @@ const ItemHeader = styled.div`
     display: flex;
     justify-cotent: space-between;
     align-items: center;
+
+    .inputWrapper {
+        width: 96%;
+        display: flex;
+        justify-cotent: space-between;
+        align-items: center;
+        .labelIcon {
+            margin-right: 5px;
+            font-size: 20px;
+            color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        }
+    }
 `;
 
 const ItemContent = styled.div`
@@ -723,7 +739,6 @@ const ItemContent = styled.div`
 `;
 
 const ClassNameInput = styled.div`
-    width: 96%;
 
     .classInput {
         border: none;
@@ -739,68 +754,55 @@ const ClassNameInput = styled.div`
 const MenuBtn = styled.div`
     width: 4%;
     text-align: right;
-
-    .menuBtn {
-        color: #adb5bd;
-        font-size: 24px;
-
-        &:hover {
-            color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
-        }
-    }
 `;
 
 const FileUploaderArea = styled.div`
     width: 50%;
     height: 100%;
     padding: 15px;
-    background: #E8F0FE;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 `;
 
 const FileViewerArea = styled.div`
     width: 50%;
     padding-top: 7px;
     padding-bottom: 7px;
-    padding-left: 25px;
 `;
 
 const FileUploaderText = styled.div`
     width: 100%;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     padding-left: 10px;
     margin-top: 40px;
     margin-bottom: 20px;
-    color: #1967D2;
+    color: white;
 `;
 
 const FileUploaderSelect = styled.div`
-    width: 100%;
+    width: 100ke%;
     padding-left: 10px;
     padding-right: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 
     .fileUploaderSelectItem {
-        width: 115px;
-        height: 75px;
-        border-radius: 5px;
+        width: 100%;
+        height: 35px;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        background: #D2E3FC;
+        justify-content: flex-start;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
         &:hover {
-            background: #AECBFA;
+            background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
+        }
+        &.file {
+            margin-top: 10px;
         }
     }
 
     .selectText {
-        margin-top: 5px;
         font-size: 12px;
         font-weight: 600;
-        color: #1967D2;
+        color: white;
 
         &.file {
         }
@@ -808,11 +810,14 @@ const FileUploaderSelect = styled.div`
 
     .selectIcon {
         font-size: 28px;
-        color: #1967D2;
+        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+        margin-left: 75px;
+        margin-right: 10px;
 
         &.file {
-            font-size: 24px;
-            margin-top: 4px;
+            font-size: 24px; 
+            margin-left: 78px;
+            margin-right: 13px;
         }
     }
 `;
