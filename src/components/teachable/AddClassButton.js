@@ -23,33 +23,45 @@ export default function AddClassButton(props) {
 	}, [list]);
 
 	return (
-		<AddButton onClick={addClick}>
-			<AddBoxOutlinedIcon className='addButtonIcon'/>
-			<AddButtonText>클래스 추가</AddButtonText>
-		</AddButton>
+		<AddButtonWrapper>
+			<AddButton onClick={addClick}>
+				<AddBoxOutlinedIcon className='addButtonIcon'/>
+				<AddButtonText>Add Class</AddButtonText>
+			</AddButton>
+		</AddButtonWrapper>
 	);
 }
 
+const AddButtonWrapper =styled.div`
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
 const AddButton = styled.div`
-	width: 600px;
-	height: 85px;
-	border-radius: 20px;
-	border: 2px dashed ${TEACHABLE_COLOR_LIST.PURPLE};
+	width: 250px;
+	height: 40px;
 	text-align: center;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+
+	:hover {
+		background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
+	}
 
 	.addButtonIcon {
-		color: #6741d9;
+		color: white;
 		font-size: 20px;
 		margin-right: 10px;
 	}
 `;
 
 const AddButtonText = styled.div`
-	color: ${TEACHABLE_COLOR_LIST.PURPLE};
-	font-size: 16px;
+	color: white;
+	font-size: 14px;
 	font-weight: 600;
 `;

@@ -477,11 +477,11 @@ const Teachable = (props) => {
                                                                                 <FileUploaderSelect>
                                                                                     <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'audioRecorder', true, false)}>
                                                                                         <MicIcon className='selectIcon'/>
-                                                                                        <div className='selectText'>마이크</div>
+                                                                                        <div className='selectText'>Mike</div>
                                                                                     </div>
                                                                                     <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'local')}>
                                                                                         <AddToQueueOutlinedIcon className='selectIcon file'/>
-                                                                                        <div className='selectText file'>업로드</div>
+                                                                                        <div className='selectText file'>File</div>
                                                                                     </div>
                                                                                 </FileUploaderSelect>
                                                                         }

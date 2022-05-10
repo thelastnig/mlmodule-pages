@@ -96,7 +96,12 @@ const FileViewerComponent = (props) => {
                     <p>{dataList.length} files</p> 
             }
             </FileNumViewer>
-            <FileViewer isUploadOpen={isUploadOpen}>
+            {
+                dataList.length === 0
+                ?
+                <FileNull isUploadOpen={isUploadOpen}>No Data</FileNull>
+                :
+                <FileViewer isUploadOpen={isUploadOpen}>
                 <div className='tableHeader'>
                     <div className='headerFile'>File</div>
                     <div className='headerName'>Name</div>
@@ -105,7 +110,8 @@ const FileViewerComponent = (props) => {
                     <div className='headerDelete'></div>
                 </div>
                 {dataList}
-            </FileViewer>
+                </FileViewer>
+            }
         </>
 	);
 };
@@ -119,6 +125,21 @@ const FileNumViewer = styled.div`
     font-weight: 600;
     color: white;
 
+`;
+
+const FileNull = styled.div`
+    width: 100%;
+    ${props => props.isUploadOpen && `
+        margin-top: 180px;
+    `}
+
+    ${props => !props.isUploadOpen && `
+        margin-top: 80px;
+    `}
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: ${TEACHABLE_COLOR_LIST.GRAY};
 `;
 
 const FileViewer = styled.div`
@@ -171,12 +192,12 @@ const FileViewer = styled.div`
         width: 7px;
     }
     ::-webkit-scrollbar-thumb {
-        background-color: #AECBFA;
+        background-color: #899095;
         border-radius: 7px;
         background-clip: padding-box;
     }
     ::-webkit-scrollbar-track {
-        background-color: white;
+        background-color: ${TEACHABLE_COLOR_LIST.GRAY};
         border-radius: 7px;
     }
 `;

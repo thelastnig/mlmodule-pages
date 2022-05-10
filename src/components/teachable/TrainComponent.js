@@ -8,6 +8,7 @@ import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
 import RestoreOutlinedIcon from '@material-ui/icons/RestoreOutlined';
 import KeyboardArrowDownOutlinedIcon from '@material-ui/icons/KeyboardArrowDownOutlined';
 import KeyboardArrowUpOutlinedIcon from '@material-ui/icons/KeyboardArrowUpOutlined';
+import UpdateIcon from '@material-ui/icons/Update';
 import TeachableSelect from './TeachableSelect';
 import { TeachableMobileNet, createTeachable } from 'tf';
 import { cropTo } from "tf/utils/canvas";
@@ -216,7 +217,10 @@ const TrainComponent = (props) => {
 	return (
         <TrainItem>
             <ItemHeader>
-                <HeaderText>학습</HeaderText>
+                <HeaderText>
+                    <UpdateIcon className='headerIcon'></UpdateIcon>
+                    <div className='headerText'>Train</div>
+                </HeaderText>
                 <HeaderContent isWorking={isWorking} isDataloading={isDataloading} isTraining={isTraining}>
                     {
                     isTraining
@@ -226,10 +230,10 @@ const TrainComponent = (props) => {
                             className="progress"
                             variant="determinate" 
                             value={count/params.epochs*100} />
-                        <div className='progressText' onClick={onSetStopTrainClicked}>학습 </div>
+                        <div className='progressText' onClick={onSetStopTrainClicked}>Training...</div>
                     </ProgressWrapper>
                     :
-                    <div className='headerContentText' onClick={onSetTrainClicked}>모델 학습시키기</div>
+                    <div className='headerContentText' onClick={onSetTrainClicked}>Start</div>
                     }
                 </HeaderContent>
                 <HeaderProgress isWorking={isWorking} isDataloading={isDataloading} isTraining={isTraining}>
@@ -250,7 +254,7 @@ const TrainComponent = (props) => {
                 <DetailButton  onClick={() => setIsSettingOpen(!isSettingOpen)} isSettingOpen={isSettingOpen}>
                     <div className='detail toggle'>
                         <div className='detailLeft toggle'>
-                                <div className='detailText toggle'>고급</div>
+                                <div className='detailText toggle'>Settings</div>
                         </div>
                         <div className='detailRight toggle'>
                             {
@@ -266,7 +270,7 @@ const TrainComponent = (props) => {
                 <DetailSetting isSettingOpen={isSettingOpen}>
                     <div className='detail epoch'>
                         <div className='detailLeft'>
-                            <div className='detailText'>에포크:</div>
+                            <div className='detailText'>Epochs:</div>
                             <div className='detailSelect'>
                                 <input type='text'
                                     name='epochs'
@@ -285,7 +289,7 @@ const TrainComponent = (props) => {
                     <>
                     <div className='detail batchSize'>
                         <div className='detailLeft'>
-                            <div className='detailText'>배치 크기:</div>
+                            <div className='detailText'>Batch Size:</div>
                             <div className='detailSelect'>                    
                                 <TeachableSelect 
                                     options={batchSize} 
@@ -303,7 +307,7 @@ const TrainComponent = (props) => {
                     </div>
                     <div className='detail learningRate'>
                         <div className='detailLeft'>
-                            <div className='detailText'>학습률:</div>
+                            <div className='detailText'>Learning Rate:</div>
                             <div className='detailSelect'>
                                 <TeachableSelect 
                                     options={learningRate} 
@@ -336,7 +340,7 @@ const TrainComponent = (props) => {
                     }
                     <div className='detail init'>
                         <div className='detailLeft'>
-                            <div className='detailText reset'>기본값 초기화</div>
+                            <div className='detailText reset'>Reset values</div>
                         </div>
                         <div className='detailRight' onClick={handleClickInitParam}>
                             <RestoreOutlinedIcon className='helpIcon reset' />
@@ -352,15 +356,13 @@ export default TrainComponent;
 
 const TrainItem = styled.div`
     width: 300px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 `;
 
 const ItemHeader = styled.div`
     width: 100%;
     padding: 15px;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 1px solid ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     display: flex;
     flex-direction: column;
     justify-cotent: space-between;
@@ -368,14 +370,25 @@ const ItemHeader = styled.div`
 
 const HeaderText = styled.div`
     height: 42px;
-    font-size: 20px;
-    font-weight: 600;
+    display: flex;
+    justify-cotent: center;
+
+    .headerIcon {
+        margin-right: 5px;
+        font-size: 20px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    }
+
+    .headerText { 
+        font-size: 14px;
+        color: white;
+        font-weight: 600;
+    }
 `;
 
 const ProgressWrapper = styled.div`
     width: 100%;
     height: 42px;
-    border-radius: 6px;
     position: relative;
 
     .progress {
@@ -415,18 +428,17 @@ const ProgressWrapper = styled.div`
 
 const HeaderContent = styled.div`
     height: 42px;
-    background: ${TEACHABLE_COLOR_LIST.LIGHT_GRAY};
-    color: ${TEACHABLE_COLOR_LIST.HEAVY_GRAY};
-    border-radius: 6px;
+    background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     justify-cotent: center;
     align-items: center;
 
     :hover {
-        background: ${TEACHABLE_COLOR_LIST.LIGHT_MAIN_COLOR};
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
-        font-weight: 600;
+        background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
     }
 
     .headerContentText {
@@ -465,10 +477,9 @@ const ItemContent = styled.div`
     
     .detail {
         width: 100%;
-        height: 60px;
+        height: 50px;
         padding-left: 15px;
         padding-right: 15px;
-        border-top: 1px solid #e9ecef;
         display: flex;
         justify-cotent: space-between;
         align-items: center;
@@ -510,10 +521,12 @@ const ItemContent = styled.div`
     }
 
     .detailText {
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
+        font-size: 12px;
         font-weight: 600;
 
         &.toggle {
-            color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+            color: white;
         }
 
         &.reset {
@@ -528,7 +541,7 @@ const ItemContent = styled.div`
     }
 
     .toggleIcon {
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+        color: white;
         font-size: 32px;
     }
 
@@ -551,18 +564,8 @@ const DetailButton = styled.div`
     cursor: pointer;
 
     :hover {
-        background: ${TEACHABLE_COLOR_LIST.LIGHT_MAIN_COLOR};
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
     }
-
-    ${props => props.isSettingOpen && `
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-    `}
-
-    ${props => !props.isSettingOpen && `
-        border-bottom-left-radius: 15px;
-        border-bottom-right-radius: 15px;
-    `}
 `;
 
 const DetailSetting = styled.div`

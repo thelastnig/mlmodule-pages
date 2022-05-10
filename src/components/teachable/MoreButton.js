@@ -11,14 +11,14 @@ export default function MoreComponent(props) {
 		let list = [];
 		let item = '';
         item = {
-            text: '클래스 삭제',
+            text: 'Delete Class',
             onClick: () => {
                 clickDelete(id);
             },
         };
         list.push(item);
         item = {
-            text: '모든 샘플 삭제',
+            text: 'Delete All Data',
             onClick: () => {
                 clickDeleteAllImages(id);
             },
@@ -27,7 +27,7 @@ export default function MoreComponent(props) {
             list.push(item);
         }
         item = {
-            text: '샘플 다운로드',
+            text: 'Data Download',
             onClick: () => {
                 clickDownloadSamples(id);
             },
