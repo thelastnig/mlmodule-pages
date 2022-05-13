@@ -377,7 +377,6 @@ const ResultItem = styled.div`
 
     .classValueNarrow {
         height: 30px;
-        border-radius: 5px;
         position: relative;
 
         &.orange {
