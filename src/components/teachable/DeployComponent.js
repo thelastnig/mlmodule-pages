@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
 import SaveAltOutlinedIcon from '@material-ui/icons/SaveAltOutlined';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import TeachableSelect from './TeachableSelect';
 import DeployFileUploaderComponent from './DeployFileUploaderComponent';
 import DeployWebcamUploaderComponent from './DeployWebcamUploaderComponent';
@@ -9,9 +10,10 @@ import DeployFileViewerComponent from './DeployFileViewerComponent';
 import DeployAudioRecorderComponent from './DeployAudioRecorderComponent';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import { Item } from 'semantic-ui-react';
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
-const inputTypeList = ['파일', 'Webcam'];
+const inputTypeList = ['File', 'Webcam'];
 const colorList = [ 
     {'name': 'orange', 'valueColor': '#E67701', 'wrapperColor': '#FFECE2'},
     {'name': 'pink', 'valueColor': '#D84C6F', 'wrapperColor': '#FFE9EC'},
@@ -24,7 +26,7 @@ const DeployComponent = (props) => {
     
     const { taskType, model, list, isTrained } = useHandleState();
     
-    const [ inputType, setInputType ] = useState('파일');
+    const [ inputType, setInputType ] = useState('File');
     const [ inferenceFile, setInferenceFile ] = useState(null);
     const [ isInferenceOpen, setIsInferenceOpen ] = useState(false);
     const [ inferenceResult, setInferenceResult ] = useState([]);
@@ -50,8 +52,6 @@ const DeployComponent = (props) => {
 	}, [inferenceFile]);
 
     const resultItemList = inferenceResult.map((item, index) => {
-        // console.log('=====================deploycomponent========================')
-        // console.log(Item)
         const colorIndex = index % colorList.length;
         const colorClass =  colorList[colorIndex].name;
         const intValue = Math.round(item.probability * 100);
@@ -85,11 +85,12 @@ const DeployComponent = (props) => {
         <DeployItem>
             <ItemHeader isTrained={isTrained}>
                 <HeaderText>
-                    배포
+                    <GetAppIcon className='headerIcon'></GetAppIcon>
+                    <div className='headerText'>Deploy</div>
                 </HeaderText>
                 <HeaderContent onClick={props.handleToggleDeployModal}>
                     <SaveAltOutlinedIcon className='headerContentIcon'/>
-                    <div className='headerContentText'>모델 내보내기</div>
+                    <div className='headerContentText'>Deploy Model</div>
                 </HeaderContent>
             </ItemHeader>
             {
@@ -100,7 +101,7 @@ const DeployComponent = (props) => {
                 taskType === 'image'
                 ?
                 <SelectArea>
-                    <div className='selectText'>입력</div>
+                    <div className='selectText'>Input Type</div>
                     <div className='selectComponent'>            
                         <TeachableSelect 
                             options={inputTypeList} 
@@ -108,7 +109,6 @@ const DeployComponent = (props) => {
                             name='inputType'
                             value={inputType}
                             handleChange={handleChange}
-                            shape='round'
                         />         
                     </div>
                 </SelectArea>
@@ -119,10 +119,10 @@ const DeployComponent = (props) => {
                 taskType === 'image'
                 ?
                 <UploadArea>
-                    <FileUploadArea isOpen={inputType === '파일' ? true : false}>
+                    <FileUploadArea isOpen={inputType === 'File' ? true : false}>
                         <DeployFileUploaderComponent inferenceFile={inferenceFile} setInferenceFile={setInferenceFile} setIsInferenceOpen={setIsInferenceOpen} />
                     </FileUploadArea>
-                    <WebcamArea isOpen={inputType === '파일' ? false : true}>
+                    <WebcamArea isOpen={inputType === 'File' ? false : true}>
                         <DeployWebcamUploaderComponent 
                             inferenceFile={inferenceFile}
                             inputType={inputType} 
@@ -156,7 +156,7 @@ const DeployComponent = (props) => {
                     <div className='resultIcon'>
                         <ArrowDownwardIcon className='icon'/>
                     </div>
-                    <div className='resultInfoText'>추론 결과</div>
+                    <div className='resultInfoText'>Result</div>
                     {resultItemList}
                 </ResultArea>
             </ItemContent>
@@ -171,9 +171,7 @@ export default DeployComponent;
 
 const DeployItem = styled.div`
     width: 300px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 `;
 
 const ItemHeader = styled.div`
@@ -190,24 +188,35 @@ const ItemHeader = styled.div`
 
 const HeaderText = styled.div`
     height: 42px;
-    font-size: 20px;
-    font-weight: 600;
+    display: flex;
+    justify-cotent: center;
+
+    .headerIcon {
+        margin-right: 5px;
+        font-size: 20px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    }
+
+    .headerText { 
+        font-size: 14px;
+        color: white;
+        font-weight: 600;
+    }
 `;
 
 const HeaderContent = styled.div`
     height: 42px;
-    background: #F1F3F4;
-    color: #495057;
-    border-radius: 6px;
+    background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
 
     :hover {
-        background: #E8F0FE;
-        color: #1967D2;
-        font-weight: 600;
+        background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
     }
 
     .headerContentText {
@@ -230,6 +239,8 @@ const SelectArea = styled.div`
     align-items: center;
 
     .selectText {
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
+        font-size: 12px;
         font-weight: 600;
     }
     .selectComponent {
@@ -287,6 +298,8 @@ const ResultArea = styled.div`
 
     .resultInfoText {
         font-weight: 600;
+        color: white;
+        font-size: 12px;        
     }
 `;
 
@@ -320,7 +333,6 @@ const ResultItem = styled.div`
     .classValueWrapper {
         width: 75%;
         height: 30px;
-        border-radius: 5px;
 
         &.orange {
             background: ${colorList[0].wrapperColor};
@@ -338,7 +350,6 @@ const ResultItem = styled.div`
 
     .classValue {
         height: 30px;
-        border-radius: 5px;
         display: flex;
         justify-content: flex-end;
         align-items: center;

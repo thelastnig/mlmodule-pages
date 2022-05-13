@@ -230,7 +230,7 @@ const TrainComponent = (props) => {
                             className="progress"
                             variant="determinate" 
                             value={count/params.epochs*100} />
-                        <div className='progressText' onClick={onSetStopTrainClicked}>Training...</div>
+                        <div className='progressText' onClick={onSetStopTrainClicked}>Training</div>
                     </ProgressWrapper>
                     :
                     <div className='headerContentText' onClick={onSetTrainClicked}>Start</div>
@@ -244,7 +244,7 @@ const TrainComponent = (props) => {
                         ?
                         String(count) + " / " + String(params.epochs) 
                         :
-                        "학습 데이터 준비중..."
+                        "Preparing Training Dataset..."
                         }
                         </div>
                     </div>
@@ -332,7 +332,7 @@ const TrainComponent = (props) => {
                     ?
                     <div className='detail report'>
                         <div className='reportButton' onClick={props.handleToggleDetailModal}>
-                            <div className='reportText'>학습 결과 보고서</div>
+                            <div className='reportText'>Train Result Report</div>
                         </div>
                     </div>
                     :
@@ -394,10 +394,10 @@ const ProgressWrapper = styled.div`
     .progress {
         width: 100%;
         height: 42px;
-        background-color: ${TEACHABLE_COLOR_LIST.MIDDLE_LIGHT_MAIN_COLOR};
+        background-color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
     }
     .progress > * { 
-        background-color: ${TEACHABLE_COLOR_LIST.MIDDLE_MAIN_COLOR};
+        background-color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
     }
 
     .progressText {
@@ -408,22 +408,16 @@ const ProgressWrapper = styled.div`
         left: 0;
         line-height: 42px;
         text-align: center;    
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+        color: white;
         font-weight: 600;
 
-        ::after {
-            content: '중...';
-        }
-
         :hover {
-            background-color: ${TEACHABLE_COLOR_LIST.MIDDLE_MAIN_COLOR};
-
-            ::after {
-                content: '중지';
+            background-color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+            :after {
+                content: ' Stop';
             }
         }
     }
-
 `;
 
 const HeaderContent = styled.div`
@@ -468,7 +462,8 @@ const HeaderProgress = styled.div`
     .headerProgressText {
         width: 100%;
         font-weight: 600;
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+        font-size: 11px;
+        color: white;
     }
 `;
 
@@ -492,19 +487,16 @@ const ItemContent = styled.div`
     .reportButton {
         width: 100%; 
         height: 42px;
-        background: ${TEACHABLE_COLOR_LIST.LIGHT_GRAY};
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_GRAY};
-        border-radius: 6px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
         cursor: pointer;
         display: flex;
         justify-cotent: center;
         align-items: center;
-        background: ${TEACHABLE_COLOR_LIST.LIGHT_MAIN_COLOR};
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
         font-weight: 600;
+        border: 1px ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} solid;
 
         :hover {
-            background: ${TEACHABLE_COLOR_LIST.MIDDLE_MAIN_COLOR};
+            background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
         }
 
         .reportText {
@@ -546,7 +538,7 @@ const ItemContent = styled.div`
     }
 
     .helpIcon {
-        color: #adb5bd;
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
         font-size: 24px;
         cursor: pointer;
 
@@ -555,7 +547,7 @@ const ItemContent = styled.div`
         }
 
         :hover {
-            color: ${TEACHABLE_COLOR_LIST.HEAVY_GRAY};
+            color: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
         }
     }
 `;
@@ -582,14 +574,10 @@ const DetailSetting = styled.div`
         height: 30px;
         border: none;
         outline: none;
-        background: ${TEACHABLE_COLOR_LIST.LIGHT_MAIN_COLOR};
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
         padding-left: 10px;
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+        color: white;
         font-weight: 600;
-
-        &:focus {
-            border: 1px solid ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOOR};
-        }
     }
 `;
 

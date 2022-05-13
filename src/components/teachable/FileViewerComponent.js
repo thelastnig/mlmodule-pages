@@ -235,6 +235,9 @@ const ImageWrapper = styled.div`
     .fileName {
         width: 43%;
         text-align: left;
+        font-size: 11px;
+        word-break:break-all; 
+        line-height: 1.1;
     }
 
     .fileStatus {

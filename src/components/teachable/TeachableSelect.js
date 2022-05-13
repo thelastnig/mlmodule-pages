@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
 export default function TeachableSelect(props) {
@@ -24,10 +25,10 @@ const SelectWrapper = styled.div`
     .selectInput {
         width: ${props => props.width}px;
         height: 30px;
-        background: #E8F0FE;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
         border: none;
         outline: none;
-        color: #1967D2;
+        color: white;
         font-weight: 600;
         padding-left: 5px;
 

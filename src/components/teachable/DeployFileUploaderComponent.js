@@ -6,6 +6,7 @@ import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
 import useDrivePicker from 'react-google-drive-picker';
 import axios from 'axios';
 import { useHandleState } from 'store/teachable/hooks';
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
 const DeployFileUploaderComponent = (props) => {
@@ -108,16 +109,16 @@ const DeployFileUploaderComponent = (props) => {
                     {
                         isDragActive 
                         ?
-                        <div className='uploadInfoText'>파일에서 이미지를 선택하거나 여기로 드래그 앤 드롭하세요.</div> 
+                        <div className='uploadInfoText'>Select or Drag &#38; Drop</div> 
                         :
-                        <div className='uploadInfoText'>파일에서 이미지를 선택하거나 여기로 드래그 앤 드롭하세요.</div> 
+                        <div className='uploadInfoText'>Select or Drag &#38; Drop</div> 
                     }
                 </div>
             </DropZone>
             <GoogleDriveZone>
                 <div className='uploadClickArea' onClick={() => handleOpenPicker()}>
                     <BackupOutlinedIcon className='uploadIcon'/>
-                    <div className='uploadInfoText'>Google Drive에서 이미지 가져오기</div> 
+                    <div className='uploadInfoText'>Google Drive</div> 
                 </div>    
             </GoogleDriveZone>
         </FileUploader>
@@ -135,12 +136,8 @@ const FileUploader = styled.div`
     align-items: center;
 
     .icon {
-        font-size: 26px;
-        color: #1967D2;
-
-        :hover {
-            color: #185ABC;
-        }
+        font-size: 24px;
+        color: white;
     }
 `;
 
@@ -149,10 +146,9 @@ const DropZone = styled.div`
     width: 90%;
     height: 120px;
     margin-bottom: 30px;
-    background: #D2E3FC;
-    border-radius: 5px;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     &:hover {
-        background: #AECBFA;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
     }
 
     .uploadClickArea {
@@ -168,8 +164,7 @@ const DropZone = styled.div`
     .uploadInfoText {
         margin-top: 5px;
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 
     .uploadIcon {
@@ -181,10 +176,9 @@ const DropZone = styled.div`
 const GoogleDriveZone = styled.div`
     width: 90%;
     height: 120px;
-    background: #D2E3FC;
-    border-radius: 5px;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     &:hover {
-        background: #AECBFA;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
     }
 
     .uploadClickArea {
@@ -200,8 +194,7 @@ const GoogleDriveZone = styled.div`
     .uploadInfoText {
         margin-top: 5px;
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 
     .uploadIcon {

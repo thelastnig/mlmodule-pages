@@ -12,7 +12,6 @@ import AddToQueueOutlinedIcon from '@material-ui/icons/AddToQueueOutlined';
 import MicIcon from '@material-ui/icons/Mic';
 import Button from '@material-ui/core/Button';
 import LabelIcon from '@material-ui/icons/Label';
-import { PageWrapper, BodyFullContainer, TitleComponent } from 'components/common/StyledComponent';
 import AddClassButton from 'components/teachable/AddClassButton';
 import PreprocessComponent from 'components/teachable/PreprocessComponent';
 import TrainComponent from 'components/teachable/TrainComponent';
@@ -271,6 +270,7 @@ const Teachable = (props) => {
             showHead={false}
             strokeWidth={3}
             curveness={0.2}
+            lineColor={TEACHABLE_COLOR_LIST.GRAY}
         />
     });
 
@@ -317,13 +317,10 @@ const Teachable = (props) => {
 	};
 
 	return (
-        <PageWrapper>
-            <TitleComponent text={'EASY ML'} />
-            <BodyFullContainer>
+            <MainWrapper>
 			    <TeachableModal />
 			    <TeachableDeployModal />
                 <TeachableAlert />
-                <GridInnerWrapper>
                 <GridLines 
                     className='grid-area' 
                     cellWidth={60} 
@@ -551,6 +548,7 @@ const Teachable = (props) => {
                             end={trainModuleStartRef}
                             showHead={false}
                             strokeWidth={3}
+                            lineColor={TEACHABLE_COLOR_LIST.GRAY}
                         />
                         :
                         null
@@ -560,27 +558,38 @@ const Teachable = (props) => {
                             end={deployModuleRef}
                             showHead={false}
                             strokeWidth={3}
+                            lineColor={TEACHABLE_COLOR_LIST.GRAY}
                         />
                         </Xwrapper>
                     </GridArea>
                 </GridLines>
-                </GridInnerWrapper>
-            </BodyFullContainer>
-        </PageWrapper>
+            </MainWrapper>
 	);
 };
 
 export default Teachable;
 
-const GridInnerWrapper = styled.div`
+const MainWrapper = styled.div`
+    width: 100%;
+    height: 100%;
     .grid-area {
         background: #060C0F;
+        height: 100%;
+    } 
+`;
+
+const GridInnerWrapper = styled.div`
+    width: 100%;
+    height: 100%;
+    .grid-area {
+        background: #060C0F;
+        height: 100%;
     } 
 `;
 
 const GridArea = styled.div`
-	width: 100%;
-	min-height: 900px;
+    width: 100%;
+    height: 100%;
     padding: 50px;
     display: flex;
     justify-content: flex-start;
@@ -747,7 +756,8 @@ const ClassNameInput = styled.div`
         font-size: 14px;
         :focus {
             outline: none !important;
-            border: 2px solid #AECBFA;
+            border: 2px solid ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        }
     }
 `;
 
