@@ -10,7 +10,6 @@ import history from "./lib/history";
 import { Router } from "react-router-dom";
 
 const store = configureStore();
-
 ReactDOM.render(
 	<Provider store={store}>
 		<Router history={history}>

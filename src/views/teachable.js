@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { colors } from 'styles';
+import styled, { keyframes, css } from 'styled-components';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import FileUploaderComponent from 'components/teachable/FileUploaderComponent';
@@ -9,6 +8,8 @@ import AudioRecorderComponent from 'components/teachable/AudioRecorderComponent'
 import FileViewerComponent from 'components/teachable/FileViewerComponent';
 import VideocamOutlinedIcon from '@material-ui/icons/VideocamOutlined';
 import AddToQueueOutlinedIcon from '@material-ui/icons/AddToQueueOutlined';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import MicIcon from '@material-ui/icons/Mic';
 import Button from '@material-ui/core/Button';
 import LabelIcon from '@material-ui/icons/Label';
@@ -24,6 +25,7 @@ import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import FileSaver from 'file-saver';
 import JSZip from "jszip";
 import { base64toFile } from 'utils/TeachableUtils'; 
+import logo from 'assets/icon/surromind.png';
 
 // Modal
 import { useDialogAction } from 'store/dialog/hooks';
@@ -79,6 +81,8 @@ const Teachable = (props) => {
     const [ isPreprocessOpen, setIsPreprocessOpen ] = useState(false);
     const [ isAlertTrainingOpen, setIsAlertTrainingOpen ] = useState(false);
     const [ isAlertDataOpen, setIsAlertDataOpen ] = useState(false);
+    const [ isOptionAreaOpen, seIsOptionAreaOpen ] = useState(true);
+    const [ isOptionAreaClicked, setIsOptionAreaClicked ] = useState(false);
     const updateXarrow = useXarrow();
 
     // sound classification
@@ -261,6 +265,13 @@ const Teachable = (props) => {
         setIsAlertDataOpen(false);
     }
 
+    const clickToggleButton = () => {
+        seIsOptionAreaOpen(!isOptionAreaOpen);
+        if (!isOptionAreaClicked) {
+            setIsOptionAreaClicked(true);
+        }
+    }
+
     const xArrows = list.map((item, index) => {
         const end = isPreprocessOpen ? preprocessModuleStartRef : trainModuleStartRef
         return <Xarrow
@@ -268,7 +279,7 @@ const Teachable = (props) => {
             start={item.id} 
             end={end}
             showHead={false}
-            strokeWidth={3}
+            strokeWidth={2}
             curveness={0.2}
             lineColor={TEACHABLE_COLOR_LIST.GRAY}
         />
@@ -317,284 +328,463 @@ const Teachable = (props) => {
 	};
 
 	return (
+        <>
+            <HeaderWrapper>
+                <div className='headerUpper'>
+                    <div className='upperWrapper'>
+                        <div className='upperLeft'>
+                            <img src={logo} height='22px'/>
+                        </div>
+                        <div className='upperRight'>
+                            <div className='upperRightItem'>Easy ML Module</div>
+                            <div className='upperRightItem'>Annotation</div>
+                        </div>
+                    </div>
+                    <div className='upperEnd'>
+                        <div className='upperEndItem status'>RUNNING</div>
+                        <div className='upperEndItem type'>CPU</div>
+                    </div>
+                </div>
+                <div className='headerLower'>
+                    
+                </div>
+            </HeaderWrapper>
             <MainWrapper>
 			    <TeachableModal />
 			    <TeachableDeployModal />
                 <TeachableAlert />
-                <GridLines 
-                    className='grid-area' 
-                    cellWidth={60} 
-                    strokeWidth={3} 
-                    cellWidth2={12}
-                    lineColor='#343a40'
-                    lineColor2='black'
-                >
-                <button onClick={() => setIsPreprocessOpen(!isPreprocessOpen)}>Preprocess</button>
-                    <GridArea>
-                        <AlertData isAlertDataOpen={isAlertDataOpen}>
-                            <div className='alertDataInner'>
-                                <div className='alertDataText'>
-                                    모델을 학습하려면 2개 이상의 클래스가 필요하며, 각 클래스에 샘플이 {taskType === 'image' ? 10 : 20}개 이상 있어야 합니다.
-                                </div>
-                                <Button variant="outlined" 
-                                        style={{
-                                            backgroundColor: TEACHABLE_COLOR_LIST.PURPLE,
-                                            border: '1px solid white',
-                                            color: 'white',
-                                        }}
-                                        className='alertTrainOKBtn' 
-                                        onClick={clickCloseAlertData}>
-                                    확인
-                                </Button>
-                            </div>
-                        </AlertData>
-                        <AlertTraining isAlertTrainingOpen={isAlertTrainingOpen}>
-                            <div className='alertTrainingInner'>
-                                <div className='alertTrainingText'>
-                                    <span>탭을 전환하지 마세요</span>&nbsp;&nbsp;-&nbsp;&nbsp;모델을 학습하려면 이 탭이 열려 있어여 합니다.
-                                </div>
-                                <Button variant="outlined" color="primary" className='alertTrainOKBtn' onClick={clickCloseAlertTraining}>확인</Button>
-                            </div>
-                        </AlertTraining>
-                        <Xwrapper>
-                        <DataModule ref={dataModuleRef}>    
-                            <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
-                                <Droppable droppableId='droppable'>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            {...provided.droppableProps}
-                                            ref={provided.innerRef}
-                                            style={getListStyle(snapshot.isDraggingOver)}
-                                        >
-                                            {list.map((item, index) => (
-                                                <Draggable key={item.id} draggableId={item.id} index={index}>
-                                                    {(provided, snapshot) => (
-                                                        <div className='draggableContentWrapper'
-                                                            ref={provided.innerRef}
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                            style={getItemStyle(
-                                                                snapshot.isDragging,
-                                                                provided.draggableProps.style
-                                                            )}
-                                                        >   
-                                                            <div className='draggableContent'>
-                                                                <ItemHeader>
-                                                                    <div className='inputWrapper'>
-                                                                        <LabelIcon className='labelIcon'></LabelIcon>
-                                                                        <ClassNameInput>
-                                                                            <input
-                                                                                className='classInput' 
-                                                                                value={item.class_name}
-                                                                                onChange={(e) => onChangeValue(e, item.id)}
-                                                                                onFocus={(e) => handleFocus(e)}
-                                                                            />
-                                                                        </ClassNameInput>
-                                                                    </div>
-                                                                    <MenuBtn>
-                                                                        <MoreButton
-                                                                            id={item.id}
-                                                                            listLength={item.data.length}
-                                                                            clickDelete={clickDelete}
-                                                                            clickDeleteAllImages={clickDeleteAllImages}
-                                                                            clickDownloadSamples={clickDownloadSamples}
-                                                                        />
-                                                                    </MenuBtn>
-                                                                </ItemHeader>
-                                                                <ItemContent isUploadOpen={item.isUploadOpen}>
-                                                                    <FileUploaderArea isUploadOpen={item.isUploadOpen}>
-                                                                        {
-                                                                            item.isUploadOpen
-                                                                            ?
-                                                                            null
-                                                                            :
-                                                                                taskType === 'image' 
-                                                                                ?
-                                                                                <FileUploaderText>+ Add images</FileUploaderText>
-                                                                                :
-                                                                                <FileUploaderText>+ Add audios(at least 20)</FileUploaderText>
-                                                                        }
-                                                                        {
-                                                                            item.isUploadOpen
-                                                                            ?
-                                                                                taskType === 'image'
-                                                                                ?
-                                                                                    item.uploaderType === 'webcam'
-                                                                                    ?
-                                                                                    <WebcamUploaderComponent id={item.id} 
-                                                                                        isWebcamAvailable={item.isWebcamAvailable}
-                                                                                        isUploadOpen={item.isUploadOpen} 
-                                                                                        {...props} 
-                                                                                        clickUploadOpen={clickUploadOpen}
-                                                                                        setWebcamAvailable={setMideaAvailable}
-                                                                                    />
-                                                                                    :
-                                                                                    <FileUploaderComponent id={item.id}
-                                                                                        taskType={taskType} 
-                                                                                        class_name={item.class_name} 
-                                                                                        {...props} 
-                                                                                        clickUploadOpen={clickUploadOpen}
-                                                                                        showDataUploadAlert={showDataUploadAlert}
-                                                                                        hideDataUploadAlert={hideDataUploadAlert}
-                                                                                    />
-                                                                                :
-                                                                                    item.uploaderType === 'audioRecorder'
-                                                                                    ?
-                                                                                    <AudioRecorderComponent id={item.id} 
-                                                                                        isAudioAvailable={item.isAudioAvailable}
-                                                                                        isUploadOpen={item.isUploadOpen}
-                                                                                        transferRecognizer={transferRecognizer}
-                                                                                        {...props} 
-                                                                                        clickUploadOpen={clickUploadOpen}
-                                                                                        setAudioAvailable={setMideaAvailable}
-                                                                                    />
-                                                                                    :
-                                                                                    <FileUploaderComponent id={item.id}
-                                                                                        taskType={taskType} 
-                                                                                        class_name={item.class_name} 
-                                                                                        {...props} 
-                                                                                        clickUploadOpen={clickUploadOpen}
-                                                                                        showDataUploadAlert={showDataUploadAlert}
-                                                                                        hideDataUploadAlert={hideDataUploadAlert}
-                                                                                    />
-                                                                            :
-                                                                                taskType === 'image'
-                                                                                ?
-                                                                                <FileUploaderSelect>
-                                                                                    <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'webcam', true, false)}>
-                                                                                        <VideocamOutlinedIcon className='selectIcon'/>
-                                                                                        <div className='selectText'>Webcam</div>
-                                                                                    </div>
-                                                                                    <div className='fileUploaderSelectItem file' onClick={() => clickUploadOpen(item.id, 'local')}>
-                                                                                        <AddToQueueOutlinedIcon className='selectIcon file'/>
-                                                                                        <div className='selectText file'>File</div>
-                                                                                    </div>
-                                                                                </FileUploaderSelect>
-                                                                                :
-                                                                                <FileUploaderSelect>
-                                                                                    <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'audioRecorder', true, false)}>
-                                                                                        <MicIcon className='selectIcon'/>
-                                                                                        <div className='selectText'>Mike</div>
-                                                                                    </div>
-                                                                                    <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'local')}>
-                                                                                        <AddToQueueOutlinedIcon className='selectIcon file'/>
-                                                                                        <div className='selectText file'>File</div>
-                                                                                    </div>
-                                                                                </FileUploaderSelect>
-                                                                        }
-                                                                    </FileUploaderArea>
-                                                                    <FileViewerArea>
-                                                                        <FileViewerComponent id={item.id} data={item.data} isUploadOpen={item.isUploadOpen} {...props}/>
-                                                                    </FileViewerArea>
-                                                                </ItemContent>
-                                                            </div>
-                                                            <div className='draggableRef' id={item.id}/>
-                                                        </div>
-                                                    )}
-                                                </Draggable>
-                                            ))}
-                                            {provided.placeholder}
-                                            <div style={{
-                                                position: 'absolute',
-                                                top: placeholderProps.clientY,
-                                                left: placeholderProps.clientX,
-                                                height: placeholderProps.clientHeight,
-                                                background: 'rgba(210, 227, 252, 0.6)',
-                                                width: placeholderProps.clientWidth
-                                                }}/>
-                                            </div>
-                                )}
-                                </Droppable>
-                            </DragDropContext>
-                            <AddClassButton/>
-                        </DataModule>
-                        <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
-                            <PreprocessModuleWrapper isPreprocessOpen={isPreprocessOpen}>
-                                <PreprocessModule isPreprocessOpen={isPreprocessOpen}>
-                                    <div ref={preprocessModuleStartRef} className='trainModuleRef'/>
-                                    <PreprocessComponent />
-                                    <div ref={preprocessModuleEndRef} className='trainModuleRef'/>
-                                </PreprocessModule>
-                            </PreprocessModuleWrapper>
-                        </Draggable2>
-                        <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
-                            <TrainModule>
-                                <div ref={trainModuleStartRef} className='trainModuleRef'/>
-                                <TrainComponent 
-                                    handleToggleDetailModal={handleToggleDetailModal} 
-                                    setIsAlertTrainingOpen={setIsAlertTrainingOpen}
-                                    setIsAlertDataOpen={setIsAlertDataOpen}
-                                    transferRecognizer={transferRecognizer}
-                                    setTransferRecognizer={setTransferRecognizer}
-                                    clickUploadOpen={clickUploadOpen}
-                                />
-                                <div ref={trainModuleEndRef} className='trainModuleRef'/>
-                            </TrainModule>
-                        </Draggable2>
-                        <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
-                            <DeployModule ref={deployModuleRef}>
-                                <DeployComponent 
-                                    handleToggleDeployModal={handleToggleDeployModal}
-                                    transferRecognizer={transferRecognizer}
-                                />
-                            </DeployModule>
-                        </Draggable2>
-                        {xArrows}
+                <OptionArea isOptionAreaOpen={isOptionAreaOpen} isOptionAreaClicked={isOptionAreaClicked}>
+                    <div className='optionToggleButton' onClick={clickToggleButton}>
                         {
-                        isPreprocessOpen
-                        ?
-                        <Xarrow
-                            start={preprocessModuleEndRef} 
-                            end={trainModuleStartRef}
-                            showHead={false}
-                            strokeWidth={3}
-                            lineColor={TEACHABLE_COLOR_LIST.GRAY}
-                        />
-                        :
-                        null
+                            isOptionAreaOpen
+                            ?
+                            <KeyboardArrowRightIcon className='toggleButton' />
+                            :
+                            <KeyboardArrowLeftIcon className='toggleButton' />
                         }
-                        <Xarrow
-                            start={trainModuleEndRef} 
-                            end={deployModuleRef}
-                            showHead={false}
-                            strokeWidth={3}
-                            lineColor={TEACHABLE_COLOR_LIST.GRAY}
-                        />
-                        </Xwrapper>
-                    </GridArea>
-                </GridLines>
+                    </div>
+                    <div className='optionContent'></div>
+                </OptionArea>
+                <MainInnerWrapper>
+                    <GridLines 
+                        className='grid-area' 
+                        cellWidth={60} 
+                        strokeWidth={2} 
+                        cellWidth2={12}
+                        lineColor='#343a40'
+                        lineColor2='black'
+                    >
+                    {/* <button onClick={() => setIsPreprocessOpen(!isPreprocessOpen)}>Preprocess</button> */}
+                        <GridArea>
+                            <AlertData isAlertDataOpen={isAlertDataOpen}>
+                                <div className='alertDataInner'>
+                                    <div className='alertDataText'>
+                                        모델을 학습하려면 2개 이상의 클래스가 필요하며, 각 클래스에 샘플이 {taskType === 'image' ? 10 : 20}개 이상 있어야 합니다.
+                                    </div>
+                                    <Button variant="outlined" 
+                                            style={{
+                                                backgroundColor: TEACHABLE_COLOR_LIST.PURPLE,
+                                                border: '1px solid white',
+                                                color: 'white',
+                                            }}
+                                            className='alertTrainOKBtn' 
+                                            onClick={clickCloseAlertData}>
+                                        확인
+                                    </Button>
+                                </div>
+                            </AlertData>
+                            <AlertTraining isAlertTrainingOpen={isAlertTrainingOpen}>
+                                <div className='alertTrainingInner'>
+                                    <div className='alertTrainingText'>
+                                        <span>탭을 전환하지 마세요</span>&nbsp;&nbsp;-&nbsp;&nbsp;모델을 학습하려면 이 탭이 열려 있어여 합니다.
+                                    </div>
+                                    <Button variant="outlined" color="primary" className='alertTrainOKBtn' onClick={clickCloseAlertTraining}>확인</Button>
+                                </div>
+                            </AlertTraining>
+                            <Xwrapper>
+                            <DataModule ref={dataModuleRef}>    
+                                <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+                                    <Droppable droppableId='droppable'>
+                                        {(provided, snapshot) => (
+                                            <div
+                                                {...provided.droppableProps}
+                                                ref={provided.innerRef}
+                                                style={getListStyle(snapshot.isDraggingOver)}
+                                            >
+                                                {list.map((item, index) => (
+                                                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                                                        {(provided, snapshot) => (
+                                                            <div className='draggableContentWrapper'
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={getItemStyle(
+                                                                    snapshot.isDragging,
+                                                                    provided.draggableProps.style
+                                                                )}
+                                                            >   
+                                                                <div className='draggableContent'>
+                                                                    <ItemHeader>
+                                                                        <div className='inputWrapper'>
+                                                                            <LabelIcon className='labelIcon'></LabelIcon>
+                                                                            <ClassNameInput>
+                                                                                <input
+                                                                                    className='classInput' 
+                                                                                    value={item.class_name}
+                                                                                    onChange={(e) => onChangeValue(e, item.id)}
+                                                                                    onFocus={(e) => handleFocus(e)}
+                                                                                />
+                                                                            </ClassNameInput>
+                                                                        </div>
+                                                                        <MenuBtn>
+                                                                            <MoreButton
+                                                                                id={item.id}
+                                                                                listLength={item.data.length}
+                                                                                clickDelete={clickDelete}
+                                                                                clickDeleteAllImages={clickDeleteAllImages}
+                                                                                clickDownloadSamples={clickDownloadSamples}
+                                                                            />
+                                                                        </MenuBtn>
+                                                                    </ItemHeader>
+                                                                    <ItemContent isUploadOpen={item.isUploadOpen}>
+                                                                        <FileUploaderArea isUploadOpen={item.isUploadOpen}>
+                                                                            {
+                                                                                item.isUploadOpen
+                                                                                ?
+                                                                                null
+                                                                                :
+                                                                                    taskType === 'image' 
+                                                                                    ?
+                                                                                    <FileUploaderText>+ Add images</FileUploaderText>
+                                                                                    :
+                                                                                    <FileUploaderText>+ Add audios(at least 20)</FileUploaderText>
+                                                                            }
+                                                                            {
+                                                                                item.isUploadOpen
+                                                                                ?
+                                                                                    taskType === 'image'
+                                                                                    ?
+                                                                                        item.uploaderType === 'webcam'
+                                                                                        ?
+                                                                                        <WebcamUploaderComponent id={item.id} 
+                                                                                            isWebcamAvailable={item.isWebcamAvailable}
+                                                                                            isUploadOpen={item.isUploadOpen} 
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            setWebcamAvailable={setMideaAvailable}
+                                                                                        />
+                                                                                        :
+                                                                                        <FileUploaderComponent id={item.id}
+                                                                                            taskType={taskType} 
+                                                                                            class_name={item.class_name} 
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            showDataUploadAlert={showDataUploadAlert}
+                                                                                            hideDataUploadAlert={hideDataUploadAlert}
+                                                                                        />
+                                                                                    :
+                                                                                        item.uploaderType === 'audioRecorder'
+                                                                                        ?
+                                                                                        <AudioRecorderComponent id={item.id} 
+                                                                                            isAudioAvailable={item.isAudioAvailable}
+                                                                                            isUploadOpen={item.isUploadOpen}
+                                                                                            transferRecognizer={transferRecognizer}
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            setAudioAvailable={setMideaAvailable}
+                                                                                        />
+                                                                                        :
+                                                                                        <FileUploaderComponent id={item.id}
+                                                                                            taskType={taskType} 
+                                                                                            class_name={item.class_name} 
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            showDataUploadAlert={showDataUploadAlert}
+                                                                                            hideDataUploadAlert={hideDataUploadAlert}
+                                                                                        />
+                                                                                :
+                                                                                    taskType === 'image'
+                                                                                    ?
+                                                                                    <FileUploaderSelect>
+                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'webcam', true, false)}>
+                                                                                            <VideocamOutlinedIcon className='selectIcon'/>
+                                                                                            <div className='selectText'>Webcam</div>
+                                                                                        </div>
+                                                                                        <div className='fileUploaderSelectItem file' onClick={() => clickUploadOpen(item.id, 'local')}>
+                                                                                            <AddToQueueOutlinedIcon className='selectIcon file'/>
+                                                                                            <div className='selectText file'>File</div>
+                                                                                        </div>
+                                                                                    </FileUploaderSelect>
+                                                                                    :
+                                                                                    <FileUploaderSelect>
+                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'audioRecorder', true, false)}>
+                                                                                            <MicIcon className='selectIcon'/>
+                                                                                            <div className='selectText'>Mike</div>
+                                                                                        </div>
+                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'local')}>
+                                                                                            <AddToQueueOutlinedIcon className='selectIcon file'/>
+                                                                                            <div className='selectText file'>File</div>
+                                                                                        </div>
+                                                                                    </FileUploaderSelect>
+                                                                            }
+                                                                        </FileUploaderArea>
+                                                                        <FileViewerArea>
+                                                                            <FileViewerComponent id={item.id} data={item.data} isUploadOpen={item.isUploadOpen} {...props}/>
+                                                                        </FileViewerArea>
+                                                                    </ItemContent>
+                                                                </div>
+                                                                <div className='draggableRef' id={item.id}/>
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                ))}
+                                                {provided.placeholder}
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: placeholderProps.clientY,
+                                                    left: placeholderProps.clientX,
+                                                    height: placeholderProps.clientHeight,
+                                                    background: 'rgba(210, 227, 252, 0.6)',
+                                                    width: placeholderProps.clientWidth
+                                                    }}/>
+                                                </div>
+                                    )}
+                                    </Droppable>
+                                </DragDropContext>
+                                <AddClassButton/>
+                            </DataModule>
+                            <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
+                                <PreprocessModuleWrapper isPreprocessOpen={isPreprocessOpen}>
+                                    <PreprocessModule isPreprocessOpen={isPreprocessOpen}>
+                                        <div ref={preprocessModuleStartRef} className='trainModuleRef'/>
+                                        <PreprocessComponent />
+                                        <div ref={preprocessModuleEndRef} className='trainModuleRef'/>
+                                    </PreprocessModule>
+                                </PreprocessModuleWrapper>
+                            </Draggable2>
+                            <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
+                                <TrainModule>
+                                    <div ref={trainModuleStartRef} className='trainModuleRef'/>
+                                    <TrainComponent 
+                                        handleToggleDetailModal={handleToggleDetailModal} 
+                                        setIsAlertTrainingOpen={setIsAlertTrainingOpen}
+                                        setIsAlertDataOpen={setIsAlertDataOpen}
+                                        transferRecognizer={transferRecognizer}
+                                        setTransferRecognizer={setTransferRecognizer}
+                                        clickUploadOpen={clickUploadOpen}
+                                    />
+                                    <div ref={trainModuleEndRef} className='trainModuleRef'/>
+                                </TrainModule>
+                            </Draggable2>
+                            <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
+                                <DeployModule ref={deployModuleRef}>
+                                    <DeployComponent 
+                                        handleToggleDeployModal={handleToggleDeployModal}
+                                        transferRecognizer={transferRecognizer}
+                                    />
+                                </DeployModule>
+                            </Draggable2>
+                            {xArrows}
+                            {
+                            isPreprocessOpen
+                            ?
+                            <Xarrow
+                                start={preprocessModuleEndRef} 
+                                end={trainModuleStartRef}
+                                showHead={false}
+                                strokeWidth={2}
+                                lineColor={TEACHABLE_COLOR_LIST.GRAY}
+                            />
+                            :
+                            null
+                            }
+                            <Xarrow
+                                start={trainModuleEndRef} 
+                                end={deployModuleRef}
+                                showHead={false}
+                                strokeWidth={2}
+                                lineColor={TEACHABLE_COLOR_LIST.GRAY}
+                            />
+                            </Xwrapper>
+                        </GridArea>
+                    </GridLines>
+                </MainInnerWrapper>
             </MainWrapper>
+        </>
 	);
 };
 
 export default Teachable;
 
+
+const toggleToRight = keyframes`
+    from {
+        right: 0px;
+    }
+    to {
+        right: -250px;
+    }
+`;
+
+const toggleToLeft = keyframes`
+    from {
+        right: -250px;
+    }
+    to {
+        right: 0px;
+    }
+`;
+
+const HeaderWrapper = styled.div`
+    width: 100%;
+    height: 70px;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
+    padding-left: 20px;
+    padding-right: 20px;
+
+    .headerUpper {
+        width: 100%;
+        height: 40px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .headerLower {
+        width: 100%;
+        height: 30px;
+    }
+
+    .upperWrapper {
+        width: 80%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .upperLeft {
+        margin-right: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .upperRight {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        .upperRightItem {
+            color: ${TEACHABLE_COLOR_LIST.GRAY}
+            margin-right: 20px;
+        }
+    }
+
+    .upperEnd {
+        width: 20%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .upperEndItem {
+            margin-left: 15px;
+            font-size: 12px;
+            border-radius: 3px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            padding-left: 8px;
+            padding-right: 8px;
+            letter-spacing: 1px;
+            background-color: rgba(55, 178, 77, .3);
+            color: #37b24d;
+            font-weight: 600;
+
+            &.type {
+                color: #1967D2;
+                background-color: rgba(25, 113, 194, .3);
+            }
+        }
+    }
+`;
+
+
 const MainWrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+`;
+
+const MainInnerWrapper = styled.div`
+    width: 100%;
+    overflow: auto;
     .grid-area {
         background: #060C0F;
-        height: 100%;
+        width: 100%;
+        min-height: calc(100vh - 70px);
+        padding: 50px;
     } 
 `;
 
-const GridInnerWrapper = styled.div`
-    width: 100%;
+const OptionArea = styled.div`
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 285px;
     height: 100%;
-    .grid-area {
-        background: #060C0F;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    ${props => !props.isOptionAreaOpen && 
+        css` 
+            animation: ${toggleToRight} 0.5s ease-in-out forwards;
+        `
+    }
+
+    ${props => props.isOptionAreaOpen && props.isOptionAreaClicked &&
+        css` 
+            animation: ${toggleToLeft} 0.5s ease-in-out forwards;
+        `
+    }
+
+    .optionToggleButton {
+        width: 35px;
+        height: 45px;
+        margin-top: 20px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+
+        .toggleButton {
+            font-size: 28px;
+            color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        }
+    }
+
+    .optionContent {
+        width: 250px;
         height: 100%;
-    } 
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
+
+    }
 `;
 
 const GridArea = styled.div`
     width: 100%;
     height: 100%;
-    padding: 50px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     position: relative;
+    overflow: auto;
 `;
 
 const AlertData = styled.div`
@@ -748,7 +938,6 @@ const ItemContent = styled.div`
 `;
 
 const ClassNameInput = styled.div`
-
     .classInput {
         border: none;
         color: white;

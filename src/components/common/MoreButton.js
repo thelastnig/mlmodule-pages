@@ -46,6 +46,7 @@ export default function CommonMoreButton(props) {
 					{list.map((data, index) => (
 						<PopoverMenuItem
 							index={index}
+							key={index}
 							text={data.text}
 							onClick={(e) => {
 								data.onClick(e);

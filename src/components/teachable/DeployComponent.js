@@ -182,7 +182,7 @@ const ItemHeader = styled.div`
     flex-direction: column;
     justify-cotent: space-between;
     ${props => props.isTrained && `
-        border-bottom: 2px solid #e9ecef;
+        border-bottom: 1px solid ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     `}
 `;
 

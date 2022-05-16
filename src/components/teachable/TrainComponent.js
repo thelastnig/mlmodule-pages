@@ -42,7 +42,7 @@ const TrainComponent = (props) => {
         stopTrain,
     } = useStateActionHandler();
     const { showAlert } = useAlertAction();
-    const [ isSettingOpen, setIsSettingOpen ] = useState(false);
+    const [ isSettingOpen, setIsSettingOpen ] = useState(true);
     const [ model, setModel ] = useState(null);
     const [ count, setCount ] = useState(0);
     const { transferRecognizer, setTransferRecognizer, clickUploadOpen } = props;
