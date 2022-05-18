@@ -720,7 +720,7 @@ const MainInnerWrapper = styled.div`
     width: 100%;
     overflow: auto;
     .grid-area {
-        background: #060C0F;
+        background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
         width: 100%;
         min-height: calc(100vh - 70px);
         padding: 50px;

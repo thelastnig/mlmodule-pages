@@ -40,7 +40,6 @@ const FileViewerComponent = (props) => {
             return null;
         } else {
             if (data.data_type === 'webcam' || data.data_type === 'drive') {
-                console.log(data);
                 return (   
                     <ImageWrapper key={index} index={index}>
                         <div className='innerWrapper'>
@@ -53,7 +52,6 @@ const FileViewerComponent = (props) => {
                     </ImageWrapper>
                 );
             } else if (data.data_type === 'local') {
-                console.log(data);
                 return (
                     <ImageWrapper key={index} index={index}>
                         <div className='innerWrapper'>

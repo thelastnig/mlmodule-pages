@@ -125,6 +125,9 @@ const TrainComponent = (props) => {
                 // start train
                 changeTraining({isTraining: true});
                 console.log('INFO: start train---------------');
+                
+                console.log(window.performance.memory)
+                console.log(navigator.hardwareConcurrency)
                 model.train({   
                     denseUnits: 100,
                     epochs: params.epochs,
@@ -135,6 +138,9 @@ const TrainComponent = (props) => {
                     addModel({model: model});
                     addHistory({history: data.history});
                     changeTraining({isTraining: false, isTrained: true});
+                    
+                  console.log(window.performance.memory)
+                  console.log(navigator.hardwareConcurrency)
                 })
                 .catch(error => {
                     console.log(error);

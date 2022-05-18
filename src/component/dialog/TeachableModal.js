@@ -23,6 +23,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import PictureAsPdfOutlinedIcon from '@material-ui/icons/PictureAsPdfOutlined';
 import PhotoLibraryOutlinedIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import CloseIcon from '@material-ui/icons/Close';
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 // modal
 import Dialog from '@material-ui/core/Dialog';
@@ -34,6 +35,7 @@ import { dialogList } from 'constants/dialog';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import FileSaver from 'file-saver';
+import { WhiteBox } from 'views/userGroup';
 
 const useStyles = makeStyles(() => ({
 	paper: {
@@ -43,8 +45,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const mainColor = '#6B75CA';
-// const mainColor = '#1967D2';
-// const mainColor = '#6495ED';
 const colorList = [ 
     {'name': 'pink', 'valueColor': '#F5D1D1'},
     {'name': 'yellow', 'valueColor': '#FFEDCB;'},
@@ -183,23 +183,18 @@ const TeachableModal = (props) => {
                     <ContentArea id='teachableReportArea'>
                         <VisualizationArea>
                         <ChartArea>
+                            <TitleArea>Training</TitleArea>
                             <ParameterArea>
-                                <Parameter className='parameterItemFirst'>
-                                    <div className='parameterTitle first'>학습<span> (Training)</span></div>
-                                </Parameter>
                                 <Parameter>
-                                    <div className='parameterTitle'>에포크</div>
-                                    <div className='parameterTitleEng'>Epoch</div>
+                                    <div className='parameterTitle'>Epoch</div>
                                     <div className='parameterValue'>{params.epochs}</div>
                                 </Parameter>
                                 <Parameter>
-                                    <div className='parameterTitle'>배치 크기</div>
-                                    <div className='parameterTitleEng'>Batch size</div>
+                                    <div className='parameterTitle'>Batch size</div>
                                     <div className='parameterValue'>{params.batch_size}</div>
                                 </Parameter>
                                 <Parameter>
-                                    <div className='parameterTitle'>학습률</div>
-                                    <div className='parameterTitleEng'>Learning rate</div>
+                                    <div className='parameterTitle'>Learning rate</div>
                                     <div className='parameterValue'>{params.learning_rate}</div>
                                 </Parameter>
                             </ParameterArea>
@@ -216,26 +211,26 @@ const TeachableModal = (props) => {
                                             bottom: 5,
                                         }}
                                     >
-                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <CartesianGrid vertical={false} stroke="#343a40" />
                                         <XAxis
                                             tickMargin={5}
                                             tickLine={false}
                                             dataKey="name"
                                             axisLine={false}
                                             style={{
-                                                    fontSize: '12px',
+                                                    fontSize: '10px',
                                             }} />
                                         <YAxis
                                             tickMargin={5}
                                             tickLine={false}
                                             axisLine={false} 
                                             style={{
-                                                    fontSize: '12px',
+                                                    fontSize: '10px',
                                             }} />
                                         <Tooltip />
                                         <Legend align='right' iconSize={12}/>
-                                        <Line type="monotone" dataKey="train" stroke={mainColor} dot={false} strokeWidth={2}/>
-                                        <Line type="monotone" dataKey="validation" stroke="#e64980" dot={false} strokeWidth={2}/>
+                                        <Line type="monotone" dataKey="train" stroke="#40c057" dot={false} strokeWidth={3}/>
+                                        <Line type="monotone" dataKey="validation" stroke="#fcc419" dot={false} strokeWidth={3}/>
                                     </LineChart>
                                 </ResponsiveContainer>
                             <ResponsiveContainer width={750} height={220}>
@@ -248,26 +243,26 @@ const TeachableModal = (props) => {
                                         bottom: 5,
                                     }}
                                 >
-                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <CartesianGrid vertical={false} stroke="#343a40"/>
                                     <XAxis
                                         tickMargin={5}
                                         tickLine={false}
                                         dataKey="name"
                                         axisLine={false}
                                         style={{
-                                                fontSize: '12px',
+                                                fontSize: '10px',
                                         }} />
                                     <YAxis
                                         tickMargin={5}
                                         tickLine={false}
                                         axisLine={false} 
                                         style={{
-                                                fontSize: '12px',
-                                        }} />
+                                                fontSize: '10px',
+                                        }} />3EA2EA
                                     <Tooltip />
                                     <Legend align='right' iconSize={12}/>
-                                    <Line type="monotone" dataKey="trainLoss" stroke={mainColor} dot={false} strokeWidth={2}/>
-                                    <Line type="monotone" dataKey="validationLoss" stroke="#e64980" dot={false} strokeWidth={2}/>
+                                    <Line type="monotone" dataKey="trainLoss" stroke="#40c057" dot={false} strokeWidth={3}/>
+                                    <Line type="monotone" dataKey="validationLoss" stroke="#fcc419" dot={false} strokeWidth={3}/>
                                 </LineChart>
                             </ResponsiveContainer>
                             </Charts>
@@ -294,20 +289,20 @@ const TeachableModal = (props) => {
                                                         startAngle={90}
                                                         endAngle={-270}
                                                         innerRadius={25}
-                                                        outerRadius={32}>
+                                                        outerRadius={32}
+                                                        stroke="none">
                                                             {pieTrainData.map((entry, index) => {
                                                                 if (index === 1) {
-                                                                    return <Cell key={`cell-${index}`} fill="white" />; 
+                                                                    return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND} />; 
                                                                 }
-                                                                return <Cell key={`cell-${index}`} fill={mainColor} />;
+                                                                return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR}/>;
                                                             })}
                                                         <Label 
                                                             width={20}
-                                                            fill="#495057" 
+                                                            fill='white'
                                                             position="center"
                                                             style={{
                                                                 fontSize: "14px",
-                                                                fontWeight: "600"
                                                             }}>
                                                             {String(trainFinalMetric.toFixed(1)) + '%'}
                                                         </Label>
@@ -341,20 +336,20 @@ const TeachableModal = (props) => {
                                                         startAngle={90}
                                                         endAngle={-270}
                                                         innerRadius={25}
-                                                        outerRadius={32}>
+                                                        outerRadius={32}
+                                                        stroke="none">
                                                             {pieTrainData.map((entry, index) => {
                                                                 if (index === 1) {
-                                                                    return <Cell key={`cell-${index}`} fill="white" />; 
+                                                                    return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND} />; 
                                                                 }
-                                                                return <Cell key={`cell-${index}`} fill={mainColor} />;
+                                                                return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} />;
                                                             })}
                                                         <Label 
                                                             width={20}
-                                                            fill="#495057" 
+                                                            fill='white'
                                                             position="center"
                                                             style={{
                                                                 fontSize: "14px",
-                                                                fontWeight: "600"
                                                             }}>
                                                             {String(valFinalMetric.toFixed(1)) + '%'}
                                                         </Label>
@@ -370,7 +365,7 @@ const TeachableModal = (props) => {
                         </ChartArea>
                         <DataArea>
                             <CloseButton>
-                                <div className='dataText'><div>데이터<span> (Data)</span></div></div>
+                                <div className='dataText'><div>Data</div></div>
                                 {/* <CloseIcon className='closeIcon' onClick={onCloseClicked}/> */}
                             </CloseButton>
                             <DataContentArea>
@@ -381,17 +376,18 @@ const TeachableModal = (props) => {
                                         outerRadius="60%"
                                         data={data}
                                         style={{
-                                            fontSize: '12px',
+                                            fontSize: '11px',
+                                            color: '#343a40'
                                     }}
                                     >
-                                        <PolarGrid gridType='circle'/>
-                                        <PolarAngleAxis dataKey="subject" />
-                                        <PolarRadiusAxis />
+                                        <PolarGrid gridType='circle' stroke={TEACHABLE_COLOR_LIST.HEAVY_GRAY}/>
+                                        <PolarAngleAxis dataKey="subject" stroke={TEACHABLE_COLOR_LIST.HEAVY_GRAY}/>
+                                        <PolarRadiusAxis stroke={TEACHABLE_COLOR_LIST.HEAVY_GRAY}/>
                                         <Radar
                                             name="test"
                                             dataKey="class"
-                                            stroke="#8884d8"
-                                            fill="#8884d8"
+                                            stroke={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR}
+                                            fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR}
                                             fillOpacity={0.5}
                                         />
                                     </RadarChart>
@@ -402,7 +398,7 @@ const TeachableModal = (props) => {
                             </DataContentArea>      
                         </DataArea>
                         </VisualizationArea>
-                        <AnalysisArea>
+                        {/* <AnalysisArea>
                             <AnalysisItem>
                                 <div className='analysisTitle'>데이터 분석<span> Data Analysis</span></div>
                                 <div className='analysisDescription'><span>[Webcam]</span> 라벨에 속하는 데이터의 개수가 부족합니다.<br/>각 라벨에 속하는 데이터를 개수를 비슷하게 설정하세요.</div>
@@ -411,7 +407,7 @@ const TeachableModal = (props) => {
                                 <div className='analysisTitle'>학습 결과 분석<span> Train Result Analysis</span></div>
                                 <div className='analysisDescription'>학습 정확도에 비해 테스트 정확도가 낮아서 모델의 일반화 성능이 떨어집니다.<br/>일반화 성능을 높이기 위해 <span>[데이터 증강]</span>을 사용해보세요.</div>
                             </AnalysisItem>
-                        </AnalysisArea>
+                        </AnalysisArea> */}
                     </ContentArea>
 				</InfoArea>
                 <CloseButtonArea>
@@ -431,7 +427,7 @@ export default TeachableModal;
 const Wrapper = styled.div`
 	width: 1200px;
 	height: 800px;
-	background: #F0F3F8;
+	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
     overflow-y: auto;
 	margin: 0 auto;
 	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
@@ -464,7 +460,7 @@ const InfoArea = styled.div`
 const MenuArea = styled.div`
 	width: 65px;
 	height: 1300px;
-	background: white;
+	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -472,7 +468,7 @@ const MenuArea = styled.div`
 
     .saveIcon {
         font-size: 26px;
-        color: ${mainColor};
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
         margin-bottom: 30px;
         cursor: pointer;
 
@@ -549,56 +545,42 @@ const Charts = styled.div`
 	margin-bottom: 30px;
 `;
 
+
+const TitleArea = styled.div`
+	width: calc(100% - 60px);
+	height: 40px;
+    line-height: 40px;
+	margin: 0 auto;
+    color: white;
+`;
+
+
 const ParameterArea = styled.div`
 	width: calc(100% - 60px);
-	height: 100px;
+	height: 70px;
 	margin: 0 auto;
 	display: flex;
 	justify-content: space-between;
 `;
 
 const Parameter = styled.div`
-	width: 150px;
-	height: 100px;
-	background: white;
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
+	width: 170px;
+	height: 100%;
+    color: white;
+	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 	padding-left: 20px;
 	padding-right: 20px;
 
-    &.parameterItemFirst {
-	    background: ${mainColor}
-;        height: 30px;
-    }
+    text-align: center;
 
 	.parameterTitle {
-		margin-top: 10px;
-		font-size: 14px;
-		font-weight: 600;
-		color: #495057;
-
-        &.first {  
-            margin-top: 0px;
-		    font-size: 14px;
-            margin-top: 2px;
-            color: white;
-            span {     
-		        font-size: 14px;
-                font-weight: 500;
-            }
-        }
-	}
-
-	.parameterTitleEng {
-		font-size: 12px;
-		color: #adb5bd;
-		margin-bottom: 10px;
+		margin-top: 7px;
+		font-size: 11px;
 	}
 
 	.parameterValue {
-		font-size: 18px;
-		font-weight: 600;
-		color: ${mainColor};
+		margin-top: 7px;
+		font-size: 20px;
 	}
 `;
 
@@ -613,8 +595,7 @@ const MetricArea = styled.div`
 const Metric = styled.div`
 	width: 340px;
 	height: 150px;
-	background: white;
-	border-radius: 10px;
+	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 
     .metricTitle {
         width: 310px
@@ -628,14 +609,12 @@ const Metric = styled.div`
         .titleIcon {
             margin-right: 5px;
             font-size: 20px;
-            color: ${mainColor};
+            color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
 
         }
         .titleText {
-            color: #495057
+            color: white;
             font-size: 14px;
-            font-weight: 600;
-
         }
     }
 
@@ -644,11 +623,10 @@ const Metric = styled.div`
         height: 15px;
         margin: 0 auto;
         margin-bottom: 10px;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 12px;
         display: flex;
         justify-content: space-between;
-        color: #868e96;
+        color: white;
 
         div {
             width: 50%;
@@ -678,15 +656,14 @@ const Metric = styled.div`
         align-items: center;
         justify-content: center;
         font-size: 18px;
-        font-weight: 600;
-        color: ${mainColor};
+        color: white;
     }
 `;
 
 const DataArea = styled.div`
 	width: 340px;
 	height: 810px;
-	background: white;
+	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
 `;
 
 const CloseButton = styled.div`
@@ -706,9 +683,6 @@ const CloseButton = styled.div`
     .dataText {
         width: 150px;
         height: 30px;
-	    background: ${mainColor};
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
         font-size: 14px;
         color: white;
 		font-weight: 600;
@@ -757,8 +731,7 @@ const ClassItemArea = styled.div`
 const ClassItem = styled.div`
 	width: 100%;
 	height: 80px;
-	background: #F0F3F8;
-	border-radius: 10px;
+	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 	margin-bottom: 40px;
     display: flex;
     justify-content: flex-start;
