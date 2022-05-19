@@ -24,6 +24,7 @@ import PictureAsPdfOutlinedIcon from '@material-ui/icons/PictureAsPdfOutlined';
 import PhotoLibraryOutlinedIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
+import NormalIcon from 'assets/icon/correct.png';
 
 // modal
 import Dialog from '@material-ui/core/Dialog';
@@ -123,15 +124,12 @@ const TeachableModal = (props) => {
     
     const classItems = data.map((item, index) => {
         const colorIndex = index % colorList.length;
-        const colorClass =  colorList[colorIndex].name;
         return (
-            <ClassItem key={index}>
-                <div className={'classIcons ' + colorClass}><div className='classIcon'>{item.subject.substr(0, 1).toUpperCase()}</div></div>
-                <div className='classTitle'>
-                    <div className='classMetaText'>Class Name</div>
-                    <div className='classText'>{item.subject}</div>
-                </div>
-                <div className='classCount'>{item.class}<span> 개</span></div>
+            <ClassItem key={index} index={index}>
+                <div className='classIndex'>{index + 1}</div>
+                <div className='classText'>{item.subject}</div>
+                <div className='classStatus'><div className='statusIcon'></div></div>
+                <div className='classCount'>{item.class}</div>
             </ClassItem>
         );
     });
@@ -229,8 +227,8 @@ const TeachableModal = (props) => {
                                             }} />
                                         <Tooltip />
                                         <Legend align='right' iconSize={12}/>
-                                        <Line type="monotone" dataKey="train" stroke="#40c057" dot={false} strokeWidth={3}/>
-                                        <Line type="monotone" dataKey="validation" stroke="#fcc419" dot={false} strokeWidth={3}/>
+                                        <Line type="monotone" dataKey="train" stroke={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} dot={false} strokeWidth={3}/>
+                                        <Line type="monotone" dataKey="validation" stroke={TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR} dot={false} strokeWidth={3}/>
                                     </LineChart>
                                 </ResponsiveContainer>
                             <ResponsiveContainer width={750} height={220}>
@@ -261,8 +259,8 @@ const TeachableModal = (props) => {
                                         }} />3EA2EA
                                     <Tooltip />
                                     <Legend align='right' iconSize={12}/>
-                                    <Line type="monotone" dataKey="trainLoss" stroke="#40c057" dot={false} strokeWidth={3}/>
-                                    <Line type="monotone" dataKey="validationLoss" stroke="#fcc419" dot={false} strokeWidth={3}/>
+                                    <Line type="monotone" dataKey="trainLoss" stroke={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} dot={false} strokeWidth={3}/>
+                                    <Line type="monotone" dataKey="validationLoss" stroke={TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR} dot={false} strokeWidth={3}/>
                                 </LineChart>
                             </ResponsiveContainer>
                             </Charts>
@@ -366,7 +364,7 @@ const TeachableModal = (props) => {
                         <DataArea>
                             <CloseButton>
                                 <div className='dataText'><div>Data</div></div>
-                                {/* <CloseIcon className='closeIcon' onClick={onCloseClicked}/> */}
+                                <CloseIcon className='closeIcon' onClick={onCloseClicked}/>
                             </CloseButton>
                             <DataContentArea>
                                 <ResponsiveContainer width={340} height={340} className='responsiveContainer'>
@@ -392,7 +390,13 @@ const TeachableModal = (props) => {
                                         />
                                     </RadarChart>
                                 </ResponsiveContainer>
-                                <ClassItemArea>
+                                <ClassItemArea>   
+                                    <ClassHeaderArea>
+                                        <div className='classIndex'>Index</div>
+                                        <div className='classText'>Class Name</div>
+                                        <div className='classStatus'>Status</div>
+                                        <div className='classCount'>Count</div>
+                                    </ClassHeaderArea>
                                     {classItems}
                                 </ClassItemArea>
                             </DataContentArea>      
@@ -410,12 +414,6 @@ const TeachableModal = (props) => {
                         </AnalysisArea> */}
                     </ContentArea>
 				</InfoArea>
-                <CloseButtonArea>
-                        <div className='leftArea'></div>
-                        <div className='rightArea'>
-                            <div className='closeButton' onClick={onCloseClicked}>닫기</div>
-                        </div>
-                    </CloseButtonArea>
 			</Wrapper>
 		</Dialog>
         </div>
@@ -426,7 +424,7 @@ export default TeachableModal;
 
 const Wrapper = styled.div`
 	width: 1200px;
-	height: 800px;
+	height: 100%;
 	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
     overflow-y: auto;
 	margin: 0 auto;
@@ -435,23 +433,11 @@ const Wrapper = styled.div`
     .recharts-legend-item {
         font-size: 12px;
     } 
-
-    ::-webkit-scrollbar {
-        width: 7px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background-color: rgba(107, 117, 202, 0.7);
-        border-radius: 7px;
-        background-clip: padding-box;
-    }
-    ::-webkit-scrollbar-track {
-        background-color: white;
-        border-radius: 7px;
-    }
 `;
 
 const InfoArea = styled.div`
 	width: 100%;
+    height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
@@ -459,7 +445,7 @@ const InfoArea = styled.div`
 
 const MenuArea = styled.div`
 	width: 65px;
-	height: 1300px;
+	height: 100%;
 	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
 	display: flex;
 	flex-direction: column;
@@ -468,7 +454,7 @@ const MenuArea = styled.div`
 
     .saveIcon {
         font-size: 26px;
-        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        color: white;
         margin-bottom: 30px;
         cursor: pointer;
 
@@ -535,7 +521,7 @@ const AnalysisItem = styled.div`
 
 const ChartArea = styled.div`
 	width: 795px;
-	height: 810px;
+	height: 100%;
 `;
 
 const Charts = styled.div`
@@ -574,6 +560,7 @@ const Parameter = styled.div`
     text-align: center;
 
 	.parameterTitle {
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
 		margin-top: 7px;
 		font-size: 11px;
 	}
@@ -594,14 +581,14 @@ const MetricArea = styled.div`
 
 const Metric = styled.div`
 	width: 340px;
-	height: 150px;
+	height: 130px;
 	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 
     .metricTitle {
         width: 310px
         height: 25px;
         margin: 0 auto;
-        margin-top: 15px;
+        margin-top: 5px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -613,8 +600,8 @@ const Metric = styled.div`
 
         }
         .titleText {
-            color: white;
-            font-size: 14px;
+            color: ${TEACHABLE_COLOR_LIST.GRAY};
+            font-size: 12px;
         }
     }
 
@@ -662,47 +649,38 @@ const Metric = styled.div`
 
 const DataArea = styled.div`
 	width: 340px;
-	height: 810px;
+    height: 100%;
 	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
 `;
 
 const CloseButton = styled.div`
 	width: 100%;
-	height: 30px;
+	height: 40px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
 
     .closeIcon {
         cursor: pointer;
-        margin-right: 0px;
+        margin-right: 10px;
         font-size: 24px;
-        color: #495057;
+        color: white;
     }
 
     .dataText {
         width: 150px;
-        height: 30px;
+        height: 40px;
+        line-height: 40px;
         font-size: 14px;
         color: white;
-		font-weight: 600;
         margin-left: 23px;
-
-        div {
-            margin-top: 2px;
-            margin-left: 20px;
-            span {     
-		        font-size: 14px;
-                font-weight: 500;
-            }
-        }
-
     }
 `;
 
 const DataContentArea = styled.div`
 	width: 100%;
 	margin: 0 auto;
+    margin-top: 50px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -711,88 +689,98 @@ const DataContentArea = styled.div`
 
 const ClassItemArea = styled.div`
 	width: calc(100% - 60px);
-	height: 400px;
+    margin-top: 50px;
+	height: 300px;
 	overflow-y: auto;
 
     ::-webkit-scrollbar {
-        width: 5px;
+        width: 7px;
     }
     ::-webkit-scrollbar-thumb {
-        background-color: rgba(107, 117, 202, 0.7);
-        border-radius: 5px;
+        background-color: #899095;
+        border-radius: 7px;
         background-clip: padding-box;
     }
     ::-webkit-scrollbar-track {
-        background-color: white;
-        border-radius: 5px;
+        background-color: ${TEACHABLE_COLOR_LIST.GRAY};
+        border-radius: 7px;
     }
+`;
+
+
+const ClassHeaderArea = styled.div`
+    width: 100%;
+    height: 40px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: ${TEACHABLE_COLOR_LIST.GRAY};
+
+    .classIndex {
+        width: 20%;
+    }
+
+    .classText {
+        width: 50%;
+        text-align: left;
+    }
+
+    .classStatus {
+        width: 15%;
+    }
+
+    .classCount {
+        width: 15%;
+    }
+
+
 `;
 
 const ClassItem = styled.div`
 	width: 100%;
-	height: 80px;
-	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
-	margin-bottom: 40px;
+	height: 40px;
+    color: white;
+    font-size: 12px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    
-    .classIcons {
-        width: 50px;
-        height: 50px;
-        margin-left: 15px;
-        border-radius: 25px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    text-align: center;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
+    ${props => (props.index % 2 === 1) && `
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
+    `}
 
-        &.pink {
-            background-color: ${colorList[0].valueColor};
-        }
-        &.yellow {
-            background-color: ${colorList[1].valueColor};
-        }
-        &.green {
-            background-color: ${colorList[2].valueColor};
-        }
-        &.blue {
-            background-color: ${colorList[3].valueColor};
-        }
-    }
-
-    .classIcon {
-        font-size: 20px;
-        font-weight: 600;
-        color: #495057;
-    }
-
-    .classTitle {
-        margin-left: 10px;
-        width: 140px;
-    }
-
-    .classMetaText {
-        font-size: 11px;
-        color: #868e96;
+    .classIndex {
+        width: 20%;
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
     }
 
     .classText {
-        font-size: 18px;
-        color: #495057;
-        font-weight: 600;
+        width: 50%;
+        text-align: left;
+    }
+
+    .classStatus {
+        width: 15%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .statusIcon {
+            width: 15px;
+            height: 15px;
+            background: url(${NormalIcon});
+            background-repeat : no-repeat;
+            background-size : cover;
+        }
     }
 
     .classCount {
-        text-align: right;
-        font-size: 22px;
-        font-weight: 600;
-        color: ${mainColor};
-
-        span {
-            font-size: 12px;
-            font-weight: 500;
-            color: #868e96;
-        }
+        width: 15%;
     }
 `;
 
