@@ -26,6 +26,7 @@ import FileSaver from 'file-saver';
 import JSZip from "jszip";
 import { base64toFile } from 'utils/TeachableUtils'; 
 import logo from 'assets/icon/surromind.png';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 // Modal
 import { useDialogAction } from 'store/dialog/hooks';
@@ -65,7 +66,7 @@ const Teachable = (props) => {
     const trainModuleEndRef = useRef(null);
     const deployModuleRef = useRef(null);
 
-    const { taskType, class_count, list } = useHandleState();
+    const { taskType, class_count, list, isWorking } = useHandleState();
     const { setTaskType, 
         changeList,
         reorderClass, 
@@ -349,6 +350,15 @@ const Teachable = (props) => {
                     
                 </div>
             </HeaderWrapper>
+            {/* <ProgressIndicatorWrapper>
+                {
+                isWorking
+                ?
+                <LinearProgress />
+                :
+                <ProgressNone />
+                }
+            </ProgressIndicatorWrapper> */}
             <MainWrapper>
 			    <TeachableModal />
 			    <TeachableDeployModal />
@@ -706,6 +716,15 @@ const HeaderWrapper = styled.div`
     }
 `;
 
+const ProgressIndicatorWrapper = styled.div`
+    width: 100%;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
+`;
+
+const ProgressNone = styled.div`
+    width: 100%;
+    height: 4px;
+`;
 
 const MainWrapper = styled.div`
     width: 100%;

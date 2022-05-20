@@ -521,7 +521,7 @@ const AnalysisItem = styled.div`
 
 const ChartArea = styled.div`
 	width: 795px;
-	height: 100%;
+    height: 800px;
 `;
 
 const Charts = styled.div`
@@ -534,8 +534,8 @@ const Charts = styled.div`
 
 const TitleArea = styled.div`
 	width: calc(100% - 60px);
-	height: 40px;
-    line-height: 40px;
+	height: 50px;
+    line-height: 50px;
 	margin: 0 auto;
     color: white;
 `;
@@ -649,13 +649,13 @@ const Metric = styled.div`
 
 const DataArea = styled.div`
 	width: 340px;
-    height: 100%;
+    height: 800px;
 	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
 `;
 
 const CloseButton = styled.div`
 	width: 100%;
-	height: 40px;
+	height: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -669,8 +669,8 @@ const CloseButton = styled.div`
 
     .dataText {
         width: 150px;
-        height: 40px;
-        line-height: 40px;
+        height: 50px;
+        line-height: 50px;
         font-size: 14px;
         color: white;
         margin-left: 23px;
