@@ -6,6 +6,22 @@ import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
 const App = () => {
+	const { 
+        taskType, 
+        list, 
+    } = useHandleState();
+    const [ selectedIndex, setSelectedIndex ] = useState(0);
+
+	const imageList = list[0].data;
+
+	const images = imageList.map((item) => {
+		return {
+			src: item.base64,
+			name: item.name
+		}
+	});
+
+
 	const [pageSize, setPageSize] = useState({
 		width: window.innerWidth - 300,
 		height: window.innerHeight - 150
@@ -20,14 +36,18 @@ const App = () => {
 	  }, []);
 
 	const onSelect = selectedId => console.log(selectedId);
-	const onChange = data => null;
+	const onChange = data => console.log(data);
+
+	const handleClickNext = () => {
+		setSelectedIndex(selectedIndex + 1);
+	}
   
 	return (
 	  <AnnotationWrapper>
 		<LeftArea>
 			<div className='innerWrapper'>
 			<ReactPictureAnnotation
-				image="https://source.unsplash.com/random/800x600"
+				image={images[selectedIndex].src}
 				onSelect={onSelect}
 				onChange={onChange}
 				width={pageSize.width}
@@ -37,7 +57,7 @@ const App = () => {
 			</div>
 		</LeftArea>
 		<RightArea>
-
+			<button onClick={handleClickNext}>Next</button>
 		</RightArea>
 	  </AnnotationWrapper>
 	);
