@@ -3,14 +3,9 @@ import styled from 'styled-components';
 import { Route } from 'react-router-dom';
 
 import './App.scss';
-import { sizes } from 'styles';
-import LocalStorageManager from 'utils/LocalStorageManager';
-
 import Routes from './Routes';
+import Header from 'views/header';
 
-import { useAuthState, useAuthAction } from 'store/auth/hooks';
-import { useCommonAction } from 'store/common/hooks';
-import { useAlertAction } from 'store/alert/hooks';
 
 import Spinner from 'component/Spinner';
 
@@ -20,6 +15,7 @@ export default function App() {
 			<Route>
 				<MainContainer className={'MainContainer'}>
 					<MainWrapper>
+						<Header />
 						<Routes />
 					</MainWrapper>
 				</MainContainer>
