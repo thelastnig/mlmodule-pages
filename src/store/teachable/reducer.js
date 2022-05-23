@@ -137,6 +137,7 @@ export const actions = {
 
 const initialState = {
 	taskType: 'image',
+	taskSubType: 'classification',
 	list_init: 2,
 	list: [{
 		id: 'id-0',
@@ -150,6 +151,16 @@ const initialState = {
 	},{
 		id: 'id-1',
 		class_name: 'class 1',
+		audioFullData: '',
+		data: [],
+		isUploadOpen: false,
+		uploaderType: 'local',
+		isWebcamAvailable: false,
+		isAudioAvailable: false
+	}],
+	detection_list: [{
+		id: 'id-0',
+		class_name: 'class 0',
 		audioFullData: '',
 		data: [],
 		isUploadOpen: false,

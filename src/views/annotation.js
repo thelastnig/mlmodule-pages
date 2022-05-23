@@ -3,6 +3,7 @@ import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
 import { ReactPictureAnnotation } from 'react-picture-annotation';
 import styled, { keyframes, css } from 'styled-components';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
+import AnnotationFileViewerComponent from 'components/teachable/AnnotationFileViewerComponent';
 
 
 const App = () => {
@@ -11,16 +12,24 @@ const App = () => {
         list, 
     } = useHandleState();
     const [ selectedIndex, setSelectedIndex ] = useState(0);
+	const [ value, setValue ] = useState();
+	const { changeList,
+    } = useStateActionHandler();
 
 	const imageList = list[0].data;
+	const id = list[0].id;
 
 	const images = imageList.map((item) => {
 		return {
 			src: item.base64,
-			name: item.name
+			name: item.name,
+			annotation: item.annotation
 		}
 	});
 
+	useEffect(() => {
+		setValue({});
+    }, [selectedIndex])
 
 	const [pageSize, setPageSize] = useState({
 		width: window.innerWidth - 300,
@@ -36,28 +45,47 @@ const App = () => {
 	  }, []);
 
 	const onSelect = selectedId => console.log(selectedId);
-	const onChange = data => console.log(data);
+	const onChange = (data) => {
+		const changed_list = list.map((item) => {
+            if (item.id === id) {
+				let new_data = item.data.slice();
+				new_data[selectedIndex]['annotation'] = data;
+				console.log(new_data)
+				return {
+					...item,
+					data: new_data
+				};
+            } else {
+                return item;
+            }
+        })
+        changeList({
+            list: changed_list
+        });
+	};
 
-	const handleClickNext = () => {
-		setSelectedIndex(selectedIndex + 1);
-	}
+	const handleClickNext = (index) => {
+		setSelectedIndex(index);
+	};
   
 	return (
 	  <AnnotationWrapper>
 		<LeftArea>
 			<div className='innerWrapper'>
 			<ReactPictureAnnotation
+				key={selectedIndex}
 				image={images[selectedIndex].src}
 				onSelect={onSelect}
 				onChange={onChange}
 				width={pageSize.width}
 				height={pageSize.height}
 				scrollSpeed={0}
+				annotationData={images[selectedIndex].annotation}
 			/>
 			</div>
 		</LeftArea>
 		<RightArea>
-			<button onClick={handleClickNext}>Next</button>
+			<AnnotationFileViewerComponent id={0} data={imageList} handleClickNext={handleClickNext}/>
 		</RightArea>
 	  </AnnotationWrapper>
 	);
