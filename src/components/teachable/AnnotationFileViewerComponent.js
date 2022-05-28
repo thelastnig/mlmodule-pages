@@ -5,6 +5,8 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import NormalIcon from 'assets/icon/correct.png';
+import NotCheckedIcon from 'assets/icon/notCheck.png';
+
 
 const AnnotationFileViewerComponent = (props) => {
     
@@ -12,12 +14,19 @@ const AnnotationFileViewerComponent = (props) => {
     const { id, data, handleClickNext } = props;
 
     const dataList = data.map((data, index) => {
+        let isAnnotation = false;
+        if (data.annotation.length !== 0) {
+            const checkMarkList = data.annotation.filter(annotation => annotation.hasOwnProperty('comment'));
+            if (checkMarkList.length !== 0) {
+                isAnnotation = true;
+            }
+        } 
         if (typeof data == "undefined" || data == null || !Object.keys(data).includes('data_type')) {
             return null;
         } else {
             if (data.data_type === 'webcam' || data.data_type === 'drive') {
                 return (   
-                    <ImageWrapper key={index} index={index} onClick={() => handleClickNext(index)}>
+                    <ImageWrapper key={index} index={index} onClick={() => handleClickNext(index)} isAnnotation={isAnnotation}>
                         <div className='innerWrapper'>
                             <img src={data.base64} alt={data.file_name}/>
                         </div>
@@ -28,7 +37,7 @@ const AnnotationFileViewerComponent = (props) => {
                 );
             } else if (data.data_type === 'local') {
                 return (
-                    <ImageWrapper key={index} index={index} onClick={() => handleClickNext(index)}>
+                    <ImageWrapper key={index} index={index} onClick={() => handleClickNext(index)} isAnnotation={isAnnotation}>
                         <div className='innerWrapper'>
                             <img src={data.base64} alt={data.name}/>
                         </div>
@@ -44,7 +53,7 @@ const AnnotationFileViewerComponent = (props) => {
     });
 
 	return (
-        <>
+        <FileWrapper>
             <FileNumViewer>
             {
                 dataList.length === 0
@@ -67,17 +76,27 @@ const AnnotationFileViewerComponent = (props) => {
                 <div className='tableHeader'>
                     <div className='headerFile'>File</div>
                     <div className='headerName'>Name</div>
-                    <div className='headerStatus'>Status</div>
+                    <div className='headerStatus'>Labeling</div>
                     <div className='headerSource'>Source</div>
                 </div>
                 {dataList}
                 </FileViewer>
             }
-        </>
+            
+        </FileWrapper>
 	);
 };
 
 export default AnnotationFileViewerComponent;
+
+
+
+
+const FileWrapper = styled.div`
+    padding: 12.5px;
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
+`;
+
 
 const FileNumViewer = styled.div`
     width: 100%;
@@ -85,7 +104,6 @@ const FileNumViewer = styled.div`
     font-size: 12px;
     font-weight: 600;
     color: white;
-
 `;
 
 const FileNull = styled.div`
@@ -99,7 +117,7 @@ const FileNull = styled.div`
 
 const FileViewer = styled.div`
     width: 100%;
-    height: 210px;
+    height: 310px;
     overflow-y: auto;
 
     .tableHeader {
@@ -184,9 +202,20 @@ const ImageWrapper = styled.div`
         justify-content: center;
         align-items: center;
         .statusIcon {
-            width: 15px;
-            height: 15px;
-            background: url(${NormalIcon});
+            width: 10px;
+            height: 10px;
+            background: url(${NotCheckedIcon});
+            ${props => props.isAnnotation && `
+                background: url(${NormalIcon});
+                width: 15px;
+                height: 15px;
+            `}
+
+            ${props => !props.isAnnotation && `
+                background: url(${NotCheckedIcon});
+                width: 10px;
+                height: 10px;
+            `}
             background-repeat : no-repeat;
             background-size : cover;
         }
