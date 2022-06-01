@@ -11,6 +11,7 @@ import DeployAudioRecorderComponent from './DeployAudioRecorderComponent';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import { Item } from 'semantic-ui-react';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
 
 
 const inputTypeList = ['File', 'Webcam'];
@@ -24,28 +25,56 @@ const colorList = [
 
 const DeployComponent = (props) => {
     
-    const { taskType, model, list, isTrained } = useHandleState();
+    // const { taskType, model, isTrained } = useHandleState();
+    const { taskType, model, taskSubType } = useHandleState();
+    const isTrained = true;
     
     const [ inputType, setInputType ] = useState('File');
     const [ inferenceFile, setInferenceFile ] = useState(null);
     const [ isInferenceOpen, setIsInferenceOpen ] = useState(false);
     const [ inferenceResult, setInferenceResult ] = useState([]);
     const [ isDeloyWebcamAvailabel, setIsDeloyWebcamAvailabel ] = useState(false);
+    const [ detectionInferenceModel, setDetectionInferenceModel ] = useState(null);
+    const [ detectionInferenceResult, setDetectionInferenceResult ] = useState([]);
+    const [ detectionResultFile, setDetectionResultFile ] = useState([]);
+
+    const setDetectionModel = async () => {
+        try {
+            const detectionModel = await cocoSsd.load();
+            setDetectionInferenceModel(detectionModel);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+	useEffect(() => {
+        if (taskType === 'image' && taskSubType === 'detection') {
+            setDetectionModel();
+        }
+	}, [taskType, taskSubType]);
 
 	useEffect(() => {
 		if (inferenceFile !== null) {
             const imageUrl = inferenceFile.inference_url;           
             let tempImage = new Image();
             tempImage.onload = function () {
-                model.predict(tempImage)
-                .then(result => {  
-                    if (Array.isArray(result) && result.length > 0) {
-                        setInferenceResult(result);    
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                });     
+                if (taskSubType === 'classification') {
+                    model.predict(tempImage)
+                    .then(result => {  
+                        if (Array.isArray(result) && result.length > 0) {
+                            setInferenceResult(result);    
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });     
+                } else {
+                    detectionInferenceModel.detect(tempImage)
+                    .then(predictions => {
+                        setDetectionInferenceResult(predictions);
+                        drawBoundingBoxes(predictions);
+                    })
+                }
            }
            tempImage.src = imageUrl;
 		}
@@ -75,6 +104,34 @@ const DeployComponent = (props) => {
             </ResultItem>
         );
     });
+
+    const drawBoundingBoxes = (predictions) => {
+        let imageObj = new Image();
+        imageObj.onload = function () {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            canvas.width = imageObj.width;
+            canvas.height = imageObj.height;
+            ctx.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
+            
+            predictions.map((prediction, index) => {
+                const bbox = prediction.bbox;
+                const score = (prediction.score * 100).toFixed(2);
+                ctx.strokeStyle = 'orange';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(Number(bbox[0].toFixed()), Number(bbox[1].toFixed()), Number(bbox[2].toFixed()), Number(bbox[3].toFixed()));
+
+                ctx.textBaseline = 'top';
+                ctx.font="14px Verdana";
+                ctx.fillStyle = 'orange';
+                ctx.fillText(prediction.class, Number(bbox[0].toFixed()) + 5, Number(bbox[1].toFixed()) + 5);
+                ctx.fill();
+            })
+            setDetectionResultFile(canvas.toDataURL());
+        };
+        imageObj.src = inferenceFile.inference_url;
+        
+    };
 
     const handleChange = (e) => {
         setIsDeloyWebcamAvailabel(false);
@@ -147,11 +204,14 @@ const DeployComponent = (props) => {
                 taskType === 'image'
                 ?
                 <ViewArea isInferenceOpen={isInferenceOpen}>
-                    <DeployFileViewerComponent inferenceFile={inferenceFile}/>
+                    <DeployFileViewerComponent inferenceFile={inferenceFile} type="inferenceFile"/>
                 </ViewArea>
                 :
                 null    
                 }
+                {
+                taskSubType === 'classification'
+                ?
                 <ResultArea isInferenceOpen={isInferenceOpen}>
                     <div className='resultIcon'>
                         <ArrowDownwardIcon className='icon'/>
@@ -159,6 +219,11 @@ const DeployComponent = (props) => {
                     <div className='resultInfoText'>Result</div>
                     {resultItemList}
                 </ResultArea>
+                :
+                <DetectionResultArea isInferenceOpen={isInferenceOpen}>
+                    <DeployFileViewerComponent inferenceFile={detectionResultFile} type="detectionResult"/>
+                </DetectionResultArea>
+                }
             </ItemContent>
             :
             null
@@ -413,6 +478,19 @@ const ResultItem = styled.div`
             }
         }
     }
+`;
+
+const DetectionResultArea = styled.div`
+    width: 100%;
+    display: none;
+
+    ${props => props.isInferenceOpen && `
+        display: block;
+    `}
+
+    ${props => !props.isInferenceOpen && `
+        display: none;
+    `}
 `;
 
 const FileUploadArea = styled.div`

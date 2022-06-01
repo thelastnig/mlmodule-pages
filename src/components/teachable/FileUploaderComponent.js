@@ -13,10 +13,12 @@ import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 const FileUploaderComponent = (props) => {
     
-    const { list, gapiAccessToken } = useHandleState();
-    const { uploadImage } = useStateActionHandler();
+    const { taskSubType, list, detection_list, gapiAccessToken } = useHandleState();
+    const { changeList, changeDetectionList } = useStateActionHandler();
     const { id, class_name, taskType, clickUploadOpen, showDataUploadAlert, hideDataUploadAlert } = props; 
     const [ googleAccessToken, setGoogleAccessToken ] = useState(null);
+
+    const raw_list = taskSubType === 'classification' ? list : detection_list;
 
     // Google Drive
     useEffect(() => {
@@ -46,7 +48,7 @@ const FileUploaderComponent = (props) => {
             showDataUploadAlert();
             uploadLocalFiles(acceptedFiles);
         }
-    }, [list])
+    }, [raw_list])
 
     const uploadLocalFiles = async (acceptedFiles) => {
         const filePromises = acceptedFiles.map((item, index) => {
@@ -98,7 +100,7 @@ const FileUploaderComponent = (props) => {
     }, [data]);
 
     const uploadImageToRedux = (newFiles) => {
-        const changedList = list.map((item) => {
+        const changed_list = raw_list.map((item) => {
             if (item.id === id) {
                 const new_data = item.data.concat(newFiles);
                 return {
@@ -109,9 +111,15 @@ const FileUploaderComponent = (props) => {
                 return item;
             }
         })
-        uploadImage({
-            list: changedList
-        });
+        if (taskSubType === 'classification') {
+            changeList({
+                list: changed_list
+            });
+        } else {
+            changeDetectionList({
+                detection_list: changed_list
+            });
+        }
     };
 
     const downloadFiles = async (data) => {

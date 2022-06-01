@@ -2,6 +2,7 @@ import produce from 'store/produce';
 
 export const SET_TASKTYPE = 'teachable/SET_TASKTYPE';
 export const CHANGE_LIST = 'teachable/CHANGE_LIST';
+export const CHANGE_DETECTION_LIST = 'teachable/CHANGE_DETECTION_LIST';
 export const INIT_DATA = 'teachable/INIT_DATA';
 export const ADD_CLASS = 'teachable/ADD_CLASS';
 export const DELETE_CLASS = 'teachable/DELETE_CLASS';
@@ -53,6 +54,7 @@ export const ADD_AUDIO_FULL_DATA = 'teachable/ADD_AUDIO_FULL_DATA';
 
 const setTaskType = (data) => ({ type: SET_TASKTYPE, payload: data });
 const changeList = (data) => ({ type: CHANGE_LIST, payload: data });
+const changeDetectionList = (data) => ({ type: CHANGE_DETECTION_LIST, payload: data });
 const initData = (data) => ({ type: INIT_DATA, payload: data });
 const addClass = (data) => ({ type: ADD_CLASS, payload: data });
 const deleteClass = (data) => ({ type: DELETE_CLASS, payload: data });
@@ -102,6 +104,7 @@ const setDataSampleIndex = (data) => ({ type: SET_DATA_SAMPLE_INDEX, payload: da
 export const actions = {
 	setTaskType,
 	changeList,
+	changeDetectionList,
 	initData,
 	addClass,
 	deleteClass,
@@ -166,7 +169,7 @@ const initialState = {
 		isUploadOpen: false,
 		uploaderType: 'local',
 		isWebcamAvailable: false,
-		isAudioAvailable: false
+		isAudioAvailable: false,
 	}],
 	useAugmentation: false,
 	params: {
@@ -192,12 +195,16 @@ const reducer = (state = initialState, action) =>
 		switch (action.type) {
 			case SET_TASKTYPE:
 				draft.taskType = action.payload.taskType;
+				draft.taskSubType = action.payload.taskSubType;
 				break;
 			case CHANGE_LIST:
 				draft.list = action.payload.list;
 				break;
-			case INIT_DATA:
+			case CHANGE_DETECTION_LIST:
+				draft.detection_list = action.payload.detection_list;
 				break;
+			case INIT_DATA:
+				return initialState;
 			case ADD_CLASS:
 				draft.class_count = action.payload.class_count;
 				draft.list_init = draft.list_init + 1;

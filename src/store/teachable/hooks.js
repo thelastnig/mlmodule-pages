@@ -24,6 +24,13 @@ export function useStateActionHandler() {
 		[dispatch],
 	);
 
+	const changeDetectionList = useCallback(
+		(params = {}) => {
+			dispatch(reducer.actions.changeDetectionList(params));
+		},
+		[dispatch],
+	);
+
 	const onInitData = useCallback(
 		(params = {}) => {
 			dispatch(reducer.actions.initData(params));
@@ -216,6 +223,7 @@ export function useStateActionHandler() {
 	return {
 		setTaskType,
 		changeList,
+		changeDetectionList,
 		onInitData,
 		addClass,
 		deleteClass,

@@ -33,15 +33,15 @@ const defaultShapeStyle = {
 const App = () => {
 	const { 
         taskType, 
-        list, 
+        detection_list, 
     } = useHandleState();
     const [ selectedIndex, setSelectedIndex ] = useState(0);
 	const [ value, setValue ] = useState();
 	const { changeList,
     } = useStateActionHandler();
 
-	const imageList = list[0].data;
-	const id = list[0].id;
+	const imageList = detection_list[0].data;
+	const id = detection_list[0].id;
 
 	const annotationList = imageList[selectedIndex].annotation;
 
@@ -72,7 +72,7 @@ const App = () => {
 
 	const onSelect = selectedId => console.log(selectedId);
 	const onChange = (data) => {
-		const changed_list = list.map((item) => {
+		const changed_list = detection_list.map((item) => {
             if (item.id === id) {
 				let new_data = item.data.slice();
 				new_data[selectedIndex]['annotation'] = data;
@@ -94,7 +94,7 @@ const App = () => {
 	};
 
 	const handleClickAnnotationDelete = (annotationId) => {
-		const changed_list = list.map((item) => {
+		const changed_list = detection_list.map((item) => {
             if (item.id === id) {
 				let new_data = item.data.slice();
 				const changed_annotation = new_data[selectedIndex]['annotation'].filter((item) => item.id !== annotationId);
@@ -113,7 +113,7 @@ const App = () => {
 	};
 
 	const handleClicSubmit = () => {
-		const dataList = list[0].data;
+		const dataList = detection_list[0].data;
 		const {images, targets} = generateDataset(dataList);
 		const batchSize = 4;
 		const initialTransferEpochs = 50;

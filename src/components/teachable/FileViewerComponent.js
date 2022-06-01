@@ -8,12 +8,14 @@ import NormalIcon from 'assets/icon/correct.png';
 
 const FileViewerComponent = (props) => {
     
-    const { list } = useHandleState();
-    const { deleteImage } = useStateActionHandler();
+    const { taskSubType, list, detection_list } = useHandleState();
+    const { changeList, changeDetectionList } = useStateActionHandler();
     const { id, data, isUploadOpen } = props;
 
+    const raw_list = taskSubType === 'classification' ? list : detection_list;
+
     const clickDeleteButton = (index) => {
-        const changedList = list.map((item) => {
+        const changed_list = raw_list.map((item) => {
             if (item.id === id) {
                 let new_data = item.data.slice();
                 new_data.splice(index, 1);
@@ -25,9 +27,15 @@ const FileViewerComponent = (props) => {
                 return item;
             }
         })
-        deleteImage({
-            list: changedList
-        });
+        if (taskSubType === 'classification') {
+            changeList({
+                list: changed_list
+            });
+        } else {
+            changeDetectionList({
+                detection_list: changed_list
+            });
+        }
     };
 
     const clickPlayButton = (audioURL) => {

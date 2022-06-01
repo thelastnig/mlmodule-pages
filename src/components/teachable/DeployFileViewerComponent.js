@@ -6,16 +6,23 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
 const DeployFileViewerComponent = (props) => {
     
-    const { inferenceFile } = props;
+    const { inferenceFile, type } = props;
 
     let data = null;
-    
-    if (inferenceFile !== null && Object.keys(inferenceFile).includes('data_type')) {
-        if (inferenceFile.data_type === 'local') {
-            data = <ImageWrapper ><img src={inferenceFile.inference_url} alt={inferenceFile.name}/></ImageWrapper>
-        } else {
-            data = <ImageWrapper ><img src={inferenceFile.inference_url} alt={inferenceFile.file_name}/></ImageWrapper>
+
+    if (type === 'inferenceFile') {
+        if (inferenceFile !== null && Object.keys(inferenceFile).includes('data_type')) {
+            if (inferenceFile.data_type === 'local') {
+                data = <ImageWrapper ><img src={inferenceFile.inference_url} alt={inferenceFile.name}/></ImageWrapper>
+            } else {
+                data = <ImageWrapper ><img src={inferenceFile.inference_url} alt={inferenceFile.file_name}/></ImageWrapper>
+            }
         }
+    } else {
+        if (inferenceFile !== null) {
+            data = <ImageWrapper ><img src={inferenceFile} alt="detection result image"/></ImageWrapper>
+        }
+
     }
 
 	return (

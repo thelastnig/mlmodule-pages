@@ -10,7 +10,7 @@ import NotCheckedIcon from 'assets/icon/notCheck.png';
 
 const AnnotationFileViewerComponent = (props) => {
     
-    const { list } = useHandleState();
+    const { detection_list } = useHandleState();
     const { id, data, handleClickNext } = props;
 
     const dataList = data.map((data, index) => {

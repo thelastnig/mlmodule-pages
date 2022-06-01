@@ -2205,6 +2205,11 @@
     "@svgr/plugin-svgo" "^5.4.0"
     "loader-utils" "^2.0.0"
 
+"@tensorflow-models/coco-ssd@^2.2.2":
+  "integrity" "sha512-Jey2JscmKEValcFZH2ZLz14s8KPRmVtfJ0d0M3dPhvBp9dJiGNanVXr/pJAY5OS7emKj9uSciGhdkHWXY9Hovw=="
+  "resolved" "https://registry.npmjs.org/@tensorflow-models/coco-ssd/-/coco-ssd-2.2.2.tgz"
+  "version" "2.2.2"
+
 "@tensorflow-models/speech-commands@^0.5.4":
   "integrity" "sha512-r0c/MvC15/09xWujx1pKe6mA0nta+4jQWDXGkqfSVkXLo8ARrwcZ4mTGLlfvT43ySfidiveUo0m+P51+UK821Q=="
   "resolved" "https://registry.npmjs.org/@tensorflow-models/speech-commands/-/speech-commands-0.5.4.tgz"

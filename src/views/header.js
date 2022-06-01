@@ -33,7 +33,13 @@ const Header = (props) => {
                 </div>
             </div>
             <div className='headerLower'>
-                
+                <div className='visionWrapper'>
+                    <div className='item first'>Image Classification</div>
+                    <div className='item'>Object Detection</div>
+                </div>
+                <div className='soundWrapper'>
+                    <div className='item'>Sound Classification</div>
+                </div>
             </div>
         </HeaderWrapper>
 	);
@@ -60,6 +66,31 @@ const HeaderWrapper = styled.div`
     .headerLower {
         width: 100%;
         height: 30px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        color: white;
+    }
+
+    .visionWrapper {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-right: 40px;
+        border: 1px solid blue;
+
+        .item {
+            cursor: pointer;
+            &.first {
+                margin-right: 20px;
+            }
+        }
+    }
+
+    .soundWrapper {
+        .item {
+            cursor: pointer;
+        }
     }
 
     .upperWrapper {

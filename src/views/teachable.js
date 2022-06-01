@@ -64,9 +64,10 @@ const Teachable = (props) => {
     const trainModuleEndRef = useRef(null);
     const deployModuleRef = useRef(null);
 
-    const { taskType, class_count, list, isWorking } = useHandleState();
+    const { taskType, taskSubType, class_count, list, detection_list, isWorking } = useHandleState();
     const { setTaskType, 
         changeList,
+        changeDetectionList,
         reorderClass, 
         changeClassName, 
         deleteClass, 
@@ -143,7 +144,8 @@ const Teachable = (props) => {
 
 	const onChangeValue = (e, id) => {
 		const value = e.target.value;
-        const changed_list = list.map((item) => {
+        const raw_list = taskSubType === 'classification' ? list : detection_list;
+        const changed_list = raw_list.map((item) => {
             if (item.id === id) {
                 return {
                     ...item,
@@ -153,9 +155,16 @@ const Teachable = (props) => {
                 return item;
             }
         })
-        changeClassName({
-            list: changed_list
-        });
+        if (taskSubType === 'classification') {
+            changeList({
+                list: changed_list
+            });
+        } else {
+            changeDetectionList({
+                detection_list: changed_list
+            });
+            
+        }
 	};
 
     const handleFocus = (e) => {
@@ -165,14 +174,15 @@ const Teachable = (props) => {
     const clickDelete = useCallback((id) => {
         const changed_list = list.filter((item) => item.id !== id);
 		const reduced_class_count = class_count - 1;
-        deleteClass({
+        deleteClass ({
             list: changed_list,
             class_count: reduced_class_count
         });
     }, [list]);
 
-    const clickDeleteAllImages = useCallback((id) => {
-        const changedList = list.map((item) => {
+    const clickDeleteAllImages = (id) => {
+        const raw_list = taskSubType === 'classification' ? list : detection_list;
+        const changed_list = raw_list.map((item) => {
             if (item.id === id) {
                 return {
                     ...item,
@@ -183,13 +193,20 @@ const Teachable = (props) => {
                 return item;
             }
         })
-        deleteAllImages({
-            list: changedList
-        });
-    }, [list]);
+        if (taskSubType === 'classification') {
+            changeList({
+                list: changed_list
+            });
+        } else {
+            changeDetectionList({
+                detection_list: changed_list
+            });
+        }
+    };
 
     const clickUploadOpen = (id, uploaderType, isMedia=false, isMediaAvaliable=false) => {
-        const changed_list = list.map((item) => {
+        const raw_list = taskSubType === 'classification' ? list : detection_list;
+        const changed_list = raw_list.map((item) => {
             if (item.id === id) {
                 if (isMedia) {
                     if (taskType === 'image') {
@@ -224,13 +241,20 @@ const Teachable = (props) => {
                 };
             }
         })
-        changeUploadOpen({
-            list: changed_list
-        });
+        if (taskSubType === 'classification') {
+            changeList({
+                list: changed_list
+            });
+        } else {
+            changeDetectionList({
+                detection_list: changed_list
+            });    
+        }
     };
 
     const clickDownloadSamples = (id) => {
-        list.map((item) => {
+        const raw_list = taskSubType === 'classification' ? list : detection_list;
+        raw_list.map((item) => {
             if (item.id === id) {
                 if (item.data.length === 0) {
                     console.log('no items')
@@ -284,10 +308,29 @@ const Teachable = (props) => {
         />
     });
 
+    const xArrowsDetection = detection_list.map((item, index) => {
+        const end = isPreprocessOpen ? preprocessModuleStartRef : trainModuleStartRef
+        return <Xarrow
+            key= {index}
+            start={item.id} 
+            end={end}
+            showHead={false}
+            strokeWidth={2}
+            curveness={0.2}
+            lineColor={TEACHABLE_COLOR_LIST.GRAY}
+        />
+    });
+
     useEffect(() => {
-        setTaskType({taskType: props.match.params.type});
-        if (props.match.params.type === "sound") {
+        setTaskType({
+            taskType: props.match.params.type,
+            taskSubType: props.match.params.subType,
+        });
+        if (props.match.params.type === 'sound') {
             setSoundModel();
+        }
+        if (props.match.params.subType === 'detection') {
+            seIsOptionAreaOpen(false);
         }
     }, [props.match.params.type])
 
@@ -304,7 +347,8 @@ const Teachable = (props) => {
 
      // media available
      const setMideaAvailable = (id, value) => {
-        const changed_list = list.map((item) => {
+        const raw_list = taskSubType === 'classification' ? list : detection_list;
+        const changed_list = raw_list.map((item) => {
             if (item.id === id) {
                 if (taskType === 'image') {
                     return {
@@ -321,9 +365,15 @@ const Teachable = (props) => {
                 return item;
             }
         })
-        changeList({
-            list: changed_list
-        });
+        if (taskSubType === 'classification') {
+            changeList({
+                list: changed_list
+            });
+        } else {
+            changeDetectionList({
+                detection_list: changed_list
+            });
+        }
 	};
 
 	return (
@@ -399,7 +449,10 @@ const Teachable = (props) => {
                                                 ref={provided.innerRef}
                                                 style={getListStyle(snapshot.isDraggingOver)}
                                             >
-                                                {list.map((item, index) => (
+                                            {
+                                                taskSubType === 'classification'
+                                                ?                                                
+                                                list.map((item, index) => (
                                                     <Draggable key={item.id} draggableId={item.id} index={index}>
                                                         {(provided, snapshot) => (
                                                             <div className='draggableContentWrapper'
@@ -525,7 +578,142 @@ const Teachable = (props) => {
                                                             </div>
                                                         )}
                                                     </Draggable>
-                                                ))}
+                                                ))
+                                                :                                  
+                                                detection_list.map((item, index) => (
+                                                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                                                        {(provided, snapshot) => (
+                                                            <div className='draggableContentWrapper'
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={getItemStyle(
+                                                                    snapshot.isDragging,
+                                                                    provided.draggableProps.style
+                                                                )}
+                                                            >   
+                                                                <div className='draggableContent'>
+                                                                    <ItemHeader>
+                                                                        <div className='inputWrapper'>
+                                                                            <LabelIcon className='labelIcon'></LabelIcon>
+                                                                            <ClassNameInput>
+                                                                                <input
+                                                                                    className='classInput' 
+                                                                                    value={item.class_name}
+                                                                                    onChange={(e) => onChangeValue(e, item.id)}
+                                                                                    onFocus={(e) => handleFocus(e)}
+                                                                                />
+                                                                            </ClassNameInput>
+                                                                        </div>
+                                                                        <MenuBtn>
+                                                                            {
+                                                                                item.data.length > 0
+                                                                                ?
+                                                                                <MoreButton
+                                                                                    id={item.id}
+                                                                                    listLength={item.data.length}
+                                                                                    clickDelete={clickDelete}
+                                                                                    clickDeleteAllImages={clickDeleteAllImages}
+                                                                                    clickDownloadSamples={clickDownloadSamples}
+                                                                                />
+                                                                                :
+                                                                                null
+                                                                            }
+                                                                        </MenuBtn>
+                                                                    </ItemHeader>
+                                                                    <ItemContent isUploadOpen={item.isUploadOpen}>
+                                                                        <FileUploaderArea isUploadOpen={item.isUploadOpen}>
+                                                                            {
+                                                                                item.isUploadOpen
+                                                                                ?
+                                                                                null
+                                                                                :
+                                                                                    taskType === 'image' 
+                                                                                    ?
+                                                                                    <FileUploaderText>+ Add images</FileUploaderText>
+                                                                                    :
+                                                                                    <FileUploaderText>+ Add audios(at least 20)</FileUploaderText>
+                                                                            }
+                                                                            {
+                                                                                item.isUploadOpen
+                                                                                ?
+                                                                                    taskType === 'image'
+                                                                                    ?
+                                                                                        item.uploaderType === 'webcam'
+                                                                                        ?
+                                                                                        <WebcamUploaderComponent id={item.id} 
+                                                                                            isWebcamAvailable={item.isWebcamAvailable}
+                                                                                            isUploadOpen={item.isUploadOpen} 
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            setWebcamAvailable={setMideaAvailable}
+                                                                                        />
+                                                                                        :
+                                                                                        <FileUploaderComponent id={item.id}
+                                                                                            taskType={taskType} 
+                                                                                            class_name={item.class_name} 
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            showDataUploadAlert={showDataUploadAlert}
+                                                                                            hideDataUploadAlert={hideDataUploadAlert}
+                                                                                        />
+                                                                                    :
+                                                                                        item.uploaderType === 'audioRecorder'
+                                                                                        ?
+                                                                                        <AudioRecorderComponent id={item.id} 
+                                                                                            isAudioAvailable={item.isAudioAvailable}
+                                                                                            isUploadOpen={item.isUploadOpen}
+                                                                                            transferRecognizer={transferRecognizer}
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            setAudioAvailable={setMideaAvailable}
+                                                                                        />
+                                                                                        :
+                                                                                        <FileUploaderComponent id={item.id}
+                                                                                            taskType={taskType} 
+                                                                                            class_name={item.class_name} 
+                                                                                            {...props} 
+                                                                                            clickUploadOpen={clickUploadOpen}
+                                                                                            showDataUploadAlert={showDataUploadAlert}
+                                                                                            hideDataUploadAlert={hideDataUploadAlert}
+                                                                                        />
+                                                                                :
+                                                                                    taskType === 'image'
+                                                                                    ?
+                                                                                    <FileUploaderSelect>
+                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'webcam', true, false)}>
+                                                                                            <VideocamOutlinedIcon className='selectIcon'/>
+                                                                                            <div className='selectText'>Webcam</div>
+                                                                                        </div>
+                                                                                        <div className='fileUploaderSelectItem file' onClick={() => clickUploadOpen(item.id, 'local')}>
+                                                                                            <AddToQueueOutlinedIcon className='selectIcon file'/>
+                                                                                            <div className='selectText file'>File</div>
+                                                                                        </div>
+                                                                                    </FileUploaderSelect>
+                                                                                    :
+                                                                                    <FileUploaderSelect>
+                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'audioRecorder', true, false)}>
+                                                                                            <MicIcon className='selectIcon'/>
+                                                                                            <div className='selectText'>Mike</div>
+                                                                                        </div>
+                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'local')}>
+                                                                                            <AddToQueueOutlinedIcon className='selectIcon file'/>
+                                                                                            <div className='selectText file'>File</div>
+                                                                                        </div>
+                                                                                    </FileUploaderSelect>
+                                                                            }
+                                                                        </FileUploaderArea>
+                                                                        <FileViewerArea>
+                                                                            <FileViewerComponent id={item.id} data={item.data} isUploadOpen={item.isUploadOpen} {...props}/>
+                                                                        </FileViewerArea>
+                                                                    </ItemContent>
+                                                                </div>
+                                                                <div className='draggableRef' id={item.id}/>
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                ))
+                                            }
                                                 {provided.placeholder}
                                                 <div style={{
                                                     position: 'absolute',
@@ -539,7 +727,13 @@ const Teachable = (props) => {
                                     )}
                                     </Droppable>
                                 </DragDropContext>
-                                <AddClassButton/>
+                                {
+                                    taskSubType === 'classification'
+                                    ?
+                                    <AddClassButton/>
+                                    :
+                                    null
+                                }
                             </DataModule>
                             <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
                                 <PreprocessModuleWrapper isPreprocessOpen={isPreprocessOpen}>
@@ -572,7 +766,13 @@ const Teachable = (props) => {
                                     />
                                 </DeployModule>
                             </Draggable2>
-                            {xArrows}
+                            {
+                            taskSubType === 'classification'
+                            ?
+                            xArrows
+                            :
+                            xArrowsDetection
+                            }
                             {
                             isPreprocessOpen
                             ?
@@ -695,7 +895,7 @@ const OptionArea = styled.div`
 
 const GridArea = styled.div`
     width: 100%;
-    height: 100%;
+	min-height: 900px;
     display: flex;
     justify-content: flex-start;
     align-items: center;

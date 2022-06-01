@@ -10,8 +10,8 @@ import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 const TeachableMain = (props) => {
 
-    const handleClick = (type) => {
-        props.history.push('teachable/' + type)
+    const handleClick = (type, subType) => {
+        props.history.push('easyml/' + type + '/' + subType)
     };
 
 
@@ -20,7 +20,7 @@ const TeachableMain = (props) => {
             <TitleComponent text={'EASY ML'} />
             <BodyFullContainer>
                 <InnerWrapper>
-                    <TaskItem onClick={() => handleClick('image')}>
+                    <TaskItem onClick={() => handleClick('image', 'classification')}>
                         <div className='imageArea'>
                             <img src={imageClassificationImg} width="340px" alt='image classification'/>
                         </div>
@@ -31,7 +31,21 @@ const TeachableMain = (props) => {
                             </div>
                         </div>
                     </TaskItem>
-                    <TaskItem onClick={() => handleClick('sound')}>
+
+                    
+                    <TaskItem onClick={() => handleClick('image', 'detection')}>
+                        <div className='imageArea'>
+                            <img src={imageClassificationImg} width="340px" alt='image detection'/>
+                        </div>
+                        <div className='textArea'>
+                            <div className='title'>객체 인식&nbsp;&nbsp;<span>Image detection</span></div>
+                            <div className='desc'>
+                                파일 또는 웹캠에서 가져온 이미지를 학습
+                            </div>
+                        </div>
+                    </TaskItem>
+
+                    <TaskItem onClick={() => handleClick('sound', 'classification')}>
                         <div className='imageArea'>
                             <img src={soundClassificationImg} width="340px" alt='image classification'/>
                         </div>
@@ -52,7 +66,7 @@ export default TeachableMain;
 
 
 const InnerWrapper = styled.div`
-    width: 1000px;
+    width: 1400px;
     margin: 150px auto 0px;
     display: flex;
     justify-content: space-between;

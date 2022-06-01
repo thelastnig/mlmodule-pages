@@ -9,7 +9,7 @@ import NormalIcon from 'assets/icon/correct.png';
 
 const AnnotationDataComponent = (props) => {
     
-    const { list } = useHandleState();
+    const { detection_list } = useHandleState();
     const { annotationIndex, annotationData, handleClickAnnotationDelete } = props;
 
 

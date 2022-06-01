@@ -11,7 +11,7 @@ export default function Routes(props) {
         <>
             <Switch>
                 <Route path="/" exact component={(props) => <TeachableMain {...props} />} />
-                <Route path="/teachable/:type" exact component={(props) => <Teachable {...props} />} />
+                <Route path="/easyml/:type/:subType" exact component={(props) => <Teachable {...props} />} />
                 <Route path="/annotation" exact component={(props) => <Annotation {...props} />} />
             </Switch>
         </>
