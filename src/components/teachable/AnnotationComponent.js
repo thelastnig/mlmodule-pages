@@ -1,49 +1,44 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
-import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
-import RestoreOutlinedIcon from '@material-ui/icons/RestoreOutlined';
-import KeyboardArrowDownOutlinedIcon from '@material-ui/icons/KeyboardArrowDownOutlined';
-import KeyboardArrowUpOutlinedIcon from '@material-ui/icons/KeyboardArrowUpOutlined';
-import TeachableSelect from './TeachableSelect';
+import CreateIcon from '@material-ui/icons/Create';
+import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
-const augType = ['이미지 뒤집기', '이미지 회전', '이미지 중앙 자르기', '이미지 밝기 변경', '이미지 포화']
 
-const PreprocessComponent = (props) => {
+const AnnotationComponent = (props) => {
+    const history = useHistory();
     
-    // const { list } = useHandleState();
-    // const { reorderClass, changeClassName } = useStateActionHandler();
+    const { detection_list } = useHandleState();
+    const { reorderClass, changeClassName } = useStateActionHandler();
     
     const [isSettingOpen, setIsSettingOpen] = useState(false);
 
-    
-    const handleChange = (e) => {
-        // if (e.target.name === 'epoch') {
-        //     if (isNaN(e.target.value)) {
-        //         alert('숫자만 입력가능합니다');
-        //         return;
-        //     }
-        // }
-        // const changed_params = {
-        //     ...params,
-        //     [e.target.name]: e.target.value
-        // };
-        // changeParams({
-        //     params: changed_params
-        // });
-    };
+    const isDetectionData = detection_list[0].data.length > 0 ? true : false;
+
+    const handleButtonClick = (url) => {
+        if (isDetectionData) {
+            history.push(url);
+        } else {
+            return;
+        }
+	};
 
 	return (
         <TrainItem>
             <ItemHeader>
                 <HeaderText>
-                    데이터 증강
+                    <CreateIcon className='headerIcon'></CreateIcon>
+                    <div className='headerText'>Annotation</div>
                 </HeaderText>
-                <HeaderContent>
-                    <div className='headerContentText'>데이터 증강하기</div>
+                <HeaderContent isDetectionData={isDetectionData}>
+                    <div className='headerContentText' onClick={() => handleButtonClick('/annotation')}>Annotation</div>
                 </HeaderContent>
+                <UploadContent>
+                    <div className='headerContentText'>Upload Annotation File</div>
+                </UploadContent>
             </ItemHeader>
-            <ItemContent>
+            {/* <ItemContent>
                 <DetailButton onClick={() => setIsSettingOpen(!isSettingOpen)}>
                     <div className='detail toggle'>
                         <div className='detailLeft'>
@@ -99,25 +94,22 @@ const PreprocessComponent = (props) => {
                         </div>
                     </div>
                 </DetailSetting>
-            </ItemContent>
+            </ItemContent> */}
         </TrainItem>
     );                                  
 };
 
-export default PreprocessComponent;
+export default AnnotationComponent;
 
 const TrainItem = styled.div`
     width: 300px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
 `;
 
 const ItemHeader = styled.div`
     width: 100%;
-    height: 115px;
     padding: 15px;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 1px solid ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     display: flex;
     flex-direction: column;
     justify-cotent: space-between;
@@ -125,24 +117,63 @@ const ItemHeader = styled.div`
 
 const HeaderText = styled.div`
     height: 42px;
-    font-size: 20px;
-    font-weight: 600;
+    display: flex;
+    justify-cotent: center;
+
+    .headerIcon {
+        margin-right: 5px;
+        font-size: 20px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    }
+
+    .headerText { 
+        font-size: 14px;
+        color: white;
+        font-weight: 600;
+    }
 `;
 
 const HeaderContent = styled.div`
     height: 42px;
-    background: #F1F3F4;
-    color: #495057;
-    border-radius: 6px;
-    cursor: pointer;
+    background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
     display: flex;
     justify-cotent: center;
     align-items: center;
 
+
+    ${props => !props.isDetectionData && ` 
+        cursor: default;
+    `};
+
+    ${props => props.isDetectionData && ` 
+        cursor: pointer;
+        :hover {
+            background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
+        }
+    `};
+
+    .headerContentText {
+        width: 100%;
+        text-align: center;
+    }
+`;
+
+const UploadContent = styled.div`
+    height: 42px;
+    color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-cotent: center;
+    align-items: center;
+    margin-top: 20px;
+    border: 1px ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} solid;
+    cursor: pointer;
     :hover {
-        background: #E8F0FE;
-        color: #1967D2;
-        font-weight: 600;
+        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
     }
 
     .headerContentText {
@@ -150,7 +181,6 @@ const HeaderContent = styled.div`
         text-align: center;
     }
 
-    
 `;
 
 const ItemContent = styled.div`

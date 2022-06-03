@@ -24,7 +24,6 @@ const Header = (props) => {
                     </div>
                     <div className='upperRight'>
                         <div className='upperRightItem' onClick={() => handleButtonClick('/')}>Easy ML Module</div>
-                        <div className='upperRightItem' onClick={() => handleButtonClick('/annotation')}>Annotation</div>
                     </div>
                 </div>
                 <div className='upperEnd'>

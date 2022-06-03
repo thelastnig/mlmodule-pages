@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
 import { ReactPictureAnnotation } from 'react-picture-annotation';
 import styled, { keyframes, css } from 'styled-components';
@@ -7,7 +8,6 @@ import AnnotationFileViewerComponent from 'components/teachable/AnnotationFileVi
 import AnnotationDataComponent from 'components/teachable/AnnotationDataComponent';
 import { generateDataset } from 'tf-od/dataprep';
 import { startTrain } from 'tf-od/train';
-
 
 const defaultShapeStyle = {
     /** text area **/
@@ -30,7 +30,9 @@ const defaultShapeStyle = {
     transformerSize: 10
 };
 
+
 const App = () => {
+    const history = useHistory();
 	const { 
         taskType, 
         detection_list, 
@@ -112,14 +114,35 @@ const App = () => {
         });
 	};
 
-	const handleClicSubmit = () => {
-		const dataList = detection_list[0].data;
-		const {images, targets} = generateDataset(dataList);
-		const batchSize = 4;
-		const initialTransferEpochs = 50;
-		const fineTuningEpochs = 50;
-		startTrain(images, targets, batchSize, initialTransferEpochs, fineTuningEpochs);
-	};
+	const handleClickSubmit = () => {
+		// const dataList = detection_list[0].data;
+		// const {images, targets} = generateDataset(dataList);
+		// const batchSize = 4;
+		// const initialTransferEpochs = 50;
+		// const fineTuningEpochs = 50;
+		// startTrain(images, targets, batchSize, initialTransferEpochs, fineTuningEpochs);
+
+		let isAnnotation = true;
+
+		detection_list[0].data.forEach(item => {
+			if (item.annotation.length === 0) {
+				isAnnotation = false;
+				return;
+			} else {
+				const checkMarkList = item.annotation.filter(annotation => annotation.hasOwnProperty('comment'));
+				if (checkMarkList.length === 0) {
+					isAnnotation = false;
+					return;
+				}
+			}
+		});
+		
+		if (!isAnnotation) {
+			alert("라벨링이 되지 않은 데이터가 있습니다. 라벨링을 완료해 주세요.");
+			return;
+		}
+		history.push('/easyml/image/detection');
+	}
   
 	return (
 	  <AnnotationWrapper>
@@ -141,7 +164,7 @@ const App = () => {
 		<RightArea>
 			<AnnotationFileViewerComponent id={0} data={imageList} handleClickNext={handleClickNext}/>
 			<AnnotationDataComponent annotationIndex={0} annotationData={annotationList} handleClickAnnotationDelete={handleClickAnnotationDelete}/>
-			<div className='annotationSubmit' onClick={handleClicSubmit}>Submit</div>
+			<div className='annotationSubmit' onClick={handleClickSubmit}>Submit</div>
 		</RightArea>
 	  </AnnotationWrapper>
 	);

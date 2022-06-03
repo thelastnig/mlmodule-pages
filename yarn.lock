@@ -13853,6 +13853,11 @@
   "resolved" "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
   "version" "3.0.4"
 
+"react-modal-image@^2.5.0":
+  "integrity" "sha512-QucQrgOLmF44CD4EFDLZ9ICrbHEZwztjALgx1GsNmMWZrAtmzDLarG+T1TK2OSE4w1eHfkXtmEhQibjbt0mT2g=="
+  "resolved" "https://registry.npmjs.org/react-modal-image/-/react-modal-image-2.5.0.tgz"
+  "version" "2.5.0"
+
 "react-modal@^3.12.1":
   "integrity" "sha512-8surmulejafYCH9wfUmFyj4UfbSJwjcgbS9gf3oOItu4Hwd6ivJyVBETI0yHRhpJKCLZMUtnhzk76wXTsNL6Qg=="
   "resolved" "https://registry.npmjs.org/react-modal/-/react-modal-3.14.4.tgz"

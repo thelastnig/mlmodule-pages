@@ -26,7 +26,8 @@ const colorList = [
 const DeployComponent = (props) => {
     
     // const { taskType, model, isTrained } = useHandleState();
-    const { taskType, model, taskSubType } = useHandleState();
+    const { taskType, model, taskSubType } = useHandleState();    
+    const { addDetectionResultImage } = useStateActionHandler();
     const isTrained = true;
     
     const [ inputType, setInputType ] = useState('File');
@@ -36,7 +37,6 @@ const DeployComponent = (props) => {
     const [ isDeloyWebcamAvailabel, setIsDeloyWebcamAvailabel ] = useState(false);
     const [ detectionInferenceModel, setDetectionInferenceModel ] = useState(null);
     const [ detectionInferenceResult, setDetectionInferenceResult ] = useState([]);
-    const [ detectionResultFile, setDetectionResultFile ] = useState([]);
 
     const setDetectionModel = async () => {
         try {
@@ -115,19 +115,32 @@ const DeployComponent = (props) => {
             ctx.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
             
             predictions.map((prediction, index) => {
+                const colorIndex = index % colorList.length;
+                const colorClass =  colorList[colorIndex].valueColor;
                 const bbox = prediction.bbox;
                 const score = (prediction.score * 100).toFixed(2);
-                ctx.strokeStyle = 'orange';
+                ctx.strokeStyle = colorClass;
                 ctx.lineWidth = 3;
                 ctx.strokeRect(Number(bbox[0].toFixed()), Number(bbox[1].toFixed()), Number(bbox[2].toFixed()), Number(bbox[3].toFixed()));
 
+                const fontSize = (imageObj.width <= 300 || imageObj.height <= 300) ? 10 : 14;
+                let i = prediction.class.length;
+                i = i * fontSize * 0.62;
+                if (i > canvas.width) {
+                  i = canvas.width;
+                }
+                ctx.fillStyle = colorClass;
+                ctx.fillRect(Number(bbox[0].toFixed()), Number(bbox[1].toFixed()), i, (fontSize * 1.5));
+                ctx.font = fontSize.toString() + "px Verdana";
+                ctx.fillStyle = 'white';
                 ctx.textBaseline = 'top';
-                ctx.font="14px Verdana";
-                ctx.fillStyle = 'orange';
-                ctx.fillText(prediction.class, Number(bbox[0].toFixed()) + 5, Number(bbox[1].toFixed()) + 5);
+        
+                ctx.fillText(prediction.class, Number(bbox[0].toFixed()), Number(bbox[1].toFixed()) + 2.5);
                 ctx.fill();
             })
-            setDetectionResultFile(canvas.toDataURL());
+            addDetectionResultImage({
+                detectionResultImage: canvas.toDataURL()
+            });
         };
         imageObj.src = inferenceFile.inference_url;
         
@@ -221,8 +234,11 @@ const DeployComponent = (props) => {
                 </ResultArea>
                 :
                 <DetectionResultArea isInferenceOpen={isInferenceOpen}>
-                    <DeployFileViewerComponent inferenceFile={detectionResultFile} type="detectionResult"/>
-                </DetectionResultArea>
+                    <div className='resultIcon'>
+                        <ArrowDownwardIcon className='icon'/>
+                    </div>
+                    <DeployFileViewerComponent inferenceFile={null} type="detectionResult"/>
+                </DetectionResultArea>            
                 }
             </ItemContent>
             :
@@ -233,6 +249,7 @@ const DeployComponent = (props) => {
 };
 
 export default DeployComponent;
+
 
 const DeployItem = styled.div`
     width: 300px;
@@ -483,6 +500,7 @@ const ResultItem = styled.div`
 const DetectionResultArea = styled.div`
     width: 100%;
     display: none;
+    padding-bottom: 20px;
 
     ${props => props.isInferenceOpen && `
         display: block;
@@ -491,6 +509,18 @@ const DetectionResultArea = styled.div`
     ${props => !props.isInferenceOpen && `
         display: none;
     `}
+    .resultIcon {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .icon {
+            font-size: 24px;
+            color: #1967D2;
+        }
+    }
 `;
 
 const FileUploadArea = styled.div`

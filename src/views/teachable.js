@@ -14,7 +14,7 @@ import MicIcon from '@material-ui/icons/Mic';
 import Button from '@material-ui/core/Button';
 import LabelIcon from '@material-ui/icons/Label';
 import AddClassButton from 'components/teachable/AddClassButton';
-import PreprocessComponent from 'components/teachable/PreprocessComponent';
+import AnnotationComponent from 'components/teachable/AnnotationComponent';
 import TrainComponent from 'components/teachable/TrainComponent';
 import DeployComponent from 'components/teachable/DeployComponent';
 import MoreButton from 'components/teachable/MoreButton';
@@ -37,6 +37,9 @@ import TeachableAlert from 'component/dialog/TeachableAlert';
 import * as tf from '@tensorflow/tfjs';
 import * as speechCommands from '@tensorflow-models/speech-commands';
 
+// detection result
+import { Lightbox } from "react-modal-image";
+
 const grid = 35;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
@@ -58,13 +61,21 @@ const queryAttr = 'data-rbd-drag-handle-draggable-id';
 
 const Teachable = (props) => {
     const dataModuleRef = useRef(null);
-    const preprocessModuleStartRef = useRef(null);
-    const preprocessModuleEndRef = useRef(null);
+    const annotationModuleStartRef = useRef(null);
+    const annotationModuleEndRef = useRef(null);
     const trainModuleStartRef = useRef(null);
     const trainModuleEndRef = useRef(null);
     const deployModuleRef = useRef(null);
 
-    const { taskType, taskSubType, class_count, list, detection_list, isWorking } = useHandleState();
+    const { taskType, 
+        taskSubType, 
+        class_count, 
+        list, 
+        detection_list, 
+        isWorking,
+        detectionResultImage,
+        isDetectionResultImageClick,
+    } = useHandleState();
     const { setTaskType, 
         changeList,
         changeDetectionList,
@@ -76,9 +87,10 @@ const Teachable = (props) => {
         deleteAllImages, 
         showDataUploadAlert,
         hideDataUploadAlert,
+        toggleDetectionResultImageClick,
     } = useStateActionHandler();
 	const [ placeholderProps, setPlaceholderProps ] = useState({});
-    const [ isPreprocessOpen, setIsPreprocessOpen ] = useState(false);
+    const [ isAnnotationOpen, setIsAnnotationOpen ] = useState(false);
     const [ isAlertTrainingOpen, setIsAlertTrainingOpen ] = useState(false);
     const [ isAlertDataOpen, setIsAlertDataOpen ] = useState(false);
     const [ isOptionAreaOpen, seIsOptionAreaOpen ] = useState(true);
@@ -282,21 +294,28 @@ const Teachable = (props) => {
 
     const clickCloseAlertTraining = () => {
         setIsAlertTrainingOpen(false);
-    }
+    };
 
     const clickCloseAlertData = () => {
         setIsAlertDataOpen(false);
-    }
+    };
 
     const clickToggleButton = () => {
         seIsOptionAreaOpen(!isOptionAreaOpen);
         if (!isOptionAreaClicked) {
             setIsOptionAreaClicked(true);
         }
-    }
+    };
+
+    const closeLightbox = () => {
+        toggleDetectionResultImageClick({
+            isDetectionResultImageClick: false
+        });
+    };
+
 
     const xArrows = list.map((item, index) => {
-        const end = isPreprocessOpen ? preprocessModuleStartRef : trainModuleStartRef
+        const end = isAnnotationOpen ? annotationModuleStartRef : trainModuleStartRef
         return <Xarrow
             key= {index}
             start={item.id} 
@@ -309,7 +328,7 @@ const Teachable = (props) => {
     });
 
     const xArrowsDetection = detection_list.map((item, index) => {
-        const end = isPreprocessOpen ? preprocessModuleStartRef : trainModuleStartRef
+        const end = isAnnotationOpen ? annotationModuleStartRef : trainModuleStartRef
         return <Xarrow
             key= {index}
             start={item.id} 
@@ -331,6 +350,7 @@ const Teachable = (props) => {
         }
         if (props.match.params.subType === 'detection') {
             seIsOptionAreaOpen(false);
+            setIsAnnotationOpen(true);
         }
     }, [props.match.params.type])
 
@@ -376,6 +396,16 @@ const Teachable = (props) => {
         }
 	};
 
+    const dataAlertStatement = taskSubType === 'classification' 
+    ?
+        taskType === 'image'
+        ?
+        '모델을 학습하려면 2개 이상의 클래스가 필요하며, 각 클래스에 샘플이 10개 이상 있어야 합니다.'
+        :
+        '모델을 학습하려면 2개 이상의 클래스가 필요하며, 각 클래스에 샘플이 20개 이상 있어야 합니다.'
+    :
+    '모델을 학습하려면 샘플이 20개 이상 있어야 하며, 모든 샘플에 라벨링이 되어야 합니다.';
+
 	return (
         <>
             {/* <ProgressIndicatorWrapper>
@@ -412,13 +442,10 @@ const Teachable = (props) => {
                         lineColor='#343a40'
                         lineColor2='black'
                     >
-                    {/* <button onClick={() => setIsPreprocessOpen(!isPreprocessOpen)}>Preprocess</button> */}
                         <GridArea>
                             <AlertData isAlertDataOpen={isAlertDataOpen}>
                                 <div className='alertDataInner'>
-                                    <div className='alertDataText'>
-                                        모델을 학습하려면 2개 이상의 클래스가 필요하며, 각 클래스에 샘플이 {taskType === 'image' ? 10 : 20}개 이상 있어야 합니다.
-                                    </div>
+                                    <div className='alertDataText'>{dataAlertStatement}</div>
                                     <Button variant="outlined" 
                                             style={{
                                                 backgroundColor: TEACHABLE_COLOR_LIST.PURPLE,
@@ -736,13 +763,13 @@ const Teachable = (props) => {
                                 }
                             </DataModule>
                             <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
-                                <PreprocessModuleWrapper isPreprocessOpen={isPreprocessOpen}>
-                                    <PreprocessModule isPreprocessOpen={isPreprocessOpen}>
-                                        <div ref={preprocessModuleStartRef} className='trainModuleRef'/>
-                                        <PreprocessComponent />
-                                        <div ref={preprocessModuleEndRef} className='trainModuleRef'/>
-                                    </PreprocessModule>
-                                </PreprocessModuleWrapper>
+                                <AnnotationModuleWrapper isAnnotationOpen={isAnnotationOpen}>
+                                    <AnnotationModule isAnnotationOpen={isAnnotationOpen}>
+                                        <div ref={annotationModuleStartRef} className='trainModuleRef'/>
+                                        <AnnotationComponent />
+                                        <div ref={annotationModuleEndRef} className='trainModuleRef'/>
+                                    </AnnotationModule>
+                                </AnnotationModuleWrapper>
                             </Draggable2>
                             <Draggable2 onDrag={updateXarrow} onStop={updateXarrow}>
                                 <TrainModule>
@@ -774,10 +801,10 @@ const Teachable = (props) => {
                             xArrowsDetection
                             }
                             {
-                            isPreprocessOpen
+                            isAnnotationOpen
                             ?
                             <Xarrow
-                                start={preprocessModuleEndRef} 
+                                start={annotationModuleEndRef} 
                                 end={trainModuleStartRef}
                                 showHead={false}
                                 strokeWidth={2}
@@ -797,6 +824,19 @@ const Teachable = (props) => {
                         </GridArea>
                     </GridLines>
                 </MainInnerWrapper>
+                {                       
+                isDetectionResultImageClick && (
+                <ModalWrapper>
+                    <Lightbox
+                    // medium={detectionResultFile}
+                    className="inferenceModaImage" 
+                    large={detectionResultImage}
+                    onClose={closeLightbox}
+                    hideDownload={true}
+                    hideZoom={true}
+                    />
+                </ModalWrapper>
+                )}
             </MainWrapper>
         </>
 	);
@@ -830,6 +870,10 @@ const MainWrapper = styled.div`
     flex-direction: column;
     overflow: hidden;
     position: relative;
+`;
+
+const ModalWrapper = styled.div`
+
 `;
 
 const MainInnerWrapper = styled.div`
@@ -991,16 +1035,16 @@ const DataModule = styled.div`
     }
 `;
 
-const PreprocessModuleWrapper = styled.div`
-    ${props => props.isPreprocessOpen && `
+const AnnotationModuleWrapper = styled.div`
+    ${props => props.isAnnotationOpen && `
         display: block;
     `}
-    ${props => !props.isPreprocessOpen && `
+    ${props => !props.isAnnotationOpen && `
         display: none;
     `}
 `;
 
-const PreprocessModule = styled.div`
+const AnnotationModule = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;

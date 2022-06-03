@@ -91,7 +91,6 @@ export default AnnotationFileViewerComponent;
 
 
 
-
 const FileWrapper = styled.div`
     padding: 12.5px;
     background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};

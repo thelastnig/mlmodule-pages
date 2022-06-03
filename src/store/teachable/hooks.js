@@ -220,6 +220,20 @@ export function useStateActionHandler() {
 		[dispatch],
 	);
 
+	const addDetectionResultImage = useCallback(
+		(params) => {
+			dispatch(reducer.actions.addDetectionResultImage(params));
+		},
+		[dispatch],
+	);
+
+	const toggleDetectionResultImageClick = useCallback(
+		(params) => {
+			dispatch(reducer.actions.toggleDetectionResultImageClick(params));
+		},
+		[dispatch],
+	);
+
 	return {
 		setTaskType,
 		changeList,
@@ -251,5 +265,7 @@ export function useStateActionHandler() {
 		toggleAudioAvailable,
 		showDataUploadAlert,
 		hideDataUploadAlert,
+		addDetectionResultImage,
+		toggleDetectionResultImageClick,
 	};
 }

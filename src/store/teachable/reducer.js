@@ -39,6 +39,8 @@ export const CHANGE_TRAINING = 'teachable/CHANGE_TRAINING';
 export const CONVERT_TEACHABLE_MODEL = 'teachable/CONVERT_TEACHABLE_MODEL';
 export const CONVERT_TEACHABLE_MODEL_SUCCESS = 'teachable/CONVERT_TEACHABLE_MODEL_SUCCESS';
 export const CONVERT_TEACHABLE_MODEL_FAIL = 'teachable/CONVERT_TEACHABLE_MODEL_FAIL';
+export const ADD_DETECTION_RESULT_IMAGE = 'teachable/ADD_DETECTION_RESULT_IMAGE';
+export const TOGGLE_DETECTION_RESULT_IMAGE_CLICK = 'teachable/TOGGLE_DETECTION_RESULT_IMAGE_CLICK';
 
 // Google Drive
 export const SET_GOOGLE_ACCESS_TOKEN = 'teachable/SET_GOOGLE_ACCESS_TOKEN';
@@ -91,6 +93,8 @@ const changeTraining = (data) => ({ type: CHANGE_TRAINING, payload: data });
 const convertTeachableModel = (data) => ({ type: CONVERT_TEACHABLE_MODEL, payload: data });
 const convertTeachableModelSuccess = (data) => ({ type: CONVERT_TEACHABLE_MODEL_SUCCESS, payload: data });
 const convertTeachableModelFail = (data) => ({ type: CONVERT_TEACHABLE_MODEL_FAIL, payload: data });
+const addDetectionResultImage = (data) => ({ type: ADD_DETECTION_RESULT_IMAGE, payload: data });
+const toggleDetectionResultImageClick = (data) => ({ type: TOGGLE_DETECTION_RESULT_IMAGE_CLICK, payload: data });
 
 // Google Drive
 const setGoogleAccessToken = (data) => ({ type: SET_GOOGLE_ACCESS_TOKEN, payload: data });
@@ -136,6 +140,8 @@ export const actions = {
 	showDataUploadAlert,
 	hideDataUploadAlert,
 	setDataSampleIndex,
+	addDetectionResultImage,
+	toggleDetectionResultImageClick,
 };
 
 const initialState = {
@@ -188,6 +194,8 @@ const initialState = {
 	gapiAccessToken: null,
 	isTrained: false,
 	isDataUploadAlertOpen: false,
+	detectionResultImage: null, 
+	isDetectionResultImageClick: false,
 };
 
 const reducer = (state = initialState, action) =>
@@ -308,6 +316,12 @@ const reducer = (state = initialState, action) =>
 				break;
 			case HIDE_DATA_UPLOAD_ALERT:
 				draft.isDataUploadAlertOpen = false;
+				break;
+			case ADD_DETECTION_RESULT_IMAGE:
+				draft.detectionResultImage = action.payload.detectionResultImage;
+				break;
+			case TOGGLE_DETECTION_RESULT_IMAGE_CLICK:
+				draft.isDetectionResultImageClick = action.payload.isDetectionResultImageClick;
 				break;
 			default:
 				return state;

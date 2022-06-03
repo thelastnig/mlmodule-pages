@@ -5,6 +5,8 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import NormalIcon from 'assets/icon/correct.png';
+import NotCheckedIcon from 'assets/icon/notCheck.png';
+
 
 const FileViewerComponent = (props) => {
     
@@ -44,12 +46,22 @@ const FileViewerComponent = (props) => {
     }
 
     const dataList = data.map((data, index) => {
+        let isAnnotation = false;
+        const isDetection = taskSubType === 'detection' ? true : false;
+        if (isDetection) {
+            if (data.annotation.length !== 0) {
+                const checkMarkList = data.annotation.filter(annotation => annotation.hasOwnProperty('comment'));
+                if (checkMarkList.length !== 0) {
+                    isAnnotation = true;
+                }
+            } 
+        }
         if (typeof data == "undefined" || data == null || !Object.keys(data).includes('data_type')) {
             return null;
         } else {
             if (data.data_type === 'webcam' || data.data_type === 'drive') {
                 return (   
-                    <ImageWrapper key={index} index={index}>
+                    <ImageWrapper key={index} index={index} isDetection={isDetection} isAnnotation={isAnnotation}>
                         <div className='innerWrapper'>
                             <img src={data.base64} alt={data.file_name}/>
                         </div>
@@ -61,7 +73,7 @@ const FileViewerComponent = (props) => {
                 );
             } else if (data.data_type === 'local') {
                 return (
-                    <ImageWrapper key={index} index={index}>
+                    <ImageWrapper key={index} index={index} isDetection={isDetection} isAnnotation={isAnnotation}>
                         <div className='innerWrapper'>
                             <img src={data.base64} alt={data.name}/>
                         </div>
@@ -111,7 +123,7 @@ const FileViewerComponent = (props) => {
                 <div className='tableHeader'>
                     <div className='headerFile'>File</div>
                     <div className='headerName'>Name</div>
-                    <div className='headerStatus'>Status</div>
+                    <div className='headerStatus'>{taskSubType === 'classification' ? 'Status' : 'Label'}</div>
                     <div className='headerSource'>Source</div>
                     <div className='headerDelete'></div>
                 </div>
@@ -257,6 +269,22 @@ const ImageWrapper = styled.div`
             background: url(${NormalIcon});
             background-repeat : no-repeat;
             background-size : cover;
+
+            ${props => props.isDetection && !props.isAnnotation && `
+                background: url(${NotCheckedIcon});
+                width: 10px;
+                height: 10px;
+                background-repeat : no-repeat;
+                background-size : cover;
+            `}
+
+            ${props => props.isDetection && props.isAnnotation && `
+                background: url(${NormalIcon});
+                background-repeat : no-repeat;
+                background-size : cover;
+                width: 15px;
+                height: 15px;
+            `}
         }
     }
 

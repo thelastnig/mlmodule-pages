@@ -24,8 +24,10 @@ const imageSize = 224
 const TrainComponent = (props) => {
     const { 
         taskType,
+        taskSubType,
         params, 
         list, 
+        detection_list,
         isWorking,
         isDataloading,
         isTraining,
@@ -193,14 +195,22 @@ const TrainComponent = (props) => {
     }
 
     const onSetTrainClicked = (e) => {
-        if (list.length < 2) {
-            props.setIsAlertDataOpen(true);
-            return;
-        }
+        const limitNum = taskType === 'image' ? taskType === 'classification' ? 10 : 20 : 20;
 
-        for (let i = 0; i < list.length; i++) {
-            const limitNum = taskType === 'image' ? 10 : 20
-            if (list[i].data.length < limitNum) {
+        if (taskSubType === 'classification') {
+            if (list.length < 2) {
+                props.setIsAlertDataOpen(true);
+                return;
+            }
+    
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].data.length < limitNum) {
+                    props.setIsAlertDataOpen(true);
+                    return;
+                }
+            }
+        } else {
+            if (detection_list[0].data.length < limitNum) {
                 props.setIsAlertDataOpen(true);
                 return;
             }

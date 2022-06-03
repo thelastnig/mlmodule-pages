@@ -7,6 +7,8 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 const DeployFileViewerComponent = (props) => {
     
     const { inferenceFile, type } = props;
+    const { detectionResultImage } = useHandleState();   
+    const { toggleDetectionResultImageClick } = useStateActionHandler();
 
     let data = null;
 
@@ -19,8 +21,8 @@ const DeployFileViewerComponent = (props) => {
             }
         }
     } else {
-        if (inferenceFile !== null) {
-            data = <ImageWrapper ><img src={inferenceFile} alt="detection result image"/></ImageWrapper>
+        if (detectionResultImage !== null) {
+            data = <ImageWrapper className='detection'><img src={detectionResultImage} alt="detection result image" onClick={() => toggleDetectionResultImageClick({isDetectionResultImageClick: true})}/></ImageWrapper>
         }
 
     }
@@ -50,6 +52,12 @@ const ImageWrapper = styled.div`
     img {
         width: 225px;
         height: 225px;
+    }
+
+    &.detection {
+        img {
+            cursor: pointer;
+        }
     }
 `;
 
