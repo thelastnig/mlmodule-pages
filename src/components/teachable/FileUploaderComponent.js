@@ -60,6 +60,7 @@ const FileUploaderComponent = (props) => {
                         item['base64']= reader.result;
                         item['data_type'] = 'local';
                         item['annotation'] = [];
+                        item['annotation_type'] = 'tool';
                         resolve(item);
                     } catch (error) {
                         reject(error);

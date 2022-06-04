@@ -75,6 +75,7 @@ const WebcamUploaderComponent = (props) => {
             const fileName = String(timestamp) + '.jpg';
             const data = {
                 data_type: 'webcam',
+                annotation_type: 'tool',
                 file_id: String(timestamp),
                 file_name: fileName,
                 base64: imageSrc

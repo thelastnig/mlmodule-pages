@@ -39,10 +39,9 @@ const App = () => {
     } = useHandleState();
     const [ selectedIndex, setSelectedIndex ] = useState(0);
 	const [ value, setValue ] = useState();
-	const { changeList,
-    } = useStateActionHandler();
+	const { changeDetectionList } = useStateActionHandler();
 
-	const imageList = detection_list[0].data;
+	const imageList = detection_list[0].data.filter(item => item.annotation_type === 'tool');
 	const id = detection_list[0].id;
 
 	const annotationList = imageList[selectedIndex].annotation;
@@ -73,22 +72,31 @@ const App = () => {
 	  }, []);
 
 	const onSelect = selectedId => console.log(selectedId);
+
 	const onChange = (data) => {
 		const changed_list = detection_list.map((item) => {
             if (item.id === id) {
-				let new_data = item.data.slice();
-				new_data[selectedIndex]['annotation'] = data;
+				const newData = item.data.slice();
+				const newAnnodatedData = newData.map((file, index) => {
+					if (file.path === imageList[selectedIndex].path) {
+						const newFile = {...file};
+						newFile['annotation'] = data;
+						return newFile;
+					} else {
+						return file;
+					}
+				});
 				return {
 					...item,
-					data: new_data
+					data: newAnnodatedData
 				};
             } else {
                 return item;
             }
         })
-        changeList({
-            list: changed_list
-        });
+		changeDetectionList({
+			detection_list: changed_list
+		});
 	};
 
 	const handleClickNext = (index) => {
@@ -109,9 +117,9 @@ const App = () => {
                 return item;
             }
         })
-        changeList({
-            list: changed_list
-        });
+		changeDetectionList({
+			detection_list: changed_list
+		});
 	};
 
 	const handleClickSubmit = () => {

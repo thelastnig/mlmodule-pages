@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
+import { useDropzone } from 'react-dropzone';
 import CreateIcon from '@material-ui/icons/Create';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
@@ -10,11 +11,13 @@ const AnnotationComponent = (props) => {
     const history = useHistory();
     
     const { detection_list } = useHandleState();
-    const { reorderClass, changeClassName } = useStateActionHandler();
+    const { changeDetectionList } = useStateActionHandler();
     
     const [isSettingOpen, setIsSettingOpen] = useState(false);
 
     const isDetectionData = detection_list[0].data.length > 0 ? true : false;
+
+    const id = detection_list[0].id;
 
     const handleButtonClick = (url) => {
         if (isDetectionData) {
@@ -23,6 +26,83 @@ const AnnotationComponent = (props) => {
             return;
         }
 	};
+
+    // file upload
+    const onDrop = useCallback((acceptedFiles, rejected, e) => {
+        if (acceptedFiles) {
+            readAnnnotationFile(acceptedFiles[0]);
+        }
+    }, [detection_list])
+
+    const readAnnnotationFile = async (acceptedFile) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+            const annotationArray = reader.result.split(/\r\n|\n/);
+            uploadAnnotation(annotationArray);
+        };
+        reader.onerror = (error) => {
+            console.log(error);
+        };
+        reader.readAsText(acceptedFile);
+    }
+
+    const uploadAnnotation = (annotationArray) => {
+        let newData =  detection_list[0].data.slice();
+        const annotatedData = newData.map((file) => {
+            let isAnnotationExist = false;
+            let newAnnotationArray = [];
+            annotationArray.map((annotation) => {
+                const annotationContentArray = annotation.split(',');
+                if (file.path === annotationContentArray[0].trim()) {
+                    isAnnotationExist = true;
+                    const annotationInfo = {
+                        id: Math.random().toString(36).substring(2, 8),
+                        mark: {
+                            x: parseFloat(annotationContentArray[1]),
+                            y: parseFloat(annotationContentArray[2]),
+                            width: parseFloat(annotationContentArray[3]),
+                            height: parseFloat(annotationContentArray[4]),
+                            type: annotationContentArray[6].trim()
+                        },
+                        comment: annotationContentArray[5].trim()
+                    };
+                    newAnnotationArray.push(annotationInfo);
+                }
+            });
+            const annotationType = isAnnotationExist ? 'fileUpload' : 'tool';
+            if (isAnnotationExist) {
+                return {
+                    ...file,
+                    name: file.path,
+                    annotation: newAnnotationArray,
+                    annotation_type: annotationType,
+                }
+            } else {
+                return file;
+            }
+        });
+
+        const changed_list = detection_list.map((item) => {
+            if (item.id === id) {
+                return {
+                    ...item,
+                    data: annotatedData
+                };
+            } else {
+                return item;
+            }
+        })
+
+        changeDetectionList({
+            detection_list: changed_list
+        });
+    };
+    
+    const {getRootProps, getInputProps} = useDropzone({onDrop, multiple: false});
+
+
+
+
 
 	return (
         <TrainItem>
@@ -35,7 +115,9 @@ const AnnotationComponent = (props) => {
                     <div className='headerContentText' onClick={() => handleButtonClick('/annotation')}>Annotation</div>
                 </HeaderContent>
                 <UploadContent>
-                    <div className='headerContentText'>Upload Annotation File</div>
+                    <div {...getRootProps()} className='headerContentText'>
+                        <input name={props.id} {...getInputProps()}/>Upload Annotation File
+                    </div>
                 </UploadContent>
             </ItemHeader>
             {/* <ItemContent>
