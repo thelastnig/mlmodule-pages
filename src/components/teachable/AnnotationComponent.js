@@ -74,7 +74,7 @@ const AnnotationComponent = (props) => {
                 return {
                     ...file,
                     name: file.path,
-                    annotation: newAnnotationArray,
+                    annotation_fileupload: newAnnotationArray,
                     annotation_type: annotationType,
                 }
             } else {

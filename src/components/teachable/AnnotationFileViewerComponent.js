@@ -15,8 +15,8 @@ const AnnotationFileViewerComponent = (props) => {
 
     const dataList = data.map((data, index) => {
         let isAnnotation = false;
-        if (data.annotation.length !== 0) {
-            const checkMarkList = data.annotation.filter(annotation => annotation.hasOwnProperty('comment'));
+        if (data.annotation_tool.length !== 0) {
+            const checkMarkList = data.annotation_tool.filter(annotation => annotation.hasOwnProperty('comment'));
             if (checkMarkList.length !== 0) {
                 isAnnotation = true;
             }

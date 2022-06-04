@@ -49,12 +49,21 @@ const FileViewerComponent = (props) => {
         let isAnnotation = false;
         const isDetection = taskSubType === 'detection' ? true : false;
         if (isDetection) {
-            if (data.annotation.length !== 0) {
-                const checkMarkList = data.annotation.filter(annotation => annotation.hasOwnProperty('comment'));
-                if (checkMarkList.length !== 0) {
-                    isAnnotation = true;
-                }
-            } 
+            if (data.annotation_type === 'tool') {
+                if (data.annotation_tool.length !== 0) {
+                    const checkMarkList = data.annotation_tool.filter(annotation => annotation.hasOwnProperty('comment'));
+                    if (checkMarkList.length !== 0) {
+                        isAnnotation = true;
+                    }
+                } 
+            } else {
+                if (data.annotation_fileupload.length !== 0) {
+                    const checkMarkList = data.annotation_fileupload.filter(annotation => annotation.hasOwnProperty('comment'));
+                    if (checkMarkList.length !== 0) {
+                        isAnnotation = true;
+                    }
+                } 
+            }
         }
         if (typeof data == "undefined" || data == null || !Object.keys(data).includes('data_type')) {
             return null;

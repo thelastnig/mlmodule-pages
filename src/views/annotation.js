@@ -37,89 +37,72 @@ const App = () => {
         taskType, 
         detection_list, 
     } = useHandleState();
-    const [ selectedIndex, setSelectedIndex ] = useState(0);
-	const [ value, setValue ] = useState();
+  const [ selectedIndex, setSelectedIndex ] = useState(0);
+	const [ imageList, setImageList ] = useState([]);
 	const { changeDetectionList } = useStateActionHandler();
 
-	const imageList = detection_list[0].data.filter(item => item.annotation_type === 'tool');
 	const id = detection_list[0].id;
 
-	const annotationList = imageList[selectedIndex].annotation;
-
-	const images = imageList.map((item) => {
-		return {
-			src: item.base64,
-			name: item.name,
-			annotation: item.annotation
-		}
-	});
-
 	useEffect(() => {
-		setValue({});
-    }, [selectedIndex])
+			const initialImageList = detection_list[0].data.filter(item => item.annotation_type === 'tool');
+			setImageList(initialImageList);
+		}, [])
 
 	const [pageSize, setPageSize] = useState({
-		width: window.innerWidth - 300,
-		height: window.innerHeight - 150
+			width: window.innerWidth - 300,
+			height: window.innerHeight - 150
 	  });
 	  const onResize = () => {
-		setPageSize({ width: window.innerWidth - 300, height: window.innerHeight - 150});
+			setPageSize({ width: window.innerWidth - 300, height: window.innerHeight - 150});
 	  };
 	
 	  useEffect(() => {
-		window.addEventListener('resize', onResize);
-		return () => window.removeEventListener('resize', onResize);
+			window.addEventListener('resize', onResize);
+			return () => window.removeEventListener('resize', onResize);
 	  }, []);
 
 	const onSelect = selectedId => console.log(selectedId);
 
 	const onChange = (data) => {
-		const changed_list = detection_list.map((item) => {
-            if (item.id === id) {
-				const newData = item.data.slice();
-				const newAnnodatedData = newData.map((file, index) => {
-					if (file.path === imageList[selectedIndex].path) {
-						const newFile = {...file};
-						newFile['annotation'] = data;
-						return newFile;
-					} else {
-						return file;
+		const changed_list = imageList.map((item, index) => {
+        if (index === selectedIndex) {
+					return {
+						...item,
+						name: item.path,
+						annotation_tool: data,
 					}
-				});
-				return {
-					...item,
-					data: newAnnodatedData
-				};
-            } else {
-                return item;
-            }
-        })
-		changeDetectionList({
-			detection_list: changed_list
+        } else {
+					return {
+						...item,
+						name: item.path,
+					}
+				}
 		});
-	};
+		setImageList(changed_list);
+	}
 
 	const handleClickNext = (index) => {
 		setSelectedIndex(index);
 	};
 
 	const handleClickAnnotationDelete = (annotationId) => {
-		const changed_list = detection_list.map((item) => {
-            if (item.id === id) {
-				let new_data = item.data.slice();
-				const changed_annotation = new_data[selectedIndex]['annotation'].filter((item) => item.id !== annotationId);
-				new_data[selectedIndex]['annotation'] = changed_annotation;
+		const changed_list = imageList.map((item, index) => {
+			if (index === selectedIndex) {
+				const changed_annotation = item.annotation_tool.filter((annotaion) => annotaion.id !== annotationId);
 				return {
 					...item,
-					data: new_data
-				};
-            } else {
-                return item;
-            }
-        })
-		changeDetectionList({
-			detection_list: changed_list
+					name: item.path,
+					annotation_tool: changed_annotation,
+				}
+			} else {
+				return {
+					...item,
+					name: item.path,
+					
+				}
+			}
 		});
+		setImageList(changed_list);
 	};
 
 	const handleClickSubmit = () => {
@@ -132,15 +115,17 @@ const App = () => {
 
 		let isAnnotation = true;
 
-		detection_list[0].data.forEach(item => {
-			if (item.annotation.length === 0) {
+		imageList.forEach(item => {
+			if (item.annotation_tool.length === 0) {
 				isAnnotation = false;
 				return;
 			} else {
-				const checkMarkList = item.annotation.filter(annotation => annotation.hasOwnProperty('comment'));
+				const checkMarkList = item.annotation_tool.filter(annotation => annotation.hasOwnProperty('comment'));
 				if (checkMarkList.length === 0) {
 					isAnnotation = false;
 					return;
+				} else {
+					uploadAnnotation(item);
 				}
 			}
 		});
@@ -149,29 +134,76 @@ const App = () => {
 			alert("라벨링이 되지 않은 데이터가 있습니다. 라벨링을 완료해 주세요.");
 			return;
 		}
+
 		history.push('/easyml/image/detection');
+	}
+
+	const uploadAnnotation = (imageItem) => {	
+
+		const changed_list = detection_list.map((item) => {
+			if (item.id === id) {
+				let newData = item.data.slice();
+				const annotatedData = newData.map((file, index) => {
+					if (file.name === imageItem.name) {
+						return {
+							...file,
+							name: file.name,
+							annotation_tool: imageItem.annotation_tool
+						};
+					} else {
+						console.log(file);
+						return file;
+					}
+				});
+				return {
+						...item,
+						data: annotatedData
+				};
+			} else {
+					return item;
+			}
+		});
+
+		changeDetectionList({
+			detection_list: changed_list
+		});
+
 	}
   
 	return (
 	  <AnnotationWrapper>
 		<LeftArea>
 			<div className='innerWrapper'>
-			<ReactPictureAnnotation
-				key={selectedIndex}
-				image={images[selectedIndex].src}
-				onSelect={onSelect}
-				onChange={onChange}
-				width={pageSize.width}
-				height={pageSize.height}
-				scrollSpeed={0}
-				annotationData={images[selectedIndex].annotation}
-				annotationStyle={defaultShapeStyle}
-			/>
+			{
+				imageList.length > 0
+				?
+				<ReactPictureAnnotation
+					key={selectedIndex}
+					image={imageList[selectedIndex].base64}
+					onSelect={onSelect}
+					onChange={onChange}
+					width={pageSize.width}
+					height={pageSize.height}
+					scrollSpeed={0}
+					annotationData={imageList[selectedIndex].annotation_tool}
+					annotationStyle={defaultShapeStyle}
+				/>
+				:
+				null
+			}
 			</div>
 		</LeftArea>
 		<RightArea>
-			<AnnotationFileViewerComponent id={0} data={imageList} handleClickNext={handleClickNext}/>
-			<AnnotationDataComponent annotationIndex={0} annotationData={annotationList} handleClickAnnotationDelete={handleClickAnnotationDelete}/>
+			{
+				imageList.length > 0
+				?
+				<>
+				<AnnotationFileViewerComponent id={0} data={imageList} handleClickNext={handleClickNext}/>
+				<AnnotationDataComponent annotationIndex={0} annotationData={imageList[selectedIndex].annotation_tool} handleClickAnnotationDelete={handleClickAnnotationDelete}/>
+				</>
+				:
+				null
+			}
 			<div className='annotationSubmit' onClick={handleClickSubmit}>Submit</div>
 		</RightArea>
 	  </AnnotationWrapper>
