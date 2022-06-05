@@ -6,6 +6,7 @@ import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import NormalIcon from 'assets/icon/correct.png';
 import NotCheckedIcon from 'assets/icon/notCheck.png';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 
 const AnnotationFileViewerComponent = (props) => {
@@ -55,17 +56,21 @@ const AnnotationFileViewerComponent = (props) => {
 	return (
         <FileWrapper>
             <FileNumViewer>
-            {
-                dataList.length === 0
-                ?
-                null
-                :
-                    dataList.length === 1
-                    ?
-                    <p>{dataList.length} file</p> 
-                    :
-                    <p>{dataList.length} files</p> 
-            }
+                <FileCopyIcon className='icon'></FileCopyIcon>
+                <div className='title'>Files</div>
+                <div className='content'>    
+                    {
+                        dataList.length === 0
+                        ?
+                        null
+                        :
+                            dataList.length === 1
+                            ?
+                            <p>{dataList.length} file</p> 
+                            :
+                            <p>{dataList.length} files</p> 
+                    }
+                </div>
             </FileNumViewer>
             {
                 dataList.length === 0
@@ -99,10 +104,27 @@ const FileWrapper = styled.div`
 
 const FileNumViewer = styled.div`
     width: 100%;
-    height: 24px;
-    font-size: 12px;
-    font-weight: 600;
-    color: white;
+    height: 30px;
+    color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    .icon {
+        font-size: 22px;
+    }
+
+    .title {
+        margin-left: 10px;
+        margin-right: 190px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .content {
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
+        font-size: 12px;
+    }
 `;
 
 const FileNull = styled.div`

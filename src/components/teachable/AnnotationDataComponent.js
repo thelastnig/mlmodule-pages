@@ -5,6 +5,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import LabelIcon from '@material-ui/icons/Label';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import NormalIcon from 'assets/icon/correct.png';
+import ClassIcon from '@material-ui/icons/Class';
 
 
 const AnnotationDataComponent = (props) => {
@@ -37,19 +38,25 @@ const AnnotationDataComponent = (props) => {
 	return (
         <FileWrapper>
             <FileViewer>
-            <div className='tableHeader'>
-                <div className='index'>Index</div>
-                <div className='label'>Label</div>
-                {/* <div className='Mark'>Status</div> */}
-                <div className='delete'>Delete</div>
+            <div className='infoWrapper'>
+                <ClassIcon className='icon'></ClassIcon>
+                <div className='title'>Labels</div>
             </div>
-            {
-            annotationData.length === 0
-            ?
-            <FileNull><div className='nullText'>No Label</div></FileNull>
-            :
-            annotationDataList
-            }
+            <div className='tableWrapper'>    
+                <div className='tableHeader'>
+                    <div className='index'>Index</div>
+                    <div className='label'>Label</div>
+                    {/* <div className='Mark'>Status</div> */}
+                    <div className='delete'>Delete</div>
+                </div>
+                {
+                annotationData.length === 0
+                ?
+                <FileNull><div className='nullText'>No Label</div></FileNull>
+                :
+                annotationDataList
+                }
+            </div>
             </FileViewer>
         </FileWrapper>
 	);
@@ -65,7 +72,7 @@ const FileWrapper = styled.div`
 
 const FileNull = styled.div`
     width: 100%;
-    height: 160px;
+    height: 130px;
     text-align: center;
     font-size: 11px;
     font-weight: 600;
@@ -80,7 +87,30 @@ const FileNull = styled.div`
 const FileViewer = styled.div`
     width: 100%;
     height: 210px;
-    overflow-y: auto;
+
+    .infoWrapper {
+        width: 100%;
+        height: 30px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        .icon {
+            font-size: 22px;
+        }
+    
+        .title {
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    }
+
+    .tableWrapper {
+        height: 172px;
+        overflow-y: auto;
+    }
 
     .tableHeader {
         width: 100%;

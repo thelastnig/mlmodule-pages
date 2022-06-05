@@ -120,13 +120,12 @@ const App = () => {
 				isAnnotation = false;
 				return;
 			} else {
-				const checkMarkList = item.annotation_tool.filter(annotation => annotation.hasOwnProperty('comment'));
-				if (checkMarkList.length === 0) {
-					isAnnotation = false;
-					return;
-				} else {
-					uploadAnnotation(item);
-				}
+				item.annotation_tool.forEach(annotation => {
+					if (!annotation.hasOwnProperty('comment')) {	
+						isAnnotation = false;
+						return;
+					}
+				});
 			}
 		});
 		
@@ -135,25 +134,23 @@ const App = () => {
 			return;
 		}
 
-		history.push('/easyml/image/detection');
-	}
-
-	const uploadAnnotation = (imageItem) => {	
-
 		const changed_list = detection_list.map((item) => {
 			if (item.id === id) {
 				let newData = item.data.slice();
 				const annotatedData = newData.map((file, index) => {
-					if (file.name === imageItem.name) {
-						return {
-							...file,
-							name: file.name,
-							annotation_tool: imageItem.annotation_tool
-						};
-					} else {
-						console.log(file);
-						return file;
-					}
+					let newFile = file;
+					imageList.forEach(imageItem => {
+						if (file.name === imageItem.name) {
+							newFile = {
+								...file,
+								name: file.name,
+								annotation_tool: imageItem.annotation_tool
+							};
+						} else {
+							return;
+						}
+					})
+					return newFile;
 				});
 				return {
 						...item,
@@ -168,7 +165,13 @@ const App = () => {
 			detection_list: changed_list
 		});
 
+		history.push('/easyml/image/detection/annotation');
 	}
+
+	const handleClickCancel = () => {
+		history.push('/easyml/image/detection/annotation');
+	}
+
   
 	return (
 	  <AnnotationWrapper>
@@ -204,7 +207,10 @@ const App = () => {
 				:
 				null
 			}
-			<div className='annotationSubmit' onClick={handleClickSubmit}>Submit</div>
+			<div className='buttonWrapper'>
+				<div className='annotationSubmit' onClick={handleClickSubmit}>Submit</div>
+				<div className='annotationCancel' onClick={handleClickCancel}>Cancel</div>
+			</div>
 		</RightArea>
 	  </AnnotationWrapper>
 	);
@@ -234,12 +240,20 @@ const RightArea = styled.div`
 	width: 350px;
 	padding: 12.5px;
 
-	.annotationSubmit {
+	.buttonWrapper {
 		width: 100%;
+		height: 40px;
+		margin-top: 30px;
+		display: flex;    
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.annotationSubmit {
+		width: 48%;
 		height: 40px;
 		line-height: 40px;
 		color: white;
-		margin-top: 30px;
 		text-align: center;
 		background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
 		cursor: pointer;
@@ -249,8 +263,22 @@ const RightArea = styled.div`
 		&:hover {
 			background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
 		}
+	}
 
+	.annotationCancel {
+		width: 48%;
+		height: 40px;
+		line-height: 40px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+		text-align: center;
+        border: 1px ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} solid;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 600;
 
+		&:hover {
+            background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
+		}
 	}
 `;
   

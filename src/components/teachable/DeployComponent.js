@@ -25,10 +25,8 @@ const colorList = [
 
 const DeployComponent = (props) => {
     
-    // const { taskType, model, isTrained } = useHandleState();
-    const { taskType, model, taskSubType } = useHandleState();    
+    const { taskType, model, isTrained, taskSubType } = useHandleState();
     const { addDetectionResultImage } = useStateActionHandler();
-    const isTrained = true;
     
     const [ inputType, setInputType ] = useState('File');
     const [ inferenceFile, setInferenceFile ] = useState(null);
@@ -158,7 +156,7 @@ const DeployComponent = (props) => {
                     <GetAppIcon className='headerIcon'></GetAppIcon>
                     <div className='headerText'>Deploy</div>
                 </HeaderText>
-                <HeaderContent onClick={props.handleToggleDeployModal}>
+                <HeaderContent isTrained={isTrained} onClick={props.handleToggleDeployModal}>
                     <SaveAltOutlinedIcon className='headerContentIcon'/>
                     <div className='headerContentText'>Deploy Model</div>
                 </HeaderContent>
@@ -394,7 +392,7 @@ const ResultItem = styled.div`
 
     .classText {
         width: 25%;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
         word-break: break-all;
 

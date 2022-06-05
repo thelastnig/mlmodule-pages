@@ -63,7 +63,8 @@ const DeployAudioRecorderComponent = (props) => {
                   enable: false
                 },
                 colors: function(steps) {
-                  var baseColors = [[0, 1, 55, 1], [2, 5, 90, 1], [2, 25, 139, 1], [37, 61, 161, 1], [176, 219, 241, 1]]; 
+                //   var baseColors = [[0, 1, 55, 1], [2, 5, 90, 1], [2, 25, 139, 1], [37, 61, 161, 1], [176, 219, 241, 1]]; 
+                  var baseColors = [[1, 0, 5, 1], [79, 17, 123, 1], [179, 54, 122, 1], [251, 134, 96, 1], [247, 242, 181, 1]]; 
 
                   var positions = [0, 0.15, 0.30, 0.50, 0.75];
                
@@ -160,56 +161,51 @@ const DeployAudioRecorderComponent = (props) => {
     }
 
     const clickDownload = () => {
-        const SAVED_MODEL_METADATA_KEY = 'tfjs-speech-commands-saved-model-metadata';
-        const SAVE_PATH_PREFIX = 'indexeddb://tfjs-speech-commands-model/';
-        // const SAVE_PATH_PREFIX = 'localstorage://tfjs-speech-commands-model';
-        const metadataMapStr  = localStorage.getItem(SAVED_MODEL_METADATA_KEY);
-        const metadata = JSON.parse(metadataMapStr);
-        console.log(metadata['sound']);
-        transferRecognizer.save(SAVE_PATH_PREFIX)
-        .then(result => {
-            const request = window.indexedDB.open("tensorflowjs", 1);
-            request.onerror = function(event) {
-                console.log("cannot access to indexeddb");
-            };
-            request.onsuccess = function(event) {
-                const db = request.result;
-                db.transaction("models_store").objectStore("models_store").get("tfjs-speech-commands-model/sound").onsuccess = event => {
-                    const modelResult = event.target.result;
-                    const modelArtifacts = modelResult["modelArtifacts"];
-                    let zip = new JSZip();      
-                    const modelInfo = {
-                        'modelTopology': modelArtifacts["modelTopology"],
-                        'weightsManifest': [{
-                            'paths': [
-                               'weights.bin'
-                            ],
-                            'weights': modelArtifacts["weightSpecs"]
-                        }]
-                    };
-                    zip.file('model.json', JSON.stringify(modelInfo));
-                    zip.file('metadata.json', JSON.stringify(metadata['sound']));
-                    zip.file('weights.bin', modelArtifacts["weightData"], {binary: true}); 
-                    zip.generateAsync({type: 'blob'})
-                    .then(content => {
-                        FileSaver.saveAs(content, 'model.zip');           
-                    });    
-                };
-                
-            }
-            
-        })
-
-
-
-        // transferRecognizer.save('downloads://my-sound-model');
+        // const SAVED_MODEL_METADATA_KEY = 'tfjs-speech-commands-saved-model-metadata';
+        // const SAVE_PATH_PREFIX = 'indexeddb://tfjs-speech-commands-model/';
+        // // const SAVE_PATH_PREFIX = 'localstorage://tfjs-speech-commands-model';
+        // const metadataMapStr  = localStorage.getItem(SAVED_MODEL_METADATA_KEY);
+        // const metadata = JSON.parse(metadataMapStr);
+        // console.log(metadata)
+        // transferRecognizer.save(SAVE_PATH_PREFIX)
+        // .then(result => {
+        //     const request = window.indexedDB.open("tensorflowjs", 1);
+        //     request.onerror = function(event) {
+        //         console.log("cannot access to indexeddb");
+        //     };
+        //     request.onsuccess = function(event) {
+        //         const db = request.result;
+        //         db.transaction("models_store").objectStore("models_store").get("tfjs-speech-commands-model/sound").onsuccess = event => {
+        //             const modelResult = event.target.result;
+        //             const modelArtifacts = modelResult["modelArtifacts"];
+        //             let zip = new JSZip();      
+        //             const modelInfo = {
+        //                 'modelTopology': modelArtifacts["modelTopology"],
+        //                 'weightsManifest': [{
+        //                     'paths': [
+        //                        'weights.bin'
+        //                     ],
+        //                     'weights': modelArtifacts["weightSpecs"]
+        //                 }]
+        //             };
+        //             zip.file('model.json', JSON.stringify(modelInfo));
+        //             zip.file('metadata.json', JSON.stringify(metadata['sound']));
+        //             zip.file('weights.bin', modelArtifacts["weightData"], {binary: true}); 
+        //             zip.generateAsync({type: 'blob'})
+        //             .then(content => {
+        //                 FileSaver.saveAs(content, 'model.zip');           
+        //             });    
+        //         };
+        //     }
+        // })
+        transferRecognizer.save('downloads://my-sound-model');
 
     }
 
 	return (
         <MediaUploader>
             <InfoArea>
-                <div className='infoText'>마이크</div>
+                <div className='infoText'>Mike</div>
             </InfoArea>
             {
                 isAudioAvailable
@@ -226,12 +222,11 @@ const DeployAudioRecorderComponent = (props) => {
                         {
                         isRecording
                         ?
-                        <div className='saveButton' onClick={stopRecording}>녹음 중...</div>
+                        <div className='saveButton' onClick={stopRecording}>Recording...</div>
                         :
-                        <div className='saveButton' onClick={startRecording}>녹화하기</div>
+                        <div className='saveButton' onClick={startRecording}>Record</div>
                         }
                         <SettingsOutlinedIcon className='icon'/>
-                        <button onClick={clickDownload}>다운로드</button>
                     </SaveArea>
                 </>
                 :
@@ -253,11 +248,7 @@ const MediaUploader = styled.div`
 
     .icon {
         font-size: 26px;
-        color: #1967D2;
-
-        :hover {
-            color: #185ABC;
-        }
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
     }
 `;
 
@@ -269,9 +260,9 @@ const InfoArea = styled.div`
     align-items: center;
 
     .infoText {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 
@@ -305,17 +296,23 @@ const SaveArea = styled.div`
     .saveButton {
         width: 200px;
         padding: 8px 0px;
-        background: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
-        border-radius: 5px;
+        background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
         color: white;
         text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
 
         ${props => props.isRecording && `
             border: 2px solid black;
         `}
 
         :hover {
-            background: ${TEACHABLE_COLOR_LIST.HEAVY_STRONG_MAIN_COLOR};
+            background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
+        }
+
+        &.ing {
+            cursor: default;
         }
     }
 `;

@@ -56,13 +56,13 @@ const colorList = [
 
 const TeachableModal = (props) => {
     // modal
-	const { dialogName } = useDialogState();
-	const { hideDialog } = useDialogAction();
-	const isShow = dialogName === dialogList.TEACHABLE_MODAL;
-	const classes = useStyles();
+    const { dialogName } = useDialogState();
+    const { hideDialog } = useDialogAction();
+    const isShow = dialogName === dialogList.TEACHABLE_MODAL;
+    const classes = useStyles();
 
     // train data
-    const { params, list, history } = useHandleState();
+    const { taskType, params, list, history } = useHandleState();
 
     const data = list.map((item, index) => {
         return {
@@ -81,45 +81,73 @@ const TeachableModal = (props) => {
 
     if (history !== null) {
         const trainMetricList = history.history;
-    
-        lineData = history.epoch.map((epoch, index) => {
-            if (trainMetricList.acc[index] === undefined ||
-                trainMetricList.val_acc[index] === undefined ||
-                trainMetricList.loss[index] === undefined ||
-                trainMetricList.val_loss[index] === undefined) {
-                return null;
-            } else {
-                return {
-                    name: String(epoch + 1),
-                    train: trainMetricList.acc[index].toFixed(3),
-                    validation: trainMetricList.val_acc[index].toFixed(3),
-                    trainLoss: trainMetricList.loss[index].toFixed(3),
-                    validationLoss: trainMetricList.val_loss[index].toFixed(3),
-                }
-            }
-        });
 
-        if (lineData[lineData.length - 1] === null) {        
-            trainFinalMetric = (lineData[lineData.length - 2].train) * 100
-            valFinalMetric = (lineData[lineData.length - 2].validation) * 100;
-            trainFinalLoss = lineData[lineData.length - 2].trainLoss;
-            valFinalLoss = lineData[lineData.length - 2].validationLoss;
+        if (taskType === 'image') {
+            lineData = history.epoch.map((epoch, index) => {
+                if (trainMetricList.acc[index] === undefined ||
+                    trainMetricList.val_acc[index] === undefined ||
+                    trainMetricList.loss[index] === undefined ||
+                    trainMetricList.val_loss[index] === undefined) {
+                    return null;
+                } else {
+                    return {
+                        name: String(epoch + 1),
+                        train: trainMetricList.acc[index].toFixed(3),
+                        validation: trainMetricList.val_acc[index].toFixed(3),
+                        trainLoss: trainMetricList.loss[index].toFixed(3),
+                        validationLoss: trainMetricList.val_loss[index].toFixed(3),
+                    }
+                }
+            });
+
+            if (lineData[lineData.length - 1] === null) {        
+                trainFinalMetric = (lineData[lineData.length - 2].train) * 100
+                valFinalMetric = (lineData[lineData.length - 2].validation) * 100;
+                trainFinalLoss = lineData[lineData.length - 2].trainLoss;
+                valFinalLoss = lineData[lineData.length - 2].validationLoss;
+            } else {
+                trainFinalMetric = (lineData[lineData.length - 1].train) * 100
+                valFinalMetric = (lineData[lineData.length - 1].validation) * 100;
+                trainFinalLoss = lineData[lineData.length - 1].trainLoss;
+                valFinalLoss = lineData[lineData.length - 1].validationLoss;
+            }
+        
+            pieTrainData = [
+                { name: "Train", value: trainFinalMetric},
+                { name: "Train left", value: 100-trainFinalMetric},
+            ];
+        
+            pieValData = [
+                { name: "Val", value: valFinalMetric},
+                { name: "Val left", value: 100-valFinalMetric},
+            ];
         } else {
-            trainFinalMetric = (lineData[lineData.length - 1].train) * 100
-            valFinalMetric = (lineData[lineData.length - 1].validation) * 100;
-            trainFinalLoss = lineData[lineData.length - 1].trainLoss;
-            valFinalLoss = lineData[lineData.length - 1].validationLoss;
+            lineData = history.epoch.map((epoch, index) => {
+                if (trainMetricList.acc[index] === undefined ||
+                    trainMetricList.loss[index] === undefined ) {
+                    return null;
+                } else {
+                    return {
+                        name: String(epoch + 1),
+                        train: trainMetricList.acc[index].toFixed(3),
+                        trainLoss: trainMetricList.loss[index].toFixed(3),
+                    }
+                }
+            });
+
+            if (lineData[lineData.length - 1] === null) {        
+                trainFinalMetric = (lineData[lineData.length - 2].train) * 100
+                trainFinalLoss = lineData[lineData.length - 2].trainLoss;
+            } else {
+                trainFinalMetric = (lineData[lineData.length - 1].train) * 100
+                trainFinalLoss = lineData[lineData.length - 1].trainLoss;
+            }
+        
+            pieTrainData = [
+                { name: "Train", value: trainFinalMetric},
+                { name: "Train left", value: 100-trainFinalMetric},
+            ];
         }
-    
-        pieTrainData = [
-            { name: "Train", value: trainFinalMetric},
-            { name: "Train left", value: 100-trainFinalMetric},
-        ];
-      
-        pieValData = [
-            { name: "Val", value: valFinalMetric},
-            { name: "Val left", value: 100-valFinalMetric},
-        ];
     }
     
     const classItems = data.map((item, index) => {
@@ -321,42 +349,48 @@ const TeachableModal = (props) => {
                                         <div>Accuracy</div>
                                         <div>Loss</div>
                                     </div>
-                                    <div className='metricContent'>
-                                        <div className='accuracyArea'>
-                                            <ResponsiveContainer width={65} height={65}>
-                                                <PieChart>
-                                                    <Pie
-                                                        data={pieValData}
-                                                        nameKey="name"
-                                                        dataKey="value"
-                                                        cx="50%"
-                                                        cy="50%"
-                                                        startAngle={90}
-                                                        endAngle={-270}
-                                                        innerRadius={25}
-                                                        outerRadius={32}
-                                                        stroke="none">
-                                                            {pieTrainData.map((entry, index) => {
-                                                                if (index === 1) {
-                                                                    return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND} />; 
-                                                                }
-                                                                return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} />;
-                                                            })}
-                                                        <Label 
-                                                            width={20}
-                                                            fill='white'
-                                                            position="center"
-                                                            style={{
-                                                                fontSize: "14px",
-                                                            }}>
-                                                            {String(valFinalMetric.toFixed(1)) + '%'}
-                                                        </Label>
-                                                    </Pie>
-                                                </PieChart>
-                                            </ResponsiveContainer>
+                                    {
+                                        taskType === 'image'
+                                        ?                                    
+                                        <div className='metricContent'>
+                                            <div className='accuracyArea'>
+                                                <ResponsiveContainer width={65} height={65}>
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={pieValData}
+                                                            nameKey="name"
+                                                            dataKey="value"
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            startAngle={90}
+                                                            endAngle={-270}
+                                                            innerRadius={25}
+                                                            outerRadius={32}
+                                                            stroke="none">
+                                                                {pieTrainData.map((entry, index) => {
+                                                                    if (index === 1) {
+                                                                        return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND} />; 
+                                                                    }
+                                                                    return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} />;
+                                                                })}
+                                                            <Label 
+                                                                width={20}
+                                                                fill='white'
+                                                                position="center"
+                                                                style={{
+                                                                    fontSize: "14px",
+                                                                }}>
+                                                                {String(valFinalMetric.toFixed(1)) + '%'}
+                                                            </Label>
+                                                        </Pie>
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                            <div className='lossArea'>{valFinalLoss}</div>
                                         </div>
-                                        <div className='lossArea'>{valFinalLoss}</div>
-                                    </div>
+                                        :
+                                        <div className='nullArea'>Not Available</div>         
+                                    }
                                 </Metric>
 
                             </MetricArea>
@@ -644,6 +678,13 @@ const Metric = styled.div`
         justify-content: center;
         font-size: 18px;
         color: white;
+    }
+
+    .nullArea {
+        margin-top: 30px;
+        font-size: 12px;
+        text-align: center;
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
     }
 `;
 

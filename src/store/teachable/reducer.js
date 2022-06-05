@@ -169,7 +169,7 @@ const initialState = {
 	}],
 	detection_list: [{
 		id: 'id-0',
-		class_name: 'class 0',
+		class_name: 'Data',
 		audioFullData: '',
 		data: [],
 		isUploadOpen: false,

@@ -6,6 +6,7 @@ import FileUploaderComponent from 'components/teachable/FileUploaderComponent';
 import WebcamUploaderComponent from 'components/teachable/WebcamUploaderComponent';
 import AudioRecorderComponent from 'components/teachable/AudioRecorderComponent';
 import FileViewerComponent from 'components/teachable/FileViewerComponent';
+import AudioFileViewerComponent from 'components/teachable/AudioFileViewerComponent';
 import VideocamOutlinedIcon from '@material-ui/icons/VideocamOutlined';
 import AddToQueueOutlinedIcon from '@material-ui/icons/AddToQueueOutlined';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
@@ -73,6 +74,7 @@ const Teachable = (props) => {
         list, 
         detection_list, 
         isWorking,
+        isTrained,
         detectionResultImage,
         isDetectionResultImageClick,
     } = useHandleState();
@@ -88,6 +90,7 @@ const Teachable = (props) => {
         showDataUploadAlert,
         hideDataUploadAlert,
         toggleDetectionResultImageClick,
+        initData,
     } = useStateActionHandler();
 	const [ placeholderProps, setPlaceholderProps ] = useState({});
     const [ isAnnotationOpen, setIsAnnotationOpen ] = useState(false);
@@ -108,7 +111,18 @@ const Teachable = (props) => {
 	};
 
 	const handleToggleDeployModal = () => {
-		showDialog(dialogList.TEACHABLE_DEPLOY_MODAL);
+        if (!isTrained) {
+            return;
+        }
+        if (taskType === 'image') {
+            showDialog(dialogList.TEACHABLE_DEPLOY_MODAL);
+        } else {
+            if (transferRecognizer === null) {
+                console.log("no trained model!!!");
+                return;
+            }
+            transferRecognizer.save('downloads://my-sound-model');
+        }
 	};
     
 	const onDragEnd = (result) => {
@@ -341,6 +355,9 @@ const Teachable = (props) => {
     });
 
     useEffect(() => {
+        if (!props.match.params.annotation) {
+            initData();
+        }
         setTaskType({
             taskType: props.match.params.type,
             taskSubType: props.match.params.subType,
@@ -589,7 +606,7 @@ const Teachable = (props) => {
                                                                                             <MicIcon className='selectIcon'/>
                                                                                             <div className='selectText'>Mike</div>
                                                                                         </div>
-                                                                                        <div className='fileUploaderSelectItem' onClick={() => clickUploadOpen(item.id, 'local')}>
+                                                                                        <div className='fileUploaderSelectItem file' onClick={() => clickUploadOpen(item.id, 'local')}>
                                                                                             <AddToQueueOutlinedIcon className='selectIcon file'/>
                                                                                             <div className='selectText file'>File</div>
                                                                                         </div>
@@ -597,7 +614,13 @@ const Teachable = (props) => {
                                                                             }
                                                                         </FileUploaderArea>
                                                                         <FileViewerArea>
+                                                                            {
+                                                                            taskType === 'image'
+                                                                            ?
                                                                             <FileViewerComponent id={item.id} data={item.data} isUploadOpen={item.isUploadOpen} {...props}/>
+                                                                            :
+                                                                            <AudioFileViewerComponent id={item.id} data={item.data} isUploadOpen={item.isUploadOpen} {...props}/>
+                                                                            }
                                                                         </FileViewerArea>
                                                                     </ItemContent>
                                                                 </div>
@@ -625,10 +648,11 @@ const Teachable = (props) => {
                                                                             <LabelIcon className='labelIcon'></LabelIcon>
                                                                             <ClassNameInput>
                                                                                 <input
-                                                                                    className='classInput' 
+                                                                                    className='classInput detection' 
                                                                                     value={item.class_name}
                                                                                     onChange={(e) => onChangeValue(e, item.id)}
                                                                                     onFocus={(e) => handleFocus(e)}
+                                                                                    disabled
                                                                                 />
                                                                             </ClassNameInput>
                                                                         </div>
@@ -1106,6 +1130,11 @@ const ClassNameInput = styled.div`
         :focus {
             outline: none !important;
             border: 2px solid ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        }
+
+        &.detection {
+            font-weight: 600;
+
         }
     }
 `;

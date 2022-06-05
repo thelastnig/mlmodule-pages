@@ -228,8 +228,8 @@ const TeachableDeployModal = (props) => {
                         className={classes.tabbar}
                     >
                         <Tab label="Tensorflow.js" className={classes.tab} {...a11yProps(0)} />
-                        <Tab label="Tensorflow" className={classes.tab}  {...a11yProps(1)} />
-                        <Tab label="Tensorflow Lite" className={classes.tab}  {...a11yProps(2)} />
+                        {/* <Tab label="Tensorflow" className={classes.tab}  {...a11yProps(1)} />
+                        <Tab label="Tensorflow Lite" className={classes.tab}  {...a11yProps(2)} /> */}
                     </Tabs>
                     <TabPanel value={value} index={0} className='tabPanel'>
                         <div className='tabItem'>

@@ -38,6 +38,13 @@ export function useStateActionHandler() {
 		[dispatch],
 	);
 
+	const initData = useCallback(
+		(params) => {
+			dispatch(reducer.actions.initData(params));
+		},
+		[dispatch],
+	);
+
 	const addClass = useCallback(
 		(params = {}) => {
 			dispatch(reducer.actions.addClass(params));
@@ -239,6 +246,7 @@ export function useStateActionHandler() {
 		changeList,
 		changeDetectionList,
 		onInitData,
+		initData,
 		addClass,
 		deleteClass,
 		reorderClass,

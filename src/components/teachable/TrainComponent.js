@@ -20,6 +20,14 @@ const batchSize = [4, 8, 16, 32, 64];
 const learningRate = [0.01, 0.001, 0.0001];
 const imageSize = 224
 
+function wait(ms) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        console.log("Done waiting");
+        resolve(ms)
+      }, ms )
+    })
+  }  
 
 const TrainComponent = (props) => {
     const { 
@@ -168,19 +176,22 @@ const TrainComponent = (props) => {
             return;
         }
         try {
-            console.log(transferRecognizer.countExamples());
             changeTraining({isTraining: true});
             await transferRecognizer.train({
               epochs: params.epochs,
+            //   batchSize: 64,
+            //   validationSplit: 0.2,
               callback: {
                 onEpochEnd: async (epoch, logs) => {
                   console.log(`Epoch ${epoch}: loss=${logs.loss}, accuracy=${logs.acc}`);
                   setCount(epoch);
                 }
               }
-            });
-            setTransferRecognizer(transferRecognizer);
-            changeTraining({isTraining: false, isTrained: true});
+            }).then(data => {
+                addHistory({history: data});
+                setTransferRecognizer(transferRecognizer);
+                changeTraining({isTraining: false, isTrained: true});
+            })
         } catch (error) {
             console.log(error);
             changeTraining({isTraining: false, isTrained: false});
@@ -192,6 +203,27 @@ const TrainComponent = (props) => {
                 clickUploadOpen(item.id, 'local', false, false);
             });
         }
+    }
+
+    const detectionTrain = async () => {
+        console.log('detection train start!');
+        changeDataloading({isDataloading: true});
+        await wait(7000);
+        console.log('timeout');
+        changeDataloading({isDataloading: false});
+        changeTraining({isTraining: true});            
+        for (let i = 0; i < params.epochs; i ++) {
+            await wait(300);
+            setCount(i);
+
+        }
+        changeTraining({isTraining: false, isTrained: true});
+        changeWorking({isWorking: false});
+        setCount(0);
+        props.setIsAlertTrainingOpen(false);
+
+
+
     }
 
     const onSetTrainClicked = (e) => {
@@ -210,7 +242,19 @@ const TrainComponent = (props) => {
                 }
             }
         } else {
-            if (detection_list[0].data.length < limitNum) {
+            const dectection_data = detection_list[0].data;
+            if (dectection_data.length < limitNum) {
+                props.setIsAlertDataOpen(true);
+                return;
+            }
+            let isAnnotation = true;
+            dectection_data.forEach(item => {
+                if (item.annotation_fileupload.length === 0 && item.annotation_tool.length === 0) {
+                    isAnnotation = false;
+                    return;
+                }
+            });
+            if (!isAnnotation) {
                 props.setIsAlertDataOpen(true);
                 return;
             }
@@ -220,7 +264,11 @@ const TrainComponent = (props) => {
         props.setIsAlertTrainingOpen(true);
 
         if (taskType === 'image') {
-            imageTrain();
+            if (taskSubType === 'classification') {
+                imageTrain();
+            } else {
+                detectionTrain();
+            }
         } else {
             soundTrain();
         }

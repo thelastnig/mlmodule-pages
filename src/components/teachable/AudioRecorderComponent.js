@@ -88,7 +88,8 @@ const AudioRecorderComponent = (props) => {
                   enable: false
                 },
                 colors: function(steps) {
-                  var baseColors = [[0, 1, 55, 1], [2, 5, 90, 1], [2, 25, 139, 1], [37, 61, 161, 1], [176, 219, 241, 1]]; 
+                //   var baseColors = [[0, 1, 55, 1], [2, 5, 90, 1], [2, 25, 139, 1], [37, 61, 161, 1], [176, 219, 241, 1]]; 
+                  var baseColors = [[1, 0, 5, 1], [79, 17, 123, 1], [179, 54, 122, 1], [251, 134, 96, 1], [247, 242, 181, 1]]; 
 
                   var positions = [0, 0.15, 0.30, 0.50, 0.75];
                
@@ -239,14 +240,14 @@ const AudioRecorderComponent = (props) => {
 	return (
         <MediaUploader>
             <InfoArea>
-                <div className='infoText'>마이크</div>
-                <CloseOutlinedIcon className='icon' onClick={() => handleClick(id, 'local')}/>
+                <div className='infoText'>Mike</div>
+                <CloseOutlinedIcon className='icon close' onClick={() => handleClick(id, 'local')}/>
             </InfoArea>
             {
                 isAudioAvailable
                 ?
                 <>
-                    <ScreenArea>
+                    <ScreenArea isRecording={isRecording} audioURL={audioURL}>
                         {/* <div className='screenWrapper'> */}
                             <div className='canvasWrapper'>
                                 <canvas id="canvas" className='soundCanvas' width="1160" height="58"></canvas>
@@ -261,7 +262,7 @@ const AudioRecorderComponent = (props) => {
                             <div className='playDevice'>
                                 <audio src={audioURL} controls controlsList='nodownload' id='audio1' />              
                             </div>
-                            <div className='extractButton' onClick={extractSamples}>샘플 추출</div>
+                            <div className='extractButton' onClick={extractSamples}>Extract Samples</div>
                             <div id='result'></div>
                             </>
                             :
@@ -272,11 +273,11 @@ const AudioRecorderComponent = (props) => {
                         {
                         isRecording
                         ?
-                        <div className='saveButton' onClick={stopRecording}>{String(timePassed)}초 녹음 중...</div>
+                        <div className='saveButton ing'>{String(timePassed)}s recoreded...</div>
                         :
-                        <div className='saveButton' onClick={startRecording}>20초 녹화하기</div>
+                        <div className='saveButton' onClick={startRecording}>Record (20s)</div>
                         }
-                        <SettingsOutlinedIcon className='icon'/>
+                        <SettingsOutlinedIcon className='icon setting'/>
                     </SaveArea>
                 </>
                 :
@@ -298,10 +299,10 @@ const MediaUploader = styled.div`
 
     .icon {
         font-size: 26px;
-        color: #1967D2;
+        color: white;
 
-        :hover {
-            color: #185ABC;
+        &.setting {
+            color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
         }
     }
 `;
@@ -314,9 +315,9 @@ const InfoArea = styled.div`
     align-items: center;
 
     .infoText {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 
@@ -325,22 +326,26 @@ const ScreenArea = styled.div`
     height: 75px;
     margin-top: 15px;
     margin-bottom: 15px;
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
     display: flex;
     flex-direction: row-reverse;
+
+    ${props => !props.isRecording && props.audioURL &&`
+        overflow-x: auto;
+    `}
 
     ::-webkit-scrollbar {
         width: 7px;
     }
     ::-webkit-scrollbar-thumb {
-        background-color: #AECBFA;
-        border-radius: 5px;
+        background-color: #899095;
+        border-radius: 7px;
         background-clip: padding-box;
     }
     ::-webkit-scrollbar-track {
-        background-color: ${TEACHABLE_COLOR_LIST.MIDDLE_LIGHT_MAIN_COLOR};
-        border-radius: 3px;
+        background-color: ${TEACHABLE_COLOR_LIST.GRAY};
+        border-radius: 7px;
     }
 
     .canvasWrapper {
@@ -364,13 +369,13 @@ const PlayArea = styled.div`
     .extractButton {
         width: 130px;
         padding: 8px 0px;
-        background: ${TEACHABLE_COLOR_LIST.MIDDLE_LIGHT_MAIN_COLOR};
-        border-radius: 5px;
-        color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        font-weight: 500;
+        border: 1px ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} solid;
         text-align: center;
 
         :hover {
-            background: ${TEACHABLE_COLOR_LIST.MIDDLE_MAIN_COLOR};
+            background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
         }
     }
 
@@ -394,17 +399,22 @@ const SaveArea = styled.div`
     .saveButton {
         width: 200px;
         padding: 8px 0px;
-        background: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
-        border-radius: 5px;
+        background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
         color: white;
         text-align: center;
+        font-size: 14px;
+        font-weight: 600;
 
         ${props => props.isRecording && `
             border: 2px solid black;
         `}
 
         :hover {
-            background: ${TEACHABLE_COLOR_LIST.HEAVY_STRONG_MAIN_COLOR};
+            background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
+        }
+
+        &.ing {
+            cursor: default;
         }
     }
 `;

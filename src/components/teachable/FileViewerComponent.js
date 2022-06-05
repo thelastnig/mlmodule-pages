@@ -151,7 +151,6 @@ const FileNumViewer = styled.div`
     font-size: 12px;
     font-weight: 600;
     color: white;
-
 `;
 
 const FileNull = styled.div`
