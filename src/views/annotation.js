@@ -39,6 +39,8 @@ const App = () => {
     } = useHandleState();
   const [ selectedIndex, setSelectedIndex ] = useState(0);
 	const [ imageList, setImageList ] = useState([]);
+	const [ annotationTags, setAnnotationTags ] = useState(['cat', 'dog', 'car', 'person']);
+	const [ selectedAnnotationId, setSelectedAnnotationId ] = useState(null);
 	const { changeDetectionList } = useStateActionHandler();
 
 	const id = detection_list[0].id;
@@ -61,9 +63,20 @@ const App = () => {
 			return () => window.removeEventListener('resize', onResize);
 	  }, []);
 
-	const onSelect = selectedId => console.log(selectedId);
+	const onSelect = (selectedId) => {
+		console.log(selectedId);
+		setSelectedAnnotationId(selectedId);
+	}
 
 	const onChange = (data) => {
+		if (data.length > 0) {
+			data.map(item => {
+				if (item.hasOwnProperty('comment')) {
+					if (annotationTags.indexOf(item.comment) === -1)
+						setAnnotationTags(annotationTags => [...annotationTags, item.comment]);
+				}
+			})
+		}
 		const changed_list = imageList.map((item, index) => {
         if (index === selectedIndex) {
 					return {
@@ -98,12 +111,42 @@ const App = () => {
 				return {
 					...item,
 					name: item.path,
-					
 				}
 			}
 		});
 		setImageList(changed_list);
 	};
+
+	const setAnnotationTag = (tag) => {
+		if (selectedAnnotationId === null) {
+			return;
+		}
+		const changed_list = imageList.map((item, index) => {
+			if (index === selectedIndex) {
+				const changed_annotation = item.annotation_tool.map((annotation) => {
+					if (annotation.id === selectedAnnotationId) {
+						return {
+							...annotation,
+							comment: tag
+						}
+					} else {
+						return annotation
+					}
+				});
+				return {
+					...item,
+					name: item.path,
+					annotation_tool: changed_annotation,
+				}
+			} else {
+				return {
+					...item,
+					name: item.path,
+				}
+			}
+		});
+		setImageList(changed_list);
+	}
 
 	const handleClickSubmit = () => {
 		// const dataList = detection_list[0].data;
@@ -172,7 +215,6 @@ const App = () => {
 		history.push('/easyml/image/detection/annotation');
 	}
 
-  
 	return (
 	  <AnnotationWrapper>
 		<LeftArea>
@@ -202,7 +244,14 @@ const App = () => {
 				?
 				<>
 				<AnnotationFileViewerComponent id={0} data={imageList} handleClickNext={handleClickNext}/>
-				<AnnotationDataComponent annotationIndex={0} annotationData={imageList[selectedIndex].annotation_tool} handleClickAnnotationDelete={handleClickAnnotationDelete}/>
+				<AnnotationDataComponent 
+					annotationIndex={0} 
+					annotationData={imageList[selectedIndex].annotation_tool} 
+					handleClickAnnotationDelete={handleClickAnnotationDelete}
+					annotationTags={annotationTags}
+					setAnnotationTags={setAnnotationTags}	
+					setAnnotationTag={setAnnotationTag}
+				/>
 				</>
 				:
 				null
