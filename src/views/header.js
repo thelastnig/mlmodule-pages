@@ -9,17 +9,18 @@ import { TEACHABLE_COLOR_LIST } from 'constants/common';
 const Header = (props) => {
     const history = useHistory();
 
-    const { taskType } = useHandleState();
+    const { taskType, taskSubType, isWorking } = useHandleState();
 
 	const handleButtonClick = (url) => {
 		history.push(url);
 	};
 
+
 	return (
         <HeaderWrapper>
             <div className='headerUpper'>
                 <div className='upperWrapper'>
-                    <div className='upperLeft'>
+                    <div className='upperLeft' onClick={() => handleButtonClick('/')}>
                         <img src={logo} height='22px'/>
                     </div>
                     <div className='upperRight'>
@@ -27,17 +28,20 @@ const Header = (props) => {
                     </div>
                 </div>
                 <div className='upperEnd'>
-                    <div className='upperEndItem status'>RUNNING</div>
+                    {
+                    isWorking
+                    ?
+                    <div className='upperEndItem running'>RUNNING</div>
+                    :
+                    <div className='upperEndItem ready'>READY</div>
+                    }
                     <div className='upperEndItem type'>CPU</div>
                 </div>
             </div>
             <div className='headerLower'>
-                <div className='visionWrapper'>
-                    <div className='item first'>Image Classification</div>
-                    <div className='item'>Object Detection</div>
-                </div>
-                <div className='soundWrapper'>
-                    <div className='item'>Sound Classification</div>
+                <div className='taskWrapper'>
+                    <div className='item first'>{taskType === 'image' ? 'VISION' : 'SOUND'}</div>
+                    <div className='item'>{taskSubType === 'classification' ? 'CLASSIFICATION' : 'DETECTION'}</div>
                 </div>
             </div>
         </HeaderWrapper>
@@ -71,17 +75,25 @@ const HeaderWrapper = styled.div`
         color: white;
     }
 
-    .visionWrapper {
+    .taskWrapper {
+        height: 25px;
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        margin-right: 40px;
-        border: 1px solid blue;
 
         .item {
-            cursor: pointer;
+            border-radius: 5px;
+            padding: 0 10px;
+            font-size: 12px;
+            border: 2px solid #E5A829;
+            color: #E5A829;
+            letter-spacing: 1px;
+            font-weight: 600;
             &.first {
-                margin-right: 20px;
+                margin-right: 10px;
+                border: 2px solid ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
+                color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
+
             }
         }
     }
@@ -104,6 +116,7 @@ const HeaderWrapper = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
     }
 
     .upperRight {
@@ -118,7 +131,6 @@ const HeaderWrapper = styled.div`
             &:hover {
                 color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
             }
-            
         }
     }
 
@@ -138,12 +150,17 @@ const HeaderWrapper = styled.div`
             padding-right: 8px;
             letter-spacing: 1px;
             background-color: rgba(55, 178, 77, .3);
-            color: #37b24d;
+            color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
             font-weight: 600;
 
             &.type {
                 color: #1967D2;
                 background-color: rgba(25, 113, 194, .3);
+            }
+
+            &.ready {
+                color: #E5A829;
+                background-color: #51380D;
             }
         }
     }

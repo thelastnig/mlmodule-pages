@@ -41,6 +41,9 @@ import * as speechCommands from '@tensorflow-models/speech-commands';
 // detection result
 import { Lightbox } from "react-modal-image";
 
+// realtime memory usage chart
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+
 const grid = 35;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
@@ -98,6 +101,19 @@ const Teachable = (props) => {
     const [ isAlertDataOpen, setIsAlertDataOpen ] = useState(false);
     const [ isOptionAreaOpen, seIsOptionAreaOpen ] = useState(true);
     const [ isOptionAreaClicked, setIsOptionAreaClicked ] = useState(false);
+    const [ memoryUsage, setMemoryUsage ] = useState([
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+        {x: 1, value: 0},
+    ]);
     const updateXarrow = useXarrow();
 
     // sound classification
@@ -112,6 +128,9 @@ const Teachable = (props) => {
 
 	const handleToggleDeployModal = () => {
         if (!isTrained) {
+            return;
+        }
+        if (taskSubType === 'detection') {
             return;
         }
         if (taskType === 'image') {
@@ -189,7 +208,6 @@ const Teachable = (props) => {
             changeDetectionList({
                 detection_list: changed_list
             });
-            
         }
 	};
 
@@ -327,7 +345,6 @@ const Teachable = (props) => {
         });
     };
 
-
     const xArrows = list.map((item, index) => {
         const end = isAnnotationOpen ? annotationModuleStartRef : trainModuleStartRef
         return <Xarrow
@@ -423,6 +440,31 @@ const Teachable = (props) => {
     :
     '모델을 학습하려면 샘플이 20개 이상 있어야 하며, 모든 샘플에 라벨링이 되어야 합니다.';
 
+
+    const useInterval = (callback, delay) => {
+        const savedCallback = useRef(); // 최근에 들어온 callback을 저장할 ref를 하나 만든다.
+      
+        useEffect(() => {
+            savedCallback.current = callback; // callback이 바뀔 때마다 ref를 업데이트 해준다.
+        }, [callback]);
+      
+        useEffect(() => {
+            function tick() {
+                savedCallback.current(); // tick이 실행되면 callback 함수를 실행시킨다.
+          }
+          if (delay !== null) { // 만약 delay가 null이 아니라면 
+                let id = setInterval(tick, delay); // delay에 맞추어 interval을 새로 실행시킨다.
+                return () => clearInterval(id); // unmount될 때 clearInterval을 해준다.
+          }
+        }, [delay]); // delay가 바뀔 때마다 새로 실행된다.
+    }
+
+    const recordingInterval = useInterval(() => {
+        const memory = window.performance.memory.usedJSHeapSize / Math.pow(1000, 2);
+        memoryUsage.shift();
+        setMemoryUsage([...memoryUsage, {x: 0, value: memory}]);
+    }, 2000);
+
 	return (
         <>
             {/* <ProgressIndicatorWrapper>
@@ -448,7 +490,25 @@ const Teachable = (props) => {
                             <KeyboardArrowLeftIcon className='toggleButton' />
                         }
                     </div>
-                    <div className='optionContent'></div>
+                    <div className='optionContent'>
+                        <div className='chartArea'>
+                            <ResponsiveContainer width="100%" height={200}>
+                            <AreaChart
+                                data={memoryUsage}
+                                margin={{
+                                    top: 10,
+                                    right: 15,
+                                    left: -20,
+                                    bottom: 0,
+                                }}
+                                >
+                                <XAxis tick={false}/>
+                                <YAxis tickLine={false} style={{ fontSize: '12px'}} />
+                                <Area type="monotone" dataKey="value" stroke="#1967D2" fill="rgba(25, 113, 194, .3)" />
+                            </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
                 </OptionArea>
                 <MainInnerWrapper>
                     <GridLines 
@@ -956,8 +1016,10 @@ const OptionArea = styled.div`
     .optionContent {
         width: 250px;
         height: 100%;
+        margin: 0 auto;
         background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
-
+    }
+    .chartArea {
     }
 `;
 

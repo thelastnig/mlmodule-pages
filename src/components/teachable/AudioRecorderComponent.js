@@ -90,6 +90,7 @@ const AudioRecorderComponent = (props) => {
                 colors: function(steps) {
                 //   var baseColors = [[0, 1, 55, 1], [2, 5, 90, 1], [2, 25, 139, 1], [37, 61, 161, 1], [176, 219, 241, 1]]; 
                   var baseColors = [[1, 0, 5, 1], [79, 17, 123, 1], [179, 54, 122, 1], [251, 134, 96, 1], [247, 242, 181, 1]]; 
+                //   var baseColors = [[69, 14, 87, 1], [59, 81, 139, 1], [32, 146, 140, 1], [96, 202, 98, 1], [253, 231, 37, 1]]; 
 
                   var positions = [0, 0.15, 0.30, 0.50, 0.75];
                
@@ -283,7 +284,7 @@ const AudioRecorderComponent = (props) => {
                 :
                 <ErrorMessageArea>
                     <div className='message'>
-                        마이크 연결 중 오류가 발생했습니다. 마이크가 제대로 연결되어 있는지 확인하세요.
+                        An error occurres. Please check your device.
                     </div>
                 </ErrorMessageArea>
             }
@@ -429,8 +430,7 @@ const ErrorMessageArea = styled.div`
 
     .message {
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 

@@ -156,7 +156,7 @@ const DeployComponent = (props) => {
                     <GetAppIcon className='headerIcon'></GetAppIcon>
                     <div className='headerText'>Deploy</div>
                 </HeaderText>
-                <HeaderContent isTrained={isTrained} onClick={props.handleToggleDeployModal}>
+                <HeaderContent isTrained={isTrained} onClick={props.handleToggleDeployModal} isDetection={taskSubType === 'detection' ? true : false}>
                     <SaveAltOutlinedIcon className='headerContentIcon'/>
                     <div className='headerContentText'>Deploy Model</div>
                 </HeaderContent>
@@ -290,14 +290,16 @@ const HeaderContent = styled.div`
     color: white;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    :hover {
-        background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
-    }
+    ${props => !props.isDetection && `
+        :hover {
+            background: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR_LIGHT};
+        }
+        cursor: pointer;
+    `}
 
     .headerContentText {
         margin-left: 10px;

@@ -232,7 +232,7 @@ const DeployAudioRecorderComponent = (props) => {
                 :
                 <ErrorMessageArea>
                     <div className='message'>
-                        마이크 연결 중 오류가 발생했습니다. 마이크가 제대로 연결되어 있는지 확인하세요.
+                        An error occurres. Please check your device.
                     </div>
                 </ErrorMessageArea>
             }
@@ -327,8 +327,7 @@ const ErrorMessageArea = styled.div`
 
     .message {
         font-size: 12px;
-        font-weight: 600;
-        color: #1967D2;
+        color: white;
     }
 `;
 

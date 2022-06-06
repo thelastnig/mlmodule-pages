@@ -62,7 +62,7 @@ const TeachableModal = (props) => {
     const classes = useStyles();
 
     // train data
-    const { taskType, params, list, history } = useHandleState();
+    const { taskType, taskSubType, params, list, history } = useHandleState();
 
     const data = list.map((item, index) => {
         return {
@@ -83,44 +83,87 @@ const TeachableModal = (props) => {
         const trainMetricList = history.history;
 
         if (taskType === 'image') {
-            lineData = history.epoch.map((epoch, index) => {
-                if (trainMetricList.acc[index] === undefined ||
-                    trainMetricList.val_acc[index] === undefined ||
-                    trainMetricList.loss[index] === undefined ||
-                    trainMetricList.val_loss[index] === undefined) {
-                    return null;
-                } else {
-                    return {
-                        name: String(epoch + 1),
-                        train: trainMetricList.acc[index].toFixed(3),
-                        validation: trainMetricList.val_acc[index].toFixed(3),
-                        trainLoss: trainMetricList.loss[index].toFixed(3),
-                        validationLoss: trainMetricList.val_loss[index].toFixed(3),
+            if (taskSubType === 'classification') {
+                lineData = history.epoch.map((epoch, index) => {
+                    if (trainMetricList.acc[index] === undefined ||
+                        trainMetricList.val_acc[index] === undefined ||
+                        trainMetricList.loss[index] === undefined ||
+                        trainMetricList.val_loss[index] === undefined) {
+                        return null;
+                    } else {
+                        return {
+                            name: String(epoch + 1),
+                            train: trainMetricList.acc[index].toFixed(3),
+                            validation: trainMetricList.val_acc[index].toFixed(3),
+                            trainLoss: trainMetricList.loss[index].toFixed(3),
+                            validationLoss: trainMetricList.val_loss[index].toFixed(3),
+                        }
                     }
+                });
+    
+                if (lineData[lineData.length - 1] === null) {        
+                    trainFinalMetric = (lineData[lineData.length - 2].train) * 100
+                    valFinalMetric = (lineData[lineData.length - 2].validation) * 100;
+                    trainFinalLoss = lineData[lineData.length - 2].trainLoss;
+                    valFinalLoss = lineData[lineData.length - 2].validationLoss;
+                } else {
+                    trainFinalMetric = (lineData[lineData.length - 1].train) * 100
+                    valFinalMetric = (lineData[lineData.length - 1].validation) * 100;
+                    trainFinalLoss = lineData[lineData.length - 1].trainLoss;
+                    valFinalLoss = lineData[lineData.length - 1].validationLoss;
                 }
-            });
-
-            if (lineData[lineData.length - 1] === null) {        
-                trainFinalMetric = (lineData[lineData.length - 2].train) * 100
-                valFinalMetric = (lineData[lineData.length - 2].validation) * 100;
-                trainFinalLoss = lineData[lineData.length - 2].trainLoss;
-                valFinalLoss = lineData[lineData.length - 2].validationLoss;
+            
+                pieTrainData = [
+                    { name: "Train", value: trainFinalMetric},
+                    { name: "Train left", value: 100-trainFinalMetric},
+                ];
+            
+                pieValData = [
+                    { name: "Val", value: valFinalMetric},
+                    { name: "Val left", value: 100-valFinalMetric},
+                ];
             } else {
-                trainFinalMetric = (lineData[lineData.length - 1].train) * 100
-                valFinalMetric = (lineData[lineData.length - 1].validation) * 100;
-                trainFinalLoss = lineData[lineData.length - 1].trainLoss;
-                valFinalLoss = lineData[lineData.length - 1].validationLoss;
+                lineData = history.epoch.map((epoch, index) => {
+                    if (trainMetricList.map[index] === undefined ||
+                        trainMetricList.val_map[index] === undefined ||
+                        trainMetricList.loss[index] === undefined ||
+                        trainMetricList.val_loss[index] === undefined) {
+                        return null;
+                    } else {
+                        return {
+                            name: String(epoch + 1),
+                            train: trainMetricList.map[index].toFixed(3),
+                            validation: trainMetricList.val_map[index].toFixed(3),
+                            trainLoss: trainMetricList.loss[index].toFixed(3),
+                            validationLoss: trainMetricList.val_loss[index].toFixed(3),
+                        }
+                    }
+                });
+    
+                if (lineData[lineData.length - 1] === null) {        
+                    trainFinalMetric = (lineData[lineData.length - 2].train) * 100
+                    valFinalMetric = (lineData[lineData.length - 2].validation) * 100;
+                    trainFinalLoss = lineData[lineData.length - 2].trainLoss;
+                    valFinalLoss = lineData[lineData.length - 2].validationLoss;
+                } else {
+                    trainFinalMetric = (lineData[lineData.length - 1].train) * 100
+                    valFinalMetric = (lineData[lineData.length - 1].validation) * 100;
+                    trainFinalLoss = lineData[lineData.length - 1].trainLoss;
+                    valFinalLoss = lineData[lineData.length - 1].validationLoss;
+                }
+            
+                pieTrainData = [
+                    { name: "Train", value: trainFinalMetric},
+                    { name: "Train left", value: 100-trainFinalMetric},
+                ];
+            
+                pieValData = [
+                    { name: "Val", value: valFinalMetric},
+                    { name: "Val left", value: 100-valFinalMetric},
+                ];
+
             }
-        
-            pieTrainData = [
-                { name: "Train", value: trainFinalMetric},
-                { name: "Train left", value: 100-trainFinalMetric},
-            ];
-        
-            pieValData = [
-                { name: "Val", value: valFinalMetric},
-                { name: "Val left", value: 100-valFinalMetric},
-            ];
+
         } else {
             lineData = history.epoch.map((epoch, index) => {
                 if (trainMetricList.acc[index] === undefined ||
