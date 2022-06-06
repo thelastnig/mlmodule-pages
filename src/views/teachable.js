@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled, { keyframes, css } from 'styled-components';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -41,8 +42,10 @@ import * as speechCommands from '@tensorflow-models/speech-commands';
 // detection result
 import { Lightbox } from "react-modal-image";
 
-// realtime memory usage chart
+// option area
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const grid = 35;
 
@@ -64,6 +67,8 @@ const queryAttr = 'data-rbd-drag-handle-draggable-id';
 
 
 const Teachable = (props) => {
+    const history = useHistory();
+
     const dataModuleRef = useRef(null);
     const annotationModuleStartRef = useRef(null);
     const annotationModuleEndRef = useRef(null);
@@ -75,6 +80,7 @@ const Teachable = (props) => {
         taskSubType, 
         class_count, 
         list, 
+        params,
         detection_list, 
         isWorking,
         isTrained,
@@ -465,6 +471,23 @@ const Teachable = (props) => {
         setMemoryUsage([...memoryUsage, {x: 0, value: memory}]);
     }, 2000);
 
+    const raw_list = taskSubType === 'classification' ? list : detection_list;
+    const stepDataItem = raw_list.map((item, index) => {
+        if (taskSubType === 'classification') {
+            return (
+                <div key={index}>{item.class_name}: {item.data.length} {item.data.length <= 1 ? 'file' : 'files'}</div>
+            )
+        } else {
+            return (
+                <div key={index}>{item.data.length} {item.data.length <= 1 ? 'file' : 'files'}</div>
+            )
+        }
+    })
+
+    const handleClickReset = () => {
+        window.location.reload();
+    }
+
 	return (
         <>
             {/* <ProgressIndicatorWrapper>
@@ -491,6 +514,10 @@ const Teachable = (props) => {
                         }
                     </div>
                     <div className='optionContent'>
+                        <div className='itemInfo'>
+                            <PlayArrowIcon className='optionIcon'></PlayArrowIcon>
+                            <div className='optionText'>Memory Usage (MB)</div>
+                        </div>
                         <div className='chartArea'>
                             <ResponsiveContainer width="100%" height={200}>
                             <AreaChart
@@ -508,6 +535,78 @@ const Teachable = (props) => {
                             </AreaChart>
                             </ResponsiveContainer>
                         </div>
+
+                        <div className='itemInfo'>
+                            <PlayArrowIcon className='optionIcon'></PlayArrowIcon>
+                            <div className='optionText'>ML Steps</div>
+                        </div>
+                        <div className='stepArea'>
+                            <div className='stepItem'>
+                                <div className='stepTitleWrapper'>
+                                    <div className='stepTitle'>Data</div>
+                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                </div>
+                                <div className='stepContent'>
+                                    {stepDataItem}
+                                </div>
+                            </div>
+                            { 
+                            taskSubType === 'detection'
+                            ?
+                            <>                
+                            <div className='stepLine'></div>
+                            <div className='stepTriangle'></div>
+                            <div className='stepItem'>
+                                <div className='stepTitleWrapper'>
+                                    <div className='stepTitle'>Annotation</div>
+                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                </div>
+                                <div className='stepContent'>
+                                </div>
+                            </div>
+                            </>
+                            :
+                            null
+                            }
+                            <div className='stepLine'></div>
+                            <div className='stepTriangle'></div>
+                            <div className='stepItem'>
+                                <div className='stepTitleWrapper'>
+                                    <div className='stepTitle'>Train</div>
+                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                </div>
+                                <div className='stepContent'>
+                                    <span>Epochs: {params.epochs}</span><br/>
+                                    {
+                                    taskType === 'image'
+                                    ?
+                                    <>
+                                    <span>Batch Size: {params.batch_size}</span><br/>
+                                    <span>Learning Rate: {params.learning_rate}</span>
+                                    </>
+                                    :
+                                    null
+                                    }
+                                </div>
+                            </div>
+                            <div className='stepLine'></div>
+                            <div className='stepTriangle'></div>
+                            <div className='stepItem'>
+                                <div className='stepTitleWrapper'>
+                                    <div className='stepTitle'>Deploy</div>
+                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                </div>
+                                <div className='stepContent'>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div className='itemInfo reset'>
+                            <PlayArrowIcon className='optionIcon'></PlayArrowIcon>
+                            <div className='optionText'>Reset Task</div>
+                        </div>
+                        <div className='resetButton' onClick={handleClickReset}>Reset</div>
                     </div>
                 </OptionArea>
                 <MainInnerWrapper>
@@ -1019,7 +1118,95 @@ const OptionArea = styled.div`
         margin: 0 auto;
         background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
     }
+
+    .itemInfo {
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        color: white;
+
+        &.reset {
+            margin-top: 40px;
+
+        }
+
+        .optionIcon {
+            font-size: 16px;
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+        .optionText {
+            font-size: 12px;
+        }
+    }
     .chartArea {
+        
+    }
+
+    .stepArea  {
+        width: 150px;
+        margin: 0 auto;
+    }
+
+    .stepItem {
+        border: 1px solid ${TEACHABLE_COLOR_LIST.GRAY};
+        border-radius: 5px;
+        color: ${TEACHABLE_COLOR_LIST.GRAY};
+        font-size: 12px;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .stepTitleWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .stepTitle {
+        font-weight: 600;
+    }
+
+    .stepIcon {
+        font-size: 16px;
+        color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
+        margin-left: 5px;
+    }
+
+    .stepLine {
+        margin-left: 75px;
+        border-left: 1px solid ${TEACHABLE_COLOR_LIST.GRAY};
+        height: 40px;
+    }
+
+    .stepTriangle {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 5px 0 5px;
+        border-color: ${TEACHABLE_COLOR_LIST.GRAY} transparent transparent transparent;
+        margin-left: 70px;
+    }
+
+    .resetButton {
+        margin: 0 auto;
+        margin-top: 20px;
+        width: 80%;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        cursor: pointer;
+        font-weight: 600;
+        border: 1px ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} solid;
+
+        :hover {
+            background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
+        }
+        
     }
 `;
 
