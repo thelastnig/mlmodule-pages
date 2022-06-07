@@ -233,7 +233,7 @@ const TrainComponent = (props) => {
         changeDataloading({isDataloading: false});
         changeTraining({isTraining: true});            
         for (let i = 0; i < params.epochs; i ++) {
-            await wait(300);
+            await wait(200);
             setCount(i);
         }
 

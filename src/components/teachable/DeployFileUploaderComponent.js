@@ -55,15 +55,15 @@ const DeployFileUploaderComponent = (props) => {
     // google Driver
     const [openPicker, data, authResponse] = useDrivePicker();  
     const handleOpenPicker = () => {
-        openPicker({
-            clientId: process.env.REACT_APP_CLIENT_ID,
-            developerKey: process.env.REACT_APP_API_KEY,
-            viewId: "DOCS_IMAGES",
-            showUploadView: true,
-            showUploadFolders: true,
-            supportDrives: true,
-            multiselect: false,
-        });
+        // openPicker({
+        //     clientId: process.env.REACT_APP_CLIENT_ID,
+        //     developerKey: process.env.REACT_APP_API_KEY,
+        //     viewId: "DOCS_IMAGES",
+        //     showUploadView: true,
+        //     showUploadFolders: true,
+        //     supportDrives: true,
+        //     multiselect: false,
+        // });
     };
 
     useEffect(() => {
