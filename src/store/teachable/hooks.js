@@ -241,6 +241,34 @@ export function useStateActionHandler() {
 		[dispatch],
 	);
 
+	const changeDataStep = useCallback(
+		(params) => {
+			dispatch(reducer.actions.changeDataStep(params));
+		},
+		[dispatch],
+	);
+
+	const changeAnnotationStep = useCallback(
+		(params) => {
+			dispatch(reducer.actions.changeAnnotationStep(params));
+		},
+		[dispatch],
+	);
+
+	const changeDeployStep = useCallback(
+		(params) => {
+			dispatch(reducer.actions.changeDeployStep(params));
+		},
+		[dispatch],
+	);
+
+	const addAnnotationData = useCallback(
+		(params) => {
+			dispatch(reducer.actions.addAnnotationData(params));
+		},
+		[dispatch],
+	);
+
 	return {
 		setTaskType,
 		changeList,
@@ -275,5 +303,9 @@ export function useStateActionHandler() {
 		hideDataUploadAlert,
 		addDetectionResultImage,
 		toggleDetectionResultImageClick,
+		changeDataStep,
+		changeAnnotationStep,
+		changeDeployStep,
+		addAnnotationData
 	};
 }

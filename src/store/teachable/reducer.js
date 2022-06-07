@@ -34,6 +34,9 @@ export const STOP_TRAIN = 'teachable/STOP_TRAIN';
 export const CHANGE_WORKING = 'teachable/CHANGE_WORKING';
 export const CHANGE_DATALOADING = 'teachable/CHANGE_DATALOADING';
 export const CHANGE_TRAINING = 'teachable/CHANGE_TRAINING';
+export const CHANGE_DATA_STEP = 'teachable/CHANGE_DATA_STEP';
+export const CHANGE_ANNOTATION_STEP = 'teachable/CHANGE_ANNOTATION_STEP';
+export const CHANGE_DEPLOY_STEP = 'teachable/CHANGE_DEPLOY_STEP';
 
 // Deploy - convert model format
 export const CONVERT_TEACHABLE_MODEL = 'teachable/CONVERT_TEACHABLE_MODEL';
@@ -52,6 +55,9 @@ export const SET_DATA_SAMPLE_INDEX = 'teachable/SET_DATA_SAMPLE_INDEX';
 
 // Audio
 export const ADD_AUDIO_FULL_DATA = 'teachable/ADD_AUDIO_FULL_DATA';
+
+// Detection
+export const ADD_ANNOTATION_DATA = 'teachable/ADD_ANNOTATION_DATA';
 
 
 const setTaskType = (data) => ({ type: SET_TASKTYPE, payload: data });
@@ -88,6 +94,9 @@ const stopTrain = (data) => ({ type: STOP_TRAIN, payload: data });
 const changeWorking = (data) => ({ type: CHANGE_WORKING, payload: data });
 const changeDataloading = (data) => ({ type: CHANGE_DATALOADING, payload: data });
 const changeTraining = (data) => ({ type: CHANGE_TRAINING, payload: data });
+const changeDataStep = (data) => ({ type: CHANGE_DATA_STEP, payload: data });
+const changeAnnotationStep = (data) => ({ type: CHANGE_ANNOTATION_STEP, payload: data });
+const changeDeployStep = (data) => ({ type: CHANGE_DEPLOY_STEP, payload: data });
 
 // Deploy - convert model format
 const convertTeachableModel = (data) => ({ type: CONVERT_TEACHABLE_MODEL, payload: data });
@@ -103,6 +112,9 @@ const setGoogleAccessToken = (data) => ({ type: SET_GOOGLE_ACCESS_TOKEN, payload
 const showDataUploadAlert = (data) => ({ type: SHOW_DATA_UPLOAD_ALERT, payload: data });
 const hideDataUploadAlert = (data) => ({ type: HIDE_DATA_UPLOAD_ALERT, payload: data });
 const setDataSampleIndex = (data) => ({ type: SET_DATA_SAMPLE_INDEX, payload: data });
+
+// Detection
+const addAnnotationData = (data) => ({ type: ADD_ANNOTATION_DATA, payload: data });
 
 
 export const actions = {
@@ -142,6 +154,10 @@ export const actions = {
 	setDataSampleIndex,
 	addDetectionResultImage,
 	toggleDetectionResultImageClick,
+	changeDataStep,
+	changeAnnotationStep,
+	changeDeployStep,
+	addAnnotationData,
 };
 
 const initialState = {
@@ -196,6 +212,10 @@ const initialState = {
 	isDataUploadAlertOpen: false,
 	detectionResultImage: null, 
 	isDetectionResultImageClick: false,
+	isDataStepDone: false,
+	isAnnotationStepDone: false,
+	isDeployStepDone: false,
+	annotationData: {},
 };
 
 const reducer = (state = initialState, action) =>
@@ -322,6 +342,18 @@ const reducer = (state = initialState, action) =>
 				break;
 			case TOGGLE_DETECTION_RESULT_IMAGE_CLICK:
 				draft.isDetectionResultImageClick = action.payload.isDetectionResultImageClick;
+				break;
+			case CHANGE_DATA_STEP:
+				draft.isDataStepDone = action.payload.isDataStepDone;
+				break;
+			case CHANGE_ANNOTATION_STEP:
+				draft.isAnnotationStepDone = action.payload.isAnnotationStepDone;
+				break;
+			case CHANGE_DEPLOY_STEP:
+				draft.isDeployStepDone = action.payload.isDeployStepDone;
+				break;
+			case ADD_ANNOTATION_DATA:
+				draft.annotationData = action.payload.annotationData;
 				break;
 			default:
 				return state;

@@ -2,9 +2,10 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { colors } from 'styles';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
-import { PageWrapper, BodyFullContainer, TitleComponent } from 'components/common/StyledComponent';
+import { PageWrapper, BodyFullContainer } from 'components/common/StyledComponent';
 import imageClassificationImg from 'assets/img/image_classification.jpg';
 import soundClassificationImg from 'assets/img/sound_classification.jpg';
+import objectDetectionImg from 'assets/img/object_detection.jpg';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
@@ -17,7 +18,6 @@ const TeachableMain = (props) => {
 
 	return (
         <PageWrapper>
-            <TitleComponent text={'EASY ML'} />
             <BodyFullContainer>
                 <InnerWrapper>
                     <TaskItem onClick={() => handleClick('image', 'classification')}>
@@ -25,9 +25,13 @@ const TeachableMain = (props) => {
                             <img src={imageClassificationImg} width="340px" alt='image classification'/>
                         </div>
                         <div className='textArea'>
-                            <div className='title'>이미지 분류&nbsp;&nbsp;<span>Image Classification</span></div>
+                            <div className='taskWrapper'>
+                                <div className='title'>이미지 분류</div>
+                                <div className='item first'>VISION</div>
+                                <div className='item'>CLASSIFICATION</div>
+                            </div>
                             <div className='desc'>
-                                파일 또는 웹캠에서 가져온 이미지를 학습
+                                파일 또는 웹캠에서 가져온 이미지 분류 학습
                             </div>
                         </div>
                     </TaskItem>
@@ -35,12 +39,16 @@ const TeachableMain = (props) => {
                     
                     <TaskItem onClick={() => handleClick('image', 'detection')}>
                         <div className='imageArea'>
-                            <img src={imageClassificationImg} width="340px" alt='image detection'/>
+                            <img src={objectDetectionImg} width="340px" alt='image detection'/>
                         </div>
                         <div className='textArea'>
-                            <div className='title'>객체 인식&nbsp;&nbsp;<span>Image detection</span></div>
+                            <div className='taskWrapper'>
+                                <div className='title'>객체 인식</div>
+                                <div className='item first'>VISION</div>
+                                <div className='item detection'>DETECTION</div>
+                            </div>
                             <div className='desc'>
-                                파일 또는 웹캠에서 가져온 이미지를 학습
+                                파일 또는 웹캠에서 가져온 객체 인식 학습
                             </div>
                         </div>
                     </TaskItem>
@@ -50,9 +58,13 @@ const TeachableMain = (props) => {
                             <img src={soundClassificationImg} width="340px" alt='image classification'/>
                         </div>
                         <div className='textArea'>
-                            <div className='title'>사운드 분류&nbsp;&nbsp;<span>Sound Classification</span></div>
+                            <div className='taskWrapper'>
+                                <div className='title'>사운드 분류</div>
+                                <div className='item first sound'>SOUND</div>
+                                <div className='item'>CLASSIFICATION</div>
+                            </div>
                             <div className='desc'>
-                                파일 또는 마이크에서 가져온 사운드를 학습
+                                파일 또는 마이크에서 가져온 사운드 분류 학습
                             </div>
                         </div>
                     </TaskItem>
@@ -88,18 +100,57 @@ const TaskItem = styled.div`
 
     .textArea {
         margin-top: 30px;
-        .title {
-            font-size: 26px;
-            font-weight: 700;
-            span {
-                font-size: 14px;
-                color: gray;
-                font-weight: 500;
+
+        .taskWrapper {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+
+            .title {
+                margin-right: 15px;
+                font-size: 24px;
+                font-weight: 800;
+                font-family: 'Nanum Gothic' !important;
+                span {
+                    font-size: 14px;
+                    color: gray;
+                    font-weight: 500;
+                }
+            }
+    
+            .item {
+                height: 25x;
+                border-radius: 5px;
+                padding: 0 10px;
+                font-size: 10px;
+                border: 2px solid #E5A829;
+                color: #E5A829;
+                letter-spacing: 1px;
+                font-weight: 600;
+                &.first {
+                    margin-right: 10px;
+                    border: 2px solid ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
+                    color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
+                }
+
+                &.sound {
+                    border: 2px solid ${TEACHABLE_COLOR_LIST.PURPLE};
+                    color: ${TEACHABLE_COLOR_LIST.PURPLE};
+                }
+
+                &.detection {
+                    border: 2px solid ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+                    color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+                }
             }
         }
+
         .desc {
             margin-top: 30px;
             font-size: 16px;
+            font-weight: 600;
+            color: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_LIGHT};
+            font-family: 'Nanum Gothic' !important;
         }
     }
 `;

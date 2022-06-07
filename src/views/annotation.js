@@ -53,15 +53,16 @@ const App = () => {
 	const [pageSize, setPageSize] = useState({
 			width: window.innerWidth - 300,
 			height: window.innerHeight - 150
-	  });
-	  const onResize = () => {
-			setPageSize({ width: window.innerWidth - 300, height: window.innerHeight - 150});
-	  };
+	});
 	
-	  useEffect(() => {
-			window.addEventListener('resize', onResize);
-			return () => window.removeEventListener('resize', onResize);
-	  }, []);
+	const onResize = () => {
+		setPageSize({ width: window.innerWidth - 300, height: window.innerHeight - 150});
+	};
+	
+	useEffect(() => {
+		window.addEventListener('resize', onResize);
+		return () => window.removeEventListener('resize', onResize);
+	}, []);
 
 	const onSelect = (selectedId) => {
 		console.log(selectedId);

@@ -116,7 +116,7 @@ const FileNumViewer = styled.div`
 
     .title {
         margin-left: 10px;
-        margin-right: 190px;
+        margin-right: 180px;
         font-size: 14px;
         font-weight: 600;
     }
@@ -138,7 +138,7 @@ const FileNull = styled.div`
 
 const FileViewer = styled.div`
     width: 100%;
-    height: 310px;
+    height: 290px;
     overflow-y: auto;
 
     .tableHeader {

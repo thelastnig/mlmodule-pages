@@ -40,6 +40,8 @@ const TrainComponent = (props) => {
         isDataloading,
         isTraining,
         isTrained,
+        isDataStepDone,
+        isAnnotationStepDone,
     } = useHandleState();
     const { changeParams,
         initParams, 
@@ -50,6 +52,7 @@ const TrainComponent = (props) => {
         changeDataloading,
         changeTraining,
         stopTrain,
+        addAnnotationData,
     } = useStateActionHandler();
     const { showAlert } = useAlertAction();
     const [ isSettingOpen, setIsSettingOpen ] = useState(true);
@@ -205,7 +208,28 @@ const TrainComponent = (props) => {
         console.log('detection train start!');
         changeDataloading({isDataloading: true});
         await wait(7000);
-        console.log('timeout');
+
+        let annotations = {};
+        const dectection_data = detection_list[0].data;
+        dectection_data.forEach(item => {
+            item.annotation_fileupload.forEach(annotation => {
+                if (!annotations.hasOwnProperty(annotation.comment)) {
+                    annotations[annotation.comment] = 1;
+                } else {
+                    annotations[annotation.comment] = annotations[annotation.comment] + 1;
+                }
+            })
+            item.annotation_tool.forEach(annotation => {
+                if (!annotations.hasOwnProperty(annotation.comment)) {
+                    annotations[annotation.comment] = 1;
+                } else {
+                    annotations[annotation.comment] = annotations[annotation.comment] + 1;
+                }
+            })
+        });
+        addAnnotationData({
+            annotationData: annotations
+        });
         changeDataloading({isDataloading: false});
         changeTraining({isTraining: true});            
         for (let i = 0; i < params.epochs; i ++) {
@@ -281,31 +305,16 @@ const TrainComponent = (props) => {
         const limitNum = taskType === 'image' ? taskType === 'classification' ? 10 : 20 : 20;
 
         if (taskSubType === 'classification') {
-            if (list.length < 2) {
+            if (!isDataStepDone) {
                 props.setIsAlertDataOpen(true);
                 return;
-            }
-    
-            for (let i = 0; i < list.length; i++) {
-                if (list[i].data.length < limitNum) {
-                    props.setIsAlertDataOpen(true);
-                    return;
-                }
             }
         } else {
-            const dectection_data = detection_list[0].data;
-            if (dectection_data.length < limitNum) {
+            if (!isDataStepDone) {
                 props.setIsAlertDataOpen(true);
                 return;
             }
-            let isAnnotation = true;
-            dectection_data.forEach(item => {
-                if (item.annotation_fileupload.length === 0 && item.annotation_tool.length === 0) {
-                    isAnnotation = false;
-                    return;
-                }
-            });
-            if (!isAnnotation) {
+            if (!isAnnotationStepDone) {
                 props.setIsAlertDataOpen(true);
                 return;
             }

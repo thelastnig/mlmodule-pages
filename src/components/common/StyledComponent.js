@@ -69,7 +69,7 @@ export const BodyContainer = styled.div`
 `;
 
 export const BodyFullContainer = styled.div`
-	background: #f4f7fc;
+	background: #dee2e6;
 	min-width: 1652px;
 	height: calc(100% - 80px);
 `;

@@ -6,6 +6,7 @@ import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import NormalIcon from 'assets/icon/correct.png';
 import NotCheckedIcon from 'assets/icon/notCheck.png';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 
 const FileViewerComponent = (props) => {

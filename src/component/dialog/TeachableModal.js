@@ -25,6 +25,7 @@ import PhotoLibraryOutlinedIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 import NormalIcon from 'assets/icon/correct.png';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 // modal
 import Dialog from '@material-ui/core/Dialog';
@@ -53,6 +54,10 @@ const colorList = [
     {'name': 'blue', 'valueColor': '#D2E3FC'},
 ];
   
+const backgroundColor = '#10111A';
+const blockColor = '#201F32';
+const yellowColor = '#F4D73C';
+const greenColor = '#15B0A2';
 
 const TeachableModal = (props) => {
     // modal
@@ -62,7 +67,7 @@ const TeachableModal = (props) => {
     const classes = useStyles();
 
     // train data
-    const { taskType, taskSubType, params, list, history } = useHandleState();
+    const { taskType, taskSubType, params, list, detection_list, history, annotationData } = useHandleState();
 
     const data = list.map((item, index) => {
         return {
@@ -194,17 +199,27 @@ const TeachableModal = (props) => {
     }
     
     const classItems = data.map((item, index) => {
-        const colorIndex = index % colorList.length;
         return (
             <ClassItem key={index} index={index}>
                 <div className='classIndex'>{index + 1}</div>
                 <div className='classText'>{item.subject}</div>
-                <div className='classStatus'><div className='statusIcon'></div></div>
+                <div className='classStatus'><CheckCircleIcon className='statusIcon' /></div>
                 <div className='classCount'>{item.class}</div>
             </ClassItem>
         );
     });
 
+    const annotationItems = Object.entries(annotationData).map(([key, value], index) => {
+        return (
+            <ClassItem key={index} index={index}>
+                <div className='classIndex'>{index + 1}</div>
+                <div className='classText'>{key}</div>
+                <div className='classStatus'><CheckCircleIcon className='statusIcon' /></div>
+                <div className='classCount'>{value}</div>
+            </ClassItem>
+        );
+    });
+        
     useEffect(() => {
 		if (isShow) {
             console.log('open');
@@ -298,8 +313,8 @@ const TeachableModal = (props) => {
                                             }} />
                                         <Tooltip />
                                         <Legend align='right' iconSize={12}/>
-                                        <Line type="monotone" dataKey="train" stroke={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} dot={false} strokeWidth={3}/>
-                                        <Line type="monotone" dataKey="validation" stroke={TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR} dot={false} strokeWidth={3}/>
+                                        <Line type="monotone" dataKey="train" stroke={yellowColor} dot={false} strokeWidth={3}/>
+                                        <Line type="monotone" dataKey="validation" stroke={greenColor} dot={false} strokeWidth={3}/>
                                     </LineChart>
                                 </ResponsiveContainer>
                             <ResponsiveContainer width={750} height={220}>
@@ -330,8 +345,8 @@ const TeachableModal = (props) => {
                                         }} />3EA2EA
                                     <Tooltip />
                                     <Legend align='right' iconSize={12}/>
-                                    <Line type="monotone" dataKey="trainLoss" stroke={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} dot={false} strokeWidth={3}/>
-                                    <Line type="monotone" dataKey="validationLoss" stroke={TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR} dot={false} strokeWidth={3}/>
+                                    <Line type="monotone" dataKey="trainLoss" stroke={yellowColor} dot={false} strokeWidth={3}/>
+                                    <Line type="monotone" dataKey="validationLoss" stroke={greenColor} dot={false} strokeWidth={3}/>
                                 </LineChart>
                             </ResponsiveContainer>
                             </Charts>
@@ -362,9 +377,9 @@ const TeachableModal = (props) => {
                                                         stroke="none">
                                                             {pieTrainData.map((entry, index) => {
                                                                 if (index === 1) {
-                                                                    return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND} />; 
+                                                                    return <Cell key={`cell-${index}`} fill={blockColor} />; 
                                                                 }
-                                                                return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR}/>;
+                                                                return <Cell key={`cell-${index}`} fill={yellowColor}/>;
                                                             })}
                                                         <Label 
                                                             width={20}
@@ -412,9 +427,9 @@ const TeachableModal = (props) => {
                                                             stroke="none">
                                                                 {pieTrainData.map((entry, index) => {
                                                                     if (index === 1) {
-                                                                        return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND} />; 
+                                                                        return <Cell key={`cell-${index}`} fill={blockColor} />; 
                                                                     }
-                                                                    return <Cell key={`cell-${index}`} fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR} />;
+                                                                    return <Cell key={`cell-${index}`} fill={yellowColor} />;
                                                                 })}
                                                             <Label 
                                                                 width={20}
@@ -443,7 +458,10 @@ const TeachableModal = (props) => {
                                 <div className='dataText'><div>Data</div></div>
                                 <CloseIcon className='closeIcon' onClick={onCloseClicked}/>
                             </CloseButton>
-                            <DataContentArea>
+                            <DataContentArea isDetection={taskSubType === 'detection' ? true : false}>
+                                {                                    
+                                taskSubType === 'classification'
+                                ?
                                 <ResponsiveContainer width={340} height={340} className='responsiveContainer'>
                                     <RadarChart
                                         cx="50%"
@@ -461,20 +479,32 @@ const TeachableModal = (props) => {
                                         <Radar
                                             name="test"
                                             dataKey="class"
-                                            stroke={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR}
-                                            fill={TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR}
+                                            stroke={yellowColor}
+                                            fill={yellowColor}
                                             fillOpacity={0.5}
                                         />
                                     </RadarChart>
                                 </ResponsiveContainer>
-                                <ClassItemArea>   
+                                :
+                                <>
+                                    <div className='dataInfo'>{detection_list[0].data.length} files</div>
+                                    <div className='annotationInfo'>Annotation Info</div>
+                                </>
+                                }
+                                <ClassItemArea isDetection={taskSubType === 'detection' ? true : false}>   
                                     <ClassHeaderArea>
                                         <div className='classIndex'>Index</div>
                                         <div className='classText'>Class Name</div>
                                         <div className='classStatus'>Status</div>
                                         <div className='classCount'>Count</div>
                                     </ClassHeaderArea>
-                                    {classItems}
+                                    {
+                                        taskSubType === 'classification'
+                                        ?
+                                        classItems
+                                        :
+                                        annotationItems
+                                    }
                                 </ClassItemArea>
                             </DataContentArea>      
                         </DataArea>
@@ -502,8 +532,9 @@ export default TeachableModal;
 const Wrapper = styled.div`
 	width: 1200px;
 	height: 100%;
-	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
-    overflow-y: auto;
+	background: ${backgroundColor};
+    overflow-x: hidden;
+    overflow-y: hidden;
 	margin: 0 auto;
 	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 
@@ -523,7 +554,7 @@ const InfoArea = styled.div`
 const MenuArea = styled.div`
 	width: 65px;
 	height: 100%;
-	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
+	background: ${blockColor};
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -630,7 +661,7 @@ const Parameter = styled.div`
 	width: 170px;
 	height: 100%;
     color: white;
-	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
+	background: ${blockColor};
 	padding-left: 20px;
 	padding-right: 20px;
 
@@ -659,7 +690,7 @@ const MetricArea = styled.div`
 const Metric = styled.div`
 	width: 340px;
 	height: 130px;
-	background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND};
+	background: ${blockColor};
 
     .metricTitle {
         width: 310px
@@ -734,7 +765,7 @@ const Metric = styled.div`
 const DataArea = styled.div`
 	width: 340px;
     height: 800px;
-	background: ${TEACHABLE_COLOR_LIST.GRID_BACKGROUND};
+	background: ${backgroundColor};
 `;
 
 const CloseButton = styled.div`
@@ -769,6 +800,27 @@ const DataContentArea = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+    ${props => props.isDetection && `
+        margin-top: 0px;
+    `}
+    .dataInfo {
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        font-weight: 600;
+        margin-top: 7px;
+        margin-bottom: 25px;
+        padding-left: 30px;
+    }
+    .annotationInfo {
+        width: 100%;
+        text-align: left;
+        font-size: 12px;
+        color: white;
+        margin-bottom: 8px;
+        padding-left: 30px;
+    }
 `;
 
 const ClassItemArea = styled.div`
@@ -776,6 +828,10 @@ const ClassItemArea = styled.div`
     margin-top: 50px;
 	height: 300px;
 	overflow-y: auto;
+    ${props => props.isDetection && `
+        margin-top: 0px;
+	    height: 640px;
+    `}
 
     ::-webkit-scrollbar {
         width: 7px;
@@ -834,9 +890,9 @@ const ClassItem = styled.div`
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
+    background: #232234;
     ${props => (props.index % 2 === 1) && `
-        background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
+        background: ${blockColor};
     `}
 
     .classIndex {
@@ -854,12 +910,9 @@ const ClassItem = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        .statusIcon {
-            width: 15px;
-            height: 15px;
-            background: url(${NormalIcon});
-            background-repeat : no-repeat;
-            background-size : cover;
+        .statusIcon { 
+            font-size: 18px;
+            color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
         }
     }
 

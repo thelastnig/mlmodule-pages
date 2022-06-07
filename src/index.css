@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
 @import url("https://rsms.me/inter/inter.css");
 body {
 	margin: 0;
 	padding: 0;
 	font-family: 'Noto Sans' !important;
 	box-sizing: border-box;
-	background: #f4f7fc;
+	background: #dee2e6;
 	/*overflow-x: overlay;*/
 	/*overflow-y: overlay;*/
 	overflow: auto;

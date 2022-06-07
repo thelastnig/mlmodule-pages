@@ -14,7 +14,7 @@ const Header = (props) => {
 	const handleButtonClick = (url) => {
 		history.push(url);
 	};
-
+    
 
 	return (
         <HeaderWrapper>
@@ -40,8 +40,8 @@ const Header = (props) => {
             </div>
             <div className='headerLower'>
                 <div className='taskWrapper'>
-                    <div className='item first'>{taskType === 'image' ? 'VISION' : 'SOUND'}</div>
-                    <div className='item'>{taskSubType === 'classification' ? 'CLASSIFICATION' : 'DETECTION'}</div>
+                    <div className={taskType === 'image' ? 'item first' : 'item first sound'}>{taskType === 'image' ? 'VISION' : 'SOUND'}</div>
+                    <div className={taskSubType === 'classification' ? 'item' : 'item detection'}>{taskSubType === 'classification' ? 'CLASSIFICATION' : 'DETECTION'}</div>
                 </div>
             </div>
         </HeaderWrapper>
@@ -93,7 +93,16 @@ const HeaderWrapper = styled.div`
                 margin-right: 10px;
                 border: 2px solid ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
                 color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
+            }
 
+            &.sound {
+                border: 2px solid ${TEACHABLE_COLOR_LIST.PURPLE};
+                color: ${TEACHABLE_COLOR_LIST.PURPLE};
+            }
+
+            &.detection {
+                border: 2px solid ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
+                color: ${TEACHABLE_COLOR_LIST.HEAVY_MAIN_COLOR};
             }
         }
     }

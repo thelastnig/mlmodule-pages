@@ -46,6 +46,7 @@ import { Lightbox } from "react-modal-image";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { KeyboardReturnOutlined } from '@material-ui/icons';
 
 const grid = 35;
 
@@ -86,6 +87,9 @@ const Teachable = (props) => {
         isTrained,
         detectionResultImage,
         isDetectionResultImageClick,
+        isDataStepDone,
+        isAnnotationStepDone,
+        isDeployStepDone,
     } = useHandleState();
     const { setTaskType, 
         changeList,
@@ -100,6 +104,9 @@ const Teachable = (props) => {
         hideDataUploadAlert,
         toggleDetectionResultImageClick,
         initData,
+        changeDataStep,
+        changeAnnotationStep,
+        changeDeployStep,
     } = useStateActionHandler();
 	const [ placeholderProps, setPlaceholderProps ] = useState({});
     const [ isAnnotationOpen, setIsAnnotationOpen ] = useState(false);
@@ -107,6 +114,7 @@ const Teachable = (props) => {
     const [ isAlertDataOpen, setIsAlertDataOpen ] = useState(false);
     const [ isOptionAreaOpen, seIsOptionAreaOpen ] = useState(true);
     const [ isOptionAreaClicked, setIsOptionAreaClicked ] = useState(false);
+    const [ isDetectionOptionAreaClicked, setIsDetectionOptionAreaClicked ] = useState(false);
     const [ memoryUsage, setMemoryUsage ] = useState([
         {x: 1, value: 0},
         {x: 1, value: 0},
@@ -342,6 +350,9 @@ const Teachable = (props) => {
         seIsOptionAreaOpen(!isOptionAreaOpen);
         if (!isOptionAreaClicked) {
             setIsOptionAreaClicked(true);
+            if (taskSubType === 'detection') {
+                setIsDetectionOptionAreaClicked(true);
+            }
         }
     };
 
@@ -391,8 +402,62 @@ const Teachable = (props) => {
         if (props.match.params.subType === 'detection') {
             seIsOptionAreaOpen(false);
             setIsAnnotationOpen(true);
+        } else {
+            setIsDetectionOptionAreaClicked(true);
         }
     }, [props.match.params.type])
+
+    useEffect(() => {
+        const limitNum = taskType === 'image' ? taskType === 'classification' ? 10 : 20 : 20;
+        if (taskSubType === 'classification') {
+            if (list.length < 2) {
+                changeDataStep({
+                    isDataStepDone: false
+                });
+            } else {
+                for (let i = 0; i < list.length; i++) {
+                    if (list[i].data.length < limitNum) {
+                        changeDataStep({
+                            isDataStepDone: false
+                        });
+                    } else {
+                        changeDataStep({
+                            isDataStepDone: true
+                        });
+                    }
+                }
+            }
+        } else {
+            const dectection_data = detection_list[0].data;
+            if (dectection_data.length < limitNum) {
+                changeDataStep({
+                    isDataStepDone: false
+                });
+            } else {
+                changeDataStep({
+                    isDataStepDone: true
+                });
+            }
+            let isAnnotation = false;
+            dectection_data.forEach(item => {
+                if (item.annotation_fileupload.length !== 0 || item.annotation_tool.length !== 0) {
+                    isAnnotation = true;
+                } else {
+                    isAnnotation = false;
+                    return;
+                }
+            });
+            if (isAnnotation) {
+                changeAnnotationStep({
+                    isAnnotationStepDone: true
+                });
+            } else {
+                changeAnnotationStep({
+                    isAnnotationStepDone: false
+                });
+            }
+        }
+    }, [list, detection_list])
 
     const setSoundModel = async () => {
         try {
@@ -503,7 +568,15 @@ const Teachable = (props) => {
 			    <TeachableModal />
 			    <TeachableDeployModal />
                 <TeachableAlert />
-                <OptionArea isOptionAreaOpen={isOptionAreaOpen} isOptionAreaClicked={isOptionAreaClicked}>
+                <OptionArea isOptionAreaOpen={isOptionAreaOpen} 
+                    isOptionAreaClicked={isOptionAreaClicked} 
+                    isDataStepDone={isDataStepDone}
+                    isAnnotationStepDone={isAnnotationStepDone}
+                    isTrainStepDone={isTrained}
+                    isDeployStepDone={isDeployStepDone}
+                    isDetection={taskSubType === 'detection'? true : false}
+                    isDetectionOptionAreaClicked={isDetectionOptionAreaClicked}
+                >
                     <div className='optionToggleButton' onClick={clickToggleButton}>
                         {
                             isOptionAreaOpen
@@ -544,7 +617,7 @@ const Teachable = (props) => {
                             <div className='stepItem'>
                                 <div className='stepTitleWrapper'>
                                     <div className='stepTitle'>Data</div>
-                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                    <CheckCircleIcon className='stepIcon data'></CheckCircleIcon>
                                 </div>
                                 <div className='stepContent'>
                                     {stepDataItem}
@@ -559,7 +632,7 @@ const Teachable = (props) => {
                             <div className='stepItem'>
                                 <div className='stepTitleWrapper'>
                                     <div className='stepTitle'>Annotation</div>
-                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                    <CheckCircleIcon className='stepIcon annotation'></CheckCircleIcon>
                                 </div>
                                 <div className='stepContent'>
                                 </div>
@@ -573,7 +646,7 @@ const Teachable = (props) => {
                             <div className='stepItem'>
                                 <div className='stepTitleWrapper'>
                                     <div className='stepTitle'>Train</div>
-                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                    <CheckCircleIcon className='stepIcon train'></CheckCircleIcon>
                                 </div>
                                 <div className='stepContent'>
                                     <span>Epochs: {params.epochs}</span><br/>
@@ -594,7 +667,7 @@ const Teachable = (props) => {
                             <div className='stepItem'>
                                 <div className='stepTitleWrapper'>
                                     <div className='stepTitle'>Deploy</div>
-                                    <CheckCircleIcon className='stepIcon'></CheckCircleIcon>
+                                    <CheckCircleIcon className='stepIcon deploy'></CheckCircleIcon>
                                 </div>
                                 <div className='stepContent'>
                                 </div>
@@ -1081,7 +1154,11 @@ const OptionArea = styled.div`
     justify-content: center;
     align-items: flex-start;
 
-    ${props => !props.isOptionAreaOpen && 
+    ${props => props.isDetection && ` 
+        right: -250px;
+    `}
+
+    ${props => !props.isOptionAreaOpen && props.isDetectionOptionAreaClicked &&
         css` 
             animation: ${toggleToRight} 0.5s ease-in-out forwards;
         `
@@ -1174,6 +1251,40 @@ const OptionArea = styled.div`
         font-size: 16px;
         color: ${TEACHABLE_COLOR_LIST.GREEN_COLOR};
         margin-left: 5px;
+        display: none;
+
+        &.data {
+            ${props => props.isDataStepDone && ` 
+                display: block;
+            `}
+            ${props => !props.isDataStepDone && ` 
+                display: none;
+            `}
+        }
+        &.annotation {
+            ${props => props.isAnnotationStepDone && ` 
+                display: block;
+            `}
+            ${props => !props.isAnnotationStepDone && ` 
+                display: none;
+            `}
+        }
+        &.train {
+            ${props => props.isTrainStepDone && ` 
+                display: block;
+            `}
+            ${props => !props.isTrainStepDone && ` 
+                display: none;
+            `}
+        }
+        &.deploy {
+            ${props => props.isDeployStepDone && ` 
+                display: block;
+            `}
+            ${props => !props.isDeployStepDone && ` 
+                display: none;
+            `}
+        }
     }
 
     .stepLine {
@@ -1205,8 +1316,7 @@ const OptionArea = styled.div`
 
         :hover {
             background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_DEEP};
-        }
-        
+        }   
     }
 `;
 

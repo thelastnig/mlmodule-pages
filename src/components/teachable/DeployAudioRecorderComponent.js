@@ -15,6 +15,7 @@ import  { AviatoAudio }  from  'aviatojs';
 
 const DeployAudioRecorderComponent = (props) => {
     const { list } = useHandleState();
+    const { changeDeployStep } = useStateActionHandler();
     const { transferRecognizer, setIsInferenceOpen, setInferenceResult } = props;
 
     // Audio Recorder
@@ -136,6 +137,9 @@ const DeployAudioRecorderComponent = (props) => {
                         'className': list[index].class_name
                     }
                     inferenceResult.push(resultItem);
+                });
+                changeDeployStep({
+                    isDeployStepDone: true
                 });
                 setInferenceResult(inferenceResult);    
             }

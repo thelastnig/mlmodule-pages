@@ -26,7 +26,7 @@ const colorList = [
 const DeployComponent = (props) => {
     
     const { taskType, model, isTrained, taskSubType } = useHandleState();
-    const { addDetectionResultImage } = useStateActionHandler();
+    const { addDetectionResultImage, changeDeployStep } = useStateActionHandler();
     
     const [ inputType, setInputType ] = useState('File');
     const [ inferenceFile, setInferenceFile ] = useState(null);
@@ -61,6 +61,9 @@ const DeployComponent = (props) => {
                     .then(result => {  
                         if (Array.isArray(result) && result.length > 0) {
                             setInferenceResult(result);    
+                            changeDeployStep({
+                                isDeployStepDone: true
+                            });
                         }
                     })
                     .catch(error => {
@@ -71,6 +74,9 @@ const DeployComponent = (props) => {
                     .then(predictions => {
                         setDetectionInferenceResult(predictions);
                         drawBoundingBoxes(predictions);
+                        changeDeployStep({
+                            isDeployStepDone: true
+                        });
                     })
                 }
            }
