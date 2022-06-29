@@ -2,7 +2,6 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { keyframes, css } from 'styled-components';
 import { useHandleState, useStateActionHandler } from 'store/teachable/hooks';
-import logo from 'assets/icon/surromind.png';
 import { TEACHABLE_COLOR_LIST } from 'constants/common';
 
 
@@ -21,7 +20,7 @@ const Header = (props) => {
             <div className='headerUpper'>
                 <div className='upperWrapper'>
                     <div className='upperLeft' onClick={() => handleButtonClick('/')}>
-                        <img src={logo} height='22px'/>
+                        <div className='logo'>JW Park</div>
                     </div>
                     <div className='upperRight'>
                         <div className='upperRightItem' onClick={() => handleButtonClick('/')}>Easy ML Module</div>
@@ -57,6 +56,12 @@ const HeaderWrapper = styled.div`
     background: ${TEACHABLE_COLOR_LIST.COMPONENT_BACKGROUND_HARD};
     padding-left: 20px;
     padding-right: 20px;
+
+    .logo {
+        height: 22px;
+        color: ${TEACHABLE_COLOR_LIST.MAIN_THEME_COLOR};
+        font-size: 17px;
+    }
 
     .headerUpper {
         width: 100%;
