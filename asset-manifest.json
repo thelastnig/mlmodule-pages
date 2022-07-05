@@ -1,0 +1,35 @@
+{
+  "files": {
+    "main.css": "/mlmodule/static/css/main.8ec8d14c.chunk.css",
+    "main.js": "/mlmodule/static/js/main.63c2a9b6.chunk.js",
+    "main.js.map": "/mlmodule/static/js/main.63c2a9b6.chunk.js.map",
+    "runtime-main.js": "/mlmodule/static/js/runtime-main.dbe4545d.js",
+    "runtime-main.js.map": "/mlmodule/static/js/runtime-main.dbe4545d.js.map",
+    "static/css/2.d22f252f.chunk.css": "/mlmodule/static/css/2.d22f252f.chunk.css",
+    "static/js/2.e44f05d8.chunk.js": "/mlmodule/static/js/2.e44f05d8.chunk.js",
+    "static/js/2.e44f05d8.chunk.js.map": "/mlmodule/static/js/2.e44f05d8.chunk.js.map",
+    "static/js/3.b9a14e19.chunk.js": "/mlmodule/static/js/3.b9a14e19.chunk.js",
+    "static/js/3.b9a14e19.chunk.js.map": "/mlmodule/static/js/3.b9a14e19.chunk.js.map",
+    "static/js/4.bc568895.chunk.js": "/mlmodule/static/js/4.bc568895.chunk.js",
+    "static/js/4.bc568895.chunk.js.map": "/mlmodule/static/js/4.bc568895.chunk.js.map",
+    "static/js/5.8373b76e.chunk.js": "/mlmodule/static/js/5.8373b76e.chunk.js",
+    "static/js/5.8373b76e.chunk.js.map": "/mlmodule/static/js/5.8373b76e.chunk.js.map",
+    "index.html": "/mlmodule/index.html",
+    "static/css/2.d22f252f.chunk.css.map": "/mlmodule/static/css/2.d22f252f.chunk.css.map",
+    "static/css/main.8ec8d14c.chunk.css.map": "/mlmodule/static/css/main.8ec8d14c.chunk.css.map",
+    "static/js/2.e44f05d8.chunk.js.LICENSE.txt": "/mlmodule/static/js/2.e44f05d8.chunk.js.LICENSE.txt",
+    "static/js/3.b9a14e19.chunk.js.LICENSE.txt": "/mlmodule/static/js/3.b9a14e19.chunk.js.LICENSE.txt",
+    "static/js/4.bc568895.chunk.js.LICENSE.txt": "/mlmodule/static/js/4.bc568895.chunk.js.LICENSE.txt",
+    "static/js/main.63c2a9b6.chunk.js.LICENSE.txt": "/mlmodule/static/js/main.63c2a9b6.chunk.js.LICENSE.txt",
+    "static/media/image_classification.35479d99.jpg": "/mlmodule/static/media/image_classification.35479d99.jpg",
+    "static/media/object_detection.9ab83da6.jpg": "/mlmodule/static/media/object_detection.9ab83da6.jpg",
+    "static/media/sound_classification.94db4ddc.jpg": "/mlmodule/static/media/sound_classification.94db4ddc.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.dbe4545d.js",
+    "static/css/2.d22f252f.chunk.css",
+    "static/js/2.e44f05d8.chunk.js",
+    "static/css/main.8ec8d14c.chunk.css",
+    "static/js/main.63c2a9b6.chunk.js"
+  ]
+}
