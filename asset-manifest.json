@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/mlmodule-pages/static/css/main.8ec8d14c.chunk.css",
-    "main.js": "/mlmodule-pages/static/js/main.09039a73.chunk.js",
-    "main.js.map": "/mlmodule-pages/static/js/main.09039a73.chunk.js.map",
+    "main.js": "/mlmodule-pages/static/js/main.1a6ad4e6.chunk.js",
+    "main.js.map": "/mlmodule-pages/static/js/main.1a6ad4e6.chunk.js.map",
     "runtime-main.js": "/mlmodule-pages/static/js/runtime-main.e9ad668b.js",
     "runtime-main.js.map": "/mlmodule-pages/static/js/runtime-main.e9ad668b.js.map",
     "static/css/2.d22f252f.chunk.css": "/mlmodule-pages/static/css/2.d22f252f.chunk.css",
@@ -20,7 +20,7 @@
     "static/js/2.e354fbe2.chunk.js.LICENSE.txt": "/mlmodule-pages/static/js/2.e354fbe2.chunk.js.LICENSE.txt",
     "static/js/3.b9a14e19.chunk.js.LICENSE.txt": "/mlmodule-pages/static/js/3.b9a14e19.chunk.js.LICENSE.txt",
     "static/js/4.bc568895.chunk.js.LICENSE.txt": "/mlmodule-pages/static/js/4.bc568895.chunk.js.LICENSE.txt",
-    "static/js/main.09039a73.chunk.js.LICENSE.txt": "/mlmodule-pages/static/js/main.09039a73.chunk.js.LICENSE.txt",
+    "static/js/main.1a6ad4e6.chunk.js.LICENSE.txt": "/mlmodule-pages/static/js/main.1a6ad4e6.chunk.js.LICENSE.txt",
     "static/media/Easy_ML_Module_Manual.7688fd41.pdf": "/mlmodule-pages/static/media/Easy_ML_Module_Manual.7688fd41.pdf",
     "static/media/image_classification.35479d99.jpg": "/mlmodule-pages/static/media/image_classification.35479d99.jpg",
     "static/media/object_detection.9ab83da6.jpg": "/mlmodule-pages/static/media/object_detection.9ab83da6.jpg",
@@ -31,6 +31,6 @@
     "static/css/2.d22f252f.chunk.css",
     "static/js/2.e354fbe2.chunk.js",
     "static/css/main.8ec8d14c.chunk.css",
-    "static/js/main.09039a73.chunk.js"
+    "static/js/main.1a6ad4e6.chunk.js"
   ]
 }
